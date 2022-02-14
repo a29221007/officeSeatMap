@@ -17,10 +17,6 @@ export default createStore({
         MapBoxRef_Transition_Timer:getItem('MapBoxRef_Transition_Timer'),
         // 当前选中的图例(此项不做本地缓存)
         currentLegend:'', // 默认是空字符串
-        // 控制抽屉式弹框的显示与隐藏
-        is_show_Drawer:true,   // 默认是false
-        // 当前选中或者查询员工的信息对象
-        currentSeatInfo: getItem('currentSeatInfo')
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -47,15 +43,6 @@ export default createStore({
         setCurrentLegend(state,data) {
             // 判断currentLegend的值与传递过来的data是否相同，相同的话，就是取消，不相同就是设置=
             state.currentLegend = state.currentLegend === data ? '' : data
-        },
-        // 设置控制抽屉式弹框的显示与隐藏的变量is_show_Drawer
-        setIs_Show_Drawer(state,data) {
-            state.is_show_Drawer = data
-        },
-        // 设置当前选中座位员工的信息对象currentSeatInfo
-        setCurrentSeatInfo(state,data) {
-            state.currentSeatInfo = data
-            setItem('currentSeatInfo',state.currentSeatInfo)
         }
     },
     actions: {

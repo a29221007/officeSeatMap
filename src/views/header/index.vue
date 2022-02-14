@@ -31,6 +31,18 @@
                 <img :src="item.url"><span>{{item.name}}</span>
             </div>
         </div>
+        <!-- 抽屉式弹框 -->
+        <el-drawer custom-class='drawer' modal-class='drawer-mask' v-model="is_show" :with-header="false" direction='ltr' :modal='false' size='15%'>
+            <div>
+                <span>姓名：</span><span>{{currentSeatInfo.name}}</span>
+            </div>
+            <div>
+                <span>座位号：</span><span>{{currentSeatInfo.seat_id}}</span>
+            </div>
+            <div>
+                <span>部门：</span><span>{{currentSeatInfo.depart}}</span>
+            </div>
+        </el-drawer>
     </div>
 </template>
 
@@ -40,9 +52,14 @@ import { useStore } from 'vuex'
 import { ElMessageBox } from 'element-plus'
 // 导入消息提示框组件
 import { successMessage, infoMessage } from '@/utils/message.js'
+// 导入事件中心
+import emitter from '../eventbus'
 export default {
     name:'layout',
     setup(){
+        // emitter.on('form', e => {
+        //     console.log(e,'==')
+        // })
         const store = useStore()
         // 切换地图区域的数据（目前只有北京地区的3楼4楼，以后说不定还有其他地区）
         const AllArea = [
@@ -55,6 +72,8 @@ export default {
             store.commit('setMapBoxRef_Transition_Timer','all 0.3s')
             // 设置当前选中的楼层（或地区）
             store.commit('setCurrentFloor',floor)
+            // 将弹框关闭
+            drawerData.is_show = false
         }
         // 定义模糊搜索框的相关数据与方法
         const searchData = reactive({
@@ -77,14 +96,19 @@ export default {
             },
             // 点击搜索建议下拉框某一项的处理程序
             handleSelect(item) {
-                if(!searchData.is_none_sugges) return 
+                if(!searchData.is_none_sugges) return
+                console.log(item)
+                const { depart, name, seat_id } = item
                 // 选中某一项，首先判断该员工的座位，是否在当前楼层
                 if(item.floor == store.getters.floor){
                     // 如果相同
                     // 1、获取座位id号对应的元素DOM
                     let el = document.getElementById(item.seat_id)
                     el.click()
-                    store.commit('setCurrentSeatInfo',item)
+                    drawerData.is_show = true
+                    drawerData.currentSeatInfo.depart = depart
+                    drawerData.currentSeatInfo.seat_id = seat_id
+                    drawerData.currentSeatInfo.name = name
                 }else{
                     // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                     ElMessageBox.confirm(
@@ -102,8 +126,11 @@ export default {
                         nextTick(() => {
                             let el = document.getElementById(item.seat_id)
                             el.click()
-                            store.commit('setCurrentSeatInfo',item)
                             successMessage('切换成功')
+                            drawerData.is_show = true
+                            drawerData.currentSeatInfo.depart = depart
+                            drawerData.currentSeatInfo.seat_id = seat_id
+                            drawerData.currentSeatInfo.name = name
                         })
                     }).catch(() => {
                         infoMessage(`您可以手动切换到${item.floor}楼查找`)
@@ -130,12 +157,26 @@ export default {
             // 点击某一个图例触发的函数
             handleClickLegend(type) {
                 store.commit('setCurrentLegend',type)
+                // 将弹框关闭
+                drawerData.is_show = false
+            }
+        })
+        // 定义抽屉式弹框的相关数据
+        const drawerData = reactive({
+            // 控制弹框的显示隐藏
+            is_show:false,
+            // 当前座位人员的信息集合
+            currentSeatInfo:{
+                name:'',
+                seat_id:'',
+                depart:''
             }
         })
         return {
             AllArea,
             ...toRefs(searchData),
             ...toRefs(legendData),
+            ...toRefs(drawerData),
             handleClickFloor,
         }
     }

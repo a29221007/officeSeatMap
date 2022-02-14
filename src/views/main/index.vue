@@ -11,6 +11,8 @@ import {ref,computed,onMounted,onBeforeUnmount, reactive,toRefs} from 'vue'
 import { useStore } from 'vuex'
 // 导入获取鼠标在盒子内的坐标函数
 import getMouseX_Y from '@/utils/getmouseX_Y.js'
+// 导入事件中心
+import emitter from '../eventbus'
 export default {
     name:'layout',
     setup(){
@@ -40,7 +42,6 @@ export default {
         })
         // 鼠标点击每一个座位的事件处理函数
         function handleClickSeat(seatItem,$event){
-            store.commit('setCurrentSeatInfo',seatItem)
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮
             seatData.current = seatItem.seat_id
             // 然后设置过度属性，以及过渡时间
@@ -62,6 +63,7 @@ export default {
             MapBoxRef.value.style.transform = `scale(3)`
             // 6、将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacle = 300
+            // emitter.emit('form', 123)
         }
         // 创建地图容器的实例对象
         const MapBoxRef = ref(null)
