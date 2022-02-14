@@ -6,11 +6,28 @@
             <div class="floor-switch">
                 <span :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<i v-if="item.id !== AllArea.length - 1"> | </i></span>
             </div>
-            <el-autocomplete v-model="searchState" value-key='name' :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:keyup.enter="handleEnter" v-on:clear="handleClearInput" />
+            <el-autocomplete v-model="searchState" value-key='name' popper-class='autocomplete' :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:clear="handleClearInput">
+                <!-- 自定义搜索建议列表模板(当有搜索建议时) -->
+                <template #default="{ item }" v-if="is_none_sugges">
+                    <div class="autoCompleteTemplate">
+                        <!-- 第一行左边显示姓名，右边显示座位号 -->
+                        <div class="oneLine">
+                            <span><span class="title">名称：</span><span class="content">{{item.name || '暂无数据'}}</span></span>
+                            <span><span class="title">座位号：</span><span class="content">{{item.seat_id}}</span></span>
+                        </div>
+                        <!-- 第二行显示该座位所在部门 -->
+                        <div class="twoLine"><span class="title">部门：</span><span class="content">{{item.depart || '暂无数据'}}</span></div>
+                    </div>
+                </template>
+                <!-- 自定义搜索建议列表模板（当无搜索建议时） -->
+                <template #default="{ item }" v-else>
+                    <div class="is_none_sugges">暂无匹配项</div>
+                </template>
+            </el-autocomplete>
         </div>
         <!-- 图例 -->
         <div class="legend">
-            <div class="legend-item" v-for="item in legendList" :key="item.id">
+            <div class="legend-item" :class="{'legendItemActive':item.type === $store.state.currentLegend}" v-for="item in legendList" :key="item.id" v-on:click="handleClickLegend(item.type)">
                 <img :src="item.url"><span>{{item.name}}</span>
             </div>
         </div>
@@ -18,8 +35,11 @@
 </template>
 
 <script>
-import {ref,reactive,toRefs} from 'vue'
-import {useStore} from 'vuex'
+import {ref, reactive, toRefs, nextTick} from 'vue'
+import { useStore } from 'vuex'
+import { ElMessageBox } from 'element-plus'
+// 导入消息提示框组件
+import { successMessage, infoMessage } from '@/utils/message.js'
 export default {
     name:'layout',
     setup(){
@@ -31,6 +51,9 @@ export default {
         ]
         // 切换楼层（或地区）的处理函数
         function handleClickFloor(floor){
+            // 切换楼层时，将过渡时间缩短
+            store.commit('setMapBoxRef_Transition_Timer','all 0.3s')
+            // 设置当前选中的楼层（或地区）
             store.commit('setCurrentFloor',floor)
         }
         // 定义模糊搜索框的相关数据与方法
@@ -38,43 +61,53 @@ export default {
             // 模糊搜索的关键字
             searchState:'',
             // 是否有匹配项
-            is_none:true, // 默认是有匹配项
-            results:[],
+            is_none_sugges:true, // 默认是有匹配项
             // 搜索建议
             querySearch(queryString, callback) {
-                searchData.is_none = true
-                searchData.results = store.getters.AllSeatList.filter(item => {
-                    return (item.name && item.name.includes(queryString.toLowerCase())) || (item.seat_id && item.seat_id.includes(queryString.toLowerCase()))
+                searchData.is_none_sugges = true
+                const results = store.getters.AllSeatList.filter(item => {
+                    return (item.name && item.name.includes(queryString)) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase()))
                 })
-                if(searchData.results.length !== 0){
-                    callback(searchData.results)
+                if(results.length !== 0){
+                    callback(results)
                 }else{
-                    callback([{name:'无匹配项'}])
-                    searchData.is_none = false
-                }
-                // 下一步优化搜索建议下拉框的内容布局展示
-            },
-            // 点击回车键触发
-            handleEnter() {
-                // 按下回车键查看是否搜索建议
-                if(searchData.is_none){
-                    // 如果有搜索的结果,则将第一位拿出来传给handleSelect函数
-                    searchData.handleSelect(searchData.results[0])
+                    callback([{name:''}])
+                    searchData.is_none_sugges = false
                 }
             },
             // 点击搜索建议下拉框某一项的处理程序
             handleSelect(item) {
-                if(!searchData.is_none) return searchData.searchState = ''
+                if(!searchData.is_none_sugges) return 
                 // 选中某一项，首先判断该员工的座位，是否在当前楼层
-                console.log(item)
                 if(item.floor == store.getters.floor){
                     // 如果相同
                     // 1、获取座位id号对应的元素DOM
                     let el = document.getElementById(item.seat_id)
                     el.click()
+                    store.commit('setCurrentSeatInfo',item)
                 }else{
                     // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
-                    
+                    ElMessageBox.confirm(
+                        `查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
+                        '提示',
+                        {
+                            cancelButtonText: '取消',
+                            confirmButtonText: '跳转',
+                            type: 'info',
+                        }
+                    ).then(() => {
+                        // 将要切换的楼层
+                        let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                        handleClickFloor(pushFloor)
+                        nextTick(() => {
+                            let el = document.getElementById(item.seat_id)
+                            el.click()
+                            store.commit('setCurrentSeatInfo',item)
+                            successMessage('切换成功')
+                        })
+                    }).catch(() => {
+                        infoMessage(`您可以手动切换到${item.floor}楼查找`)
+                    })
                 }
             },
             // 点击搜索框中清除图标的处理程序
@@ -93,13 +126,17 @@ export default {
                 {id:2,name:'占用',lable:'occupation',type:'0-2',url:'/legend-image/image2.png'},
                 {id:3,name:'维修',lable:'maintenance',type:'0-3',url:'/legend-image/image3.png'},
                 {id:4,name:'休闲区',lable:'Recreational-area',type:'0-4',url:'/legend-image/image4.png'},
-            ]
+            ],
+            // 点击某一个图例触发的函数
+            handleClickLegend(type) {
+                store.commit('setCurrentLegend',type)
+            }
         })
         return {
             AllArea,
             ...toRefs(searchData),
             ...toRefs(legendData),
-            handleClickFloor
+            handleClickFloor,
         }
     }
 }
@@ -140,9 +177,14 @@ export default {
         .legend-item{
             display: flex;
             align-items: center;
+            cursor: pointer;
+            transition: all 0.15s;
             img{
                 height: 32px;
             }
+        }
+        .legendItemActive{
+            transform: scale(1.2);
         }
     }
 }

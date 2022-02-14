@@ -6,3 +6,45 @@
 .el-input__inner:focus {
   border-color: #dcdfe6 !important;
 }
+.autocomplete .el-autocomplete-suggestion .el-scrollbar .el-autocomplete-suggestion__wrap .el-scrollbar__view li ~ li {
+  border-top: 1px solid #eee;
+}
+.autocomplete .el-autocomplete-suggestion .el-scrollbar .el-autocomplete-suggestion__wrap .el-scrollbar__view li .autoCompleteTemplate .oneLine {
+  display: flex;
+  justify-content: space-between;
+}
+.autocomplete .el-autocomplete-suggestion .el-scrollbar .el-autocomplete-suggestion__wrap .el-scrollbar__view li .autoCompleteTemplate .title {
+  font-weight: 600;
+}
+.autocomplete .el-autocomplete-suggestion .el-scrollbar .el-autocomplete-suggestion__wrap .el-scrollbar__view li .autoCompleteTemplate .content {
+  color: #333;
+}
+.autocomplete .el-autocomplete-suggestion .el-scrollbar .el-autocomplete-suggestion__wrap .el-scrollbar__view li .is_none_sugges {
+  color: #333;
+  text-align: center;
+}
+.el-message-box .el-message-box__btns {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-start;
+}
+.el-message-box .el-message-box__btns button:nth-child(2) {
+  margin-right: 10px;
+  margin-left: unset;
+}
+.drawer {
+  top: 20px!important;
+  left: 20px!important;
+  bottom: unset!important;
+  height: unset!important;
+  right: unset!important;
+  border-radius: 7px;
+  padding: 20px;
+}
+.drawer .el-drawer__body {
+  padding: unset;
+}
+.drawer-mask {
+  z-index: -10 !important;
+}

@@ -18,9 +18,7 @@ export default {
         // 人员座位信息
         let seatData = reactive({
             // 人员信息座位集合
-            seatList: computed(() => {
-                return store.state.currentFloor === 'three' ? store.state.seatListOfthree : store.state.seatListOfFour
-            }),
+            seatList: computed(() => store.getters.FilterSeatListByLegend),
             // 当前选中的座位
             current:0,
             // 设置每一个座位的样式
@@ -36,15 +34,17 @@ export default {
         const MapBoxStyle = computed(() => {
             // MapBoxRef盒子的行内样式暂时只有背景图片，后面页面初始化时要加入缩放的比例
             return {
-                backgroundImage: `url(/floor_image/${store.getters.floor}rd_floor_cleaned.png)`
+                backgroundImage: `url(/floor_image/${store.getters.floor}rd_floor_cleaned.png)`,
+                transition:store.state.MapBoxRef_Transition_Timer
             }
         })
         // 鼠标点击每一个座位的事件处理函数
         function handleClickSeat(seatItem,$event){
+            store.commit('setCurrentSeatInfo',seatItem)
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮
             seatData.current = seatItem.seat_id
             // 然后设置过度属性，以及过渡时间
-            MapBoxRef.value.style.transition = `all 1s`
+            store.commit('setMapBoxRef_Transition_Timer','all 1s')
             // 1、首先计算点击时鼠标距离MapContainerRef盒子的距离
             let MapContainerRef_x = $event.target.offsetLeft + MapBoxRef.value.offsetLeft
             let MapContainerRef_y = $event.target.offsetTop + MapBoxRef.value.offsetTop
@@ -90,7 +90,7 @@ export default {
         // 鼠标移动的事件处理程序
         function mouseMove(e){
             // 当发生mousemove事件时，对transition的属性值设置为unset
-            MapBoxRef.value.style.transition = `unset`
+            store.commit('setMapBoxRef_Transition_Timer','unset')
             // 1、计算鼠标距离MapContainerRef距离
             let mouseToMapContainerX = e.pageX - MapContainerRef.value.offsetLeft
             let mouseToMapContainerY = e.pageY - MapContainerRef.value.offsetTop
@@ -108,7 +108,7 @@ export default {
         // 监听鼠标滚轮滚动的事件
         function handleScale(e){
             // 当发生滚轮滚动事件时，对transition的属性值设置为unset
-            MapBoxRef.value.style.transition = `unset`
+            store.commit('setMapBoxRef_Transition_Timer','unset')
             // 阻止默认行为
             e.preventDefault()
             // 鼠标滚轮的参数

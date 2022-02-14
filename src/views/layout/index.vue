@@ -1,4 +1,5 @@
 <template>
+    <Drawer />
     <Header />
     <Main />
 </template>
@@ -6,12 +7,14 @@
 <script>
 import Header from '../header'
 import Main from '../main'
+import Drawer from '../Drawer'
 import { useStore } from 'vuex'
 export default {
     name:'layout',
     components:{
         Header,
-        Main
+        Main,
+        Drawer
     },
     setup(){
         // 在layout组件中初始化store中的状态

@@ -7,3 +7,68 @@
 .el-input__inner:focus {
     border-color: #dcdfe6!important;
 }
+
+// 设置搜索建议框下拉列表的样式
+.autocomplete {
+    .el-autocomplete-suggestion {
+        .el-scrollbar {
+            .el-autocomplete-suggestion__wrap {
+                .el-scrollbar__view {
+                    li {
+                        & ~ li {
+                            border-top: 1px solid #eee;
+                        }
+                        .autoCompleteTemplate {
+                            .oneLine {
+                                display: flex;
+                                justify-content: space-between;
+                            }
+                            .title {
+                                font-weight: 600;
+                            }
+                            .content {
+                                color: #333;
+                            }
+                        }
+                        .is_none_sugges {
+                            color: #333;
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 设置确认弹框中按钮的样式
+.el-message-box{
+    .el-message-box__btns{
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        justify-content: flex-start;
+        button:nth-child(2){
+            margin-right: 10px;
+            margin-left: unset;
+        }
+    }
+}
+// 抽屉式弹框的样式
+.drawer{
+    top: 20px!important;
+    left: 20px!important;
+    bottom: unset!important;
+    height: unset!important;
+    right: unset!important;
+    border-radius: 7px;
+    padding:20px;
+    .el-drawer__body{
+        padding: unset;
+    }
+}
+
+// 设置抽屉式谈款的遮罩层样式
+.drawer-mask{
+    z-index: -10!important;
+}

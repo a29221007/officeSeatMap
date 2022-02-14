@@ -12,7 +12,15 @@ export default createStore({
         // 3层的座位信息
         seatListOfthree:getItem('seatListOfthree'),
         // 4层的座位信息
-        seatListOfFour:getItem('seatListOfFour')
+        seatListOfFour:getItem('seatListOfFour'),
+        // MapBoxRef盒子设置transition属性的动态值
+        MapBoxRef_Transition_Timer:getItem('MapBoxRef_Transition_Timer'),
+        // 当前选中的图例(此项不做本地缓存)
+        currentLegend:'', // 默认是空字符串
+        // 控制抽屉式弹框的显示与隐藏
+        is_show_Drawer:true,   // 默认是false
+        // 当前选中或者查询员工的信息对象
+        currentSeatInfo: getItem('currentSeatInfo')
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -29,6 +37,25 @@ export default createStore({
         setSeatListOfFour(state,data) {
             state.seatListOfFour = data
             setItem('seatListOfFour',state.seatListOfFour)
+        },
+        // 设置MapBoxRef盒子的transition属性值
+        setMapBoxRef_Transition_Timer(state,data) {
+            state.MapBoxRef_Transition_Timer = data
+            setItem('MapBoxRef_Transition_Timer',state.MapBoxRef_Transition_Timer)
+        },
+        // 设置currentLegend图例
+        setCurrentLegend(state,data) {
+            // 判断currentLegend的值与传递过来的data是否相同，相同的话，就是取消，不相同就是设置=
+            state.currentLegend = state.currentLegend === data ? '' : data
+        },
+        // 设置控制抽屉式弹框的显示与隐藏的变量is_show_Drawer
+        setIs_Show_Drawer(state,data) {
+            state.is_show_Drawer = data
+        },
+        // 设置当前选中座位员工的信息对象currentSeatInfo
+        setCurrentSeatInfo(state,data) {
+            state.currentSeatInfo = data
+            setItem('currentSeatInfo',state.currentSeatInfo)
         }
     },
     actions: {
@@ -60,6 +87,21 @@ export default createStore({
         // 根据currentFloor得到当前的楼层（或地区）的数值
         floor(state) {
             return state.currentFloor === 'three' ? 3 : 4
+        },
+        // 点击图里筛选后的座位信息
+        FilterSeatListByLegend(state) {
+            // 1、判断当前的楼层，选择出要做筛选的数组
+            const currentFloorSeatList = state.currentFloor === 'three' ? state.seatListOfthree : state.seatListOfFour
+            // 2、判断当前是否有选中的图例
+            if(state.currentLegend){
+                // 3、如果有选中的图例
+                return currentFloorSeatList.filter((item) => {
+                    return item.type === state.currentLegend
+                })
+            }else{
+                // 4、没有选中的图例，直接返回currentFloorSeatList
+                return currentFloorSeatList
+            }
         }
     }
 })
