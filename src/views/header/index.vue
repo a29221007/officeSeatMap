@@ -78,6 +78,7 @@ export default {
         ]
         // 切换楼层（或地区）的处理函数
         function handleClickFloor(floor){
+            if(floor === store.state.currentFloor) return
             // 设置当前选中的楼层（或地区）
             store.commit('setCurrentFloor',floor)
             // 将弹框关闭

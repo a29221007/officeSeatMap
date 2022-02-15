@@ -141,21 +141,15 @@ export default {
         })
         function MapBoxAmplification (e){
             // 调用设置地图中心点的函数
-            setTransformOrigin(e)
             if (sacle > 700) return
             sacle += 8
             MapBoxRef.value.style.transform = `scale(${sacle/100})`
         }
         function MapBoxReduce(e){
             // 调用设置地图中心点的函数
-            setTransformOrigin(e)
             if(sacle < 40) return
             sacle -= 8
             MapBoxRef.value.style.transform = `scale(${sacle/100})`
-        }
-        // 设置地图缩放的中心点
-        function setTransformOrigin(e){
-
         }
         // 在组件卸载时移除一些事件的监听
         onBeforeUnmount(() => {

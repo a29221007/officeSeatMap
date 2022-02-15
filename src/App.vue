@@ -5,10 +5,15 @@
 <script>
 // 导入布局组件layout
 import LayOut from './views/layout'
+// 导入获取浏览器可视区的宽高
+import getClient from './utils/getClient.js'
 export default {
     name:'App',
     components:{
         LayOut
+    },
+    setup() {
+        console.log(getClient())
     }
 }
 </script>
