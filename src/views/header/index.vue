@@ -57,9 +57,14 @@ import emitter from '../eventbus'
 export default {
     name:'layout',
     setup(){
-        // emitter.on('form', e => {
-        //     console.log(e,'==')
-        // })
+        // 监听兄弟组件Main发布的自定义事件from，将弹框显示
+        emitter.on('form', data => {
+            const { depart, name, seat_id } = data
+            drawerData.currentSeatInfo.depart = depart
+            drawerData.currentSeatInfo.seat_id = seat_id
+            drawerData.currentSeatInfo.name = name
+            drawerData.is_show = true
+        })
         const store = useStore()
         // 切换地图区域的数据（目前只有北京地区的3楼4楼，以后说不定还有其他地区）
         const AllArea = [

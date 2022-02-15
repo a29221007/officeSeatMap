@@ -12,7 +12,7 @@ import { useStore } from 'vuex'
 // 导入获取鼠标在盒子内的坐标函数
 import getMouseX_Y from '@/utils/getmouseX_Y.js'
 // 导入事件中心
-import emitter from '../eventbus'
+import emitter from '../eventbus.js'
 export default {
     name:'layout',
     setup(){
@@ -63,7 +63,8 @@ export default {
             MapBoxRef.value.style.transform = `scale(3)`
             // 6、将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacle = 300
-            // emitter.emit('form', 123)
+            // 想兄弟组件header发布一个自定义事件form
+            emitter.emit('form', seatItem)
         }
         // 创建地图容器的实例对象
         const MapBoxRef = ref(null)
