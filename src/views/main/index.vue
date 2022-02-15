@@ -134,6 +134,11 @@ export default {
         }
         // 定义初始的缩放值100
         let sacle = 100
+        // 监听切换楼层或者切换图例时发布的自定义事件initScale，将此时的缩放系数与缩放时的缩放系数同步
+        emitter.on('initScale', () => {
+            sacle = store.state.scale * 100
+            seatData.current = 0
+        })
         function MapBoxAmplification (e){
             // 调用设置地图中心点的函数
             setTransformOrigin(e)

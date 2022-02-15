@@ -1,4 +1,9 @@
 // 将地图切换至中心，不放大
+
+// 导入事件中心
+import emitter from '@/views/eventbus.js'
+// 导入vuex
+import store from '../store'
 function initMap() {
     // 获取地图盒子
     let MapBox = document.querySelector('.map-box')
@@ -7,6 +12,7 @@ function initMap() {
     MapBox.style.top = 'unset'
     MapBox.style.left = 'unset'
     MapBox.style.transformOrigin = `50% 50%`
-    MapBox.style.transform = `scale(1)`
+    MapBox.style.transform = `scale(${store.state.scale})`
+    emitter.emit('initScale')
 }
 export default initMap

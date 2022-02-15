@@ -33,15 +33,11 @@
         </div>
         <!-- 抽屉式弹框 -->
         <el-drawer custom-class='drawer' modal-class='drawer-mask' v-model="is_show" :with-header="false" direction='ltr' :modal='false' size='15%'>
-            <div>
-                <span>姓名：</span><span>{{currentSeatInfo.name}}</span>
-            </div>
-            <div>
-                <span>座位号：</span><span>{{currentSeatInfo.seat_id}}</span>
-            </div>
-            <div>
-                <span>部门：</span><span>{{currentSeatInfo.depart}}</span>
-            </div>
+            <el-form label-width="auto">
+                <el-form-item label="姓名：">{{currentSeatInfo.name || '暂无数据'}}</el-form-item>
+                <el-form-item label="座位号：">{{currentSeatInfo.seat_id}}</el-form-item>
+                <el-form-item label="部门：">{{currentSeatInfo.depart || '暂无数据'}}</el-form-item>
+            </el-form>
         </el-drawer>
     </div>
 </template>
@@ -136,14 +132,14 @@ export default {
                         // 将要切换的楼层
                         let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
                         handleClickFloor(pushFloor)
+                        drawerData.is_show = true
+                        drawerData.currentSeatInfo.depart = depart
+                        drawerData.currentSeatInfo.seat_id = seat_id
+                        drawerData.currentSeatInfo.name = name
                         nextTick(() => {
                             let el = document.getElementById(item.seat_id)
                             el.click()
                             successMessage('切换成功')
-                            drawerData.is_show = true
-                            drawerData.currentSeatInfo.depart = depart
-                            drawerData.currentSeatInfo.seat_id = seat_id
-                            drawerData.currentSeatInfo.name = name
                         })
                     }).catch(() => {
                         infoMessage(`您可以手动切换到${item.floor}楼查找`)

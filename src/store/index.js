@@ -15,6 +15,8 @@ export default createStore({
         seatListOfFour:getItem('seatListOfFour'),
         // 当前选中的图例(此项不做本地缓存)
         currentLegend:'', // 默认是空字符串
+        // 当前的地图的初始缩放系数
+        scale:1 // 默认是1
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -36,6 +38,10 @@ export default createStore({
         setCurrentLegend(state,data) {
             // 判断currentLegend的值与传递过来的data是否相同，相同的话，就是取消，不相同就是设置
             state.currentLegend = state.currentLegend === data ? '' : data
+        },
+        // 设置低于初始化缩放系数
+        setScale(state,data) {
+            state.scale = data
         }
     },
     actions: {
