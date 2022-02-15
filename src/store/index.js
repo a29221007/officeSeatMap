@@ -13,8 +13,6 @@ export default createStore({
         seatListOfthree:getItem('seatListOfthree'),
         // 4层的座位信息
         seatListOfFour:getItem('seatListOfFour'),
-        // MapBoxRef盒子设置transition属性的动态值
-        MapBoxRef_Transition_Timer:getItem('MapBoxRef_Transition_Timer'),
         // 当前选中的图例(此项不做本地缓存)
         currentLegend:'', // 默认是空字符串
     },
@@ -34,14 +32,9 @@ export default createStore({
             state.seatListOfFour = data
             setItem('seatListOfFour',state.seatListOfFour)
         },
-        // 设置MapBoxRef盒子的transition属性值
-        setMapBoxRef_Transition_Timer(state,data) {
-            state.MapBoxRef_Transition_Timer = data
-            setItem('MapBoxRef_Transition_Timer',state.MapBoxRef_Transition_Timer)
-        },
         // 设置currentLegend图例
         setCurrentLegend(state,data) {
-            // 判断currentLegend的值与传递过来的data是否相同，相同的话，就是取消，不相同就是设置=
+            // 判断currentLegend的值与传递过来的data是否相同，相同的话，就是取消，不相同就是设置
             state.currentLegend = state.currentLegend === data ? '' : data
         }
     },

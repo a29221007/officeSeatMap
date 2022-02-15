@@ -54,16 +54,25 @@ import { ElMessageBox } from 'element-plus'
 import { successMessage, infoMessage } from '@/utils/message.js'
 // 导入事件中心
 import emitter from '../eventbus'
+// 导入初始化地图的方法
+import initMap from '@/utils/initMap.js'
 export default {
     name:'layout',
     setup(){
         // 监听兄弟组件Main发布的自定义事件from，将弹框显示
         emitter.on('form', data => {
-            const { depart, name, seat_id } = data
-            drawerData.currentSeatInfo.depart = depart
-            drawerData.currentSeatInfo.seat_id = seat_id
-            drawerData.currentSeatInfo.name = name
-            drawerData.is_show = true
+            if(data){
+                const { depart, name, seat_id } = data
+                drawerData.currentSeatInfo.depart = depart
+                drawerData.currentSeatInfo.seat_id = seat_id
+                drawerData.currentSeatInfo.name = name
+                drawerData.is_show = true
+            }else{
+                drawerData.currentSeatInfo.depart = ''
+                drawerData.currentSeatInfo.seat_id = ''
+                drawerData.currentSeatInfo.name = ''
+                drawerData.is_show = false
+            }
         })
         const store = useStore()
         // 切换地图区域的数据（目前只有北京地区的3楼4楼，以后说不定还有其他地区）
@@ -73,12 +82,12 @@ export default {
         ]
         // 切换楼层（或地区）的处理函数
         function handleClickFloor(floor){
-            // 切换楼层时，将过渡时间缩短
-            store.commit('setMapBoxRef_Transition_Timer','all 0.3s')
             // 设置当前选中的楼层（或地区）
             store.commit('setCurrentFloor',floor)
             // 将弹框关闭
             drawerData.is_show = false
+            // 切换楼层（或地区）时，将地图初始化
+            initMap()
         }
         // 定义模糊搜索框的相关数据与方法
         const searchData = reactive({
@@ -102,7 +111,6 @@ export default {
             // 点击搜索建议下拉框某一项的处理程序
             handleSelect(item) {
                 if(!searchData.is_none_sugges) return
-                console.log(item)
                 const { depart, name, seat_id } = item
                 // 选中某一项，首先判断该员工的座位，是否在当前楼层
                 if(item.floor == store.getters.floor){
@@ -164,6 +172,8 @@ export default {
                 store.commit('setCurrentLegend',type)
                 // 将弹框关闭
                 drawerData.is_show = false
+                // 切换图例时，初始化地图
+                initMap()
             }
         })
         // 定义抽屉式弹框的相关数据

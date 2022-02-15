@@ -1,7 +1,8 @@
 <template>
     <div ref="MapContainerRef" class="map-container">
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
-            <div class="seat" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-for="seatItem in seatList" :key="seatItem.seat_id" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)"></div>
+            <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)">
+            </div>
         </div>
     </div>
 </template>
@@ -37,15 +38,22 @@ export default {
             // MapBoxRef盒子的行内样式暂时只有背景图片，后面页面初始化时要加入缩放的比例
             return {
                 backgroundImage: `url(/floor_image/${store.getters.floor}rd_floor_cleaned.png)`,
-                transition:store.state.MapBoxRef_Transition_Timer
             }
         })
         // 鼠标点击每一个座位的事件处理函数
         function handleClickSeat(seatItem,$event){
-            // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮
-            seatData.current = seatItem.seat_id
-            // 然后设置过度属性，以及过渡时间
-            store.commit('setMapBoxRef_Transition_Timer','all 1s')
+            // 设置过度属性，以及过渡时间
+            MapBoxRef.value.style.transition = 'all 1s'
+            // store.commit('setMapBoxRef_Transition_Timer','all 1s')
+            // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
+            if(seatItem.seat_id === seatData.current){
+                seatData.current = 0
+                // 向兄弟组件header发布一个自定义事件form，参数为空字符串
+                emitter.emit('form','')
+            }else{
+                seatData.current = seatItem.seat_id
+                emitter.emit('form',seatItem)
+            }
             // 1、首先计算点击时鼠标距离MapContainerRef盒子的距离
             let MapContainerRef_x = $event.target.offsetLeft + MapBoxRef.value.offsetLeft
             let MapContainerRef_y = $event.target.offsetTop + MapBoxRef.value.offsetTop
@@ -63,8 +71,6 @@ export default {
             MapBoxRef.value.style.transform = `scale(3)`
             // 6、将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacle = 300
-            // 想兄弟组件header发布一个自定义事件form
-            emitter.emit('form', seatItem)
         }
         // 创建地图容器的实例对象
         const MapBoxRef = ref(null)
@@ -93,7 +99,8 @@ export default {
         // 鼠标移动的事件处理程序
         function mouseMove(e){
             // 当发生mousemove事件时，对transition的属性值设置为unset
-            store.commit('setMapBoxRef_Transition_Timer','unset')
+            // store.commit('setMapBoxRef_Transition_Timer','unset')
+            MapBoxRef.value.style.transition = 'all 0s'
             // 1、计算鼠标距离MapContainerRef距离
             let mouseToMapContainerX = e.pageX - MapContainerRef.value.offsetLeft
             let mouseToMapContainerY = e.pageY - MapContainerRef.value.offsetTop
@@ -111,7 +118,8 @@ export default {
         // 监听鼠标滚轮滚动的事件
         function handleScale(e){
             // 当发生滚轮滚动事件时，对transition的属性值设置为unset
-            store.commit('setMapBoxRef_Transition_Timer','unset')
+            // store.commit('setMapBoxRef_Transition_Timer','unset')
+            MapBoxRef.value.style.transition = 'all 0s'
             // 阻止默认行为
             e.preventDefault()
             // 鼠标滚轮的参数
@@ -179,6 +187,8 @@ export default {
         height: 843px;
         background-size: cover;
         background-repeat: no-repeat;
+        // 给盒子设置上一个过渡的默认值
+        transition: all 1s;
         .seat{
             position: absolute;
             width: 8px;
