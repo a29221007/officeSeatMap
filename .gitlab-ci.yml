@@ -1,0 +1,18 @@
+before_script:
+  - date
+stages:
+  - build
+  - test
+  - deploy
+dev job:
+  stage: deploy
+  script:
+    - echo "new_oa_map_dev"
+    - git checkout dev
+#   - git pull
+#   - npm install && CI=false npm run build
+    - rsync -rvz --no-owner --no-group --no-perms --progress --exclude=".*" --delete $CI_PROJECT_DIR/ /data/new_oa_map
+  only:
+    - dev
+  tags:
+    - "new_oa_map_dev"
