@@ -212,14 +212,30 @@ export default {
 <style lang="less" scoped>
 .map-container{
     position: relative;
-    // width: 1200px; // 0.625
-    // height: 845px; // 0.872
     background-color: #f3f4f6;
     margin: 0 auto;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    &::before{
+        content: '北';
+        position: absolute;
+        top: 0;
+        left: 10px;
+        z-index: 3;
+    }
+    &::after{
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 35px;
+        width: 10px;
+        height: 10px;
+        border-top: 1px solid rgb(12, 11, 11);
+        border-right: 1px solid rgb(12, 11, 11);
+        transform: rotate(-45deg);
+    }
     .map-box{
         position:absolute;
         width: 930px;
