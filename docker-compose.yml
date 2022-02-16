@@ -1,12 +1,12 @@
-version: '1'
+version: '3'
 services:
-    map_tb.test:
+    pc_map.test:
         build: .
         image: pc_new_oa_map_test:latest
         ports:
             - '8095:80'
         volumes:
-            - '.:/var/www/html'
+            - '.:/var/www/html/'
         networks:
             - sail
 networks:
