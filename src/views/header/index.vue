@@ -197,12 +197,12 @@ export default {
 
 <style lang="less" scoped>
 .header-container{
-    width: 1200px;
-    height: 120px;
+    width: 1200px; // 0.625
+    height: 120px; // 0.124
     margin: 0 auto;
     .search{
         width: 100%;
-        height: 50px;
+        height: 41.66666667%;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -221,7 +221,7 @@ export default {
     }
     .legend{
         width: 100%;
-        height: 70px;
+        height: 58.33333333%;
         background-color: #f3f4f6;
         padding: 5px;
         display: flex;

@@ -172,8 +172,8 @@ export default {
 <style lang="less" scoped>
 .map-container{
     position: relative;
-    width: 1200px;
-    height: 845px;
+    width: 1200px; // 0.625
+    height: 845px; // 0.872
     background-color: #f3f4f6;
     margin: 0 auto;
     overflow: hidden;
