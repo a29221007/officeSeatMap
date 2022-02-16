@@ -246,11 +246,13 @@ export default {
             background-color: black;
             padding: 3px;
             border-radius: 10px;
+            min-width: 100px;
+            text-align: center;
             &::after{
                 content: '';
                 position: absolute;
                 bottom: 1px;
-                left: 10%;
+                left: 8%;
                 border: 10px solid transparent;
                 border-top: 0px;
                 border-bottom-color:black ;
