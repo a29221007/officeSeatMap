@@ -6,7 +6,7 @@
             <div class="floor-switch">
                 <span :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<i v-if="item.id !== AllArea.length - 1"> | </i></span>
             </div>
-            <el-autocomplete v-model="searchState" value-key='name' popper-class='autocomplete' :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:clear="handleClearInput">
+            <el-autocomplete v-model="searchState" value-key='name' popper-class='autocomplete' :prefix-icon="Search" :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:clear="handleClearInput">
                 <!-- 自定义搜索建议列表模板(当有搜索建议时) -->
                 <template #default="{ item }" v-if="is_none_sugges">
                     <div class="autoCompleteTemplate">
@@ -52,6 +52,7 @@ import { successMessage, infoMessage } from '@/utils/message.js'
 import emitter from '../eventbus'
 // 导入初始化地图的方法
 import initMap from '@/utils/initMap.js'
+import { Search } from '@element-plus/icons-vue'
 export default {
     name:'layout',
     setup(){
@@ -202,7 +203,8 @@ export default {
             ...toRefs(legendData),
             ...toRefs(drawerData),
             handleClickFloor,
-            headerContainerRef
+            headerContainerRef,
+            Search
         }
     }
 }
