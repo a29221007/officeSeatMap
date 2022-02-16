@@ -1,0 +1,17 @@
+version: '3'
+services:
+    pc_map.test:
+        build: .
+        image: pc_new_oa_map_test:latest
+        ports:
+            - '8095:80'
+        volumes:
+            - '.:/var/www/html/'
+        networks:
+            - sail
+networks:
+    sail:
+        driver: bridge
+volumes:
+    sailredis:
+        driver: local

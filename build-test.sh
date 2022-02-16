@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t hub.longtubas.com/new_oa_map_front_test .
+docker build -t pc_new_oa_map_test .
