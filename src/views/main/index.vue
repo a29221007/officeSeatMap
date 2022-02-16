@@ -1,8 +1,10 @@
 <template>
     <div ref="MapContainerRef" class="map-container">
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
-            <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)">
+            <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)" v-on:mouseenter="seatMouseenter" v-on:mouseleave="seatMouseleave">
             </div>
+            <!-- 鼠标经过每一个座位的提示框 -->
+            <div ref="tooltipRef" class="tooltip" v-show="is_show_tooltip" v-text="tooltipText"></div>
         </div>
     </div>
 </template>
@@ -20,6 +22,12 @@ export default {
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
         const store = useStore()
+        // 控制提示框的显示与隐藏
+        const is_show_tooltip = ref(false)
+        // 提示框的值
+        const tooltipText = ref('')
+        // 获取提示框的实例对象
+        const tooltipRef = ref(null)
         // 人员座位信息
         let seatData = reactive({
             // 人员信息座位集合
@@ -33,6 +41,18 @@ export default {
                     left:seatItem.gCol * 9.6 + 35 +'px',
                     backgroundImage: `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                 }
+            },
+            // 鼠标进入每一个座位的处理程序
+            seatMouseenter($event) {
+                tooltipRef.value.style.top = $event.target.offsetTop - 38 + 'px'
+                tooltipRef.value.style.left = $event.target.offsetLeft - 14 + 'px'
+                is_show_tooltip.value = true
+                tooltipText.value = $event.target.id
+            },
+            // 鼠标离开每一个座位的处理程序
+            seatMouseleave() {
+                is_show_tooltip.value = false
+                tooltipText.value = ''
             }
         })
         // MapBoxRef盒子的行内样式设置为计算属性
@@ -180,7 +200,10 @@ export default {
             handleClickSeat,
             MapBoxRef,
             MapContainerRef,
-            MapBoxStyle
+            MapBoxStyle,
+            is_show_tooltip,
+            tooltipText,
+            tooltipRef
         }
     }
 }
@@ -214,6 +237,25 @@ export default {
             &.active{
                 // 使用动画
                 animation: scaleAnimation 1s infinite alternate;
+            }
+        }
+        // 设置提示框的样式
+        .tooltip{
+            position: absolute;
+            color: #fff;
+            background-color: black;
+            padding: 3px;
+            border-radius: 10px;
+            &::after{
+                content: '';
+                position: absolute;
+                bottom: 1px;
+                left: 10%;
+                border: 10px solid transparent;
+                border-top: 0px;
+                border-bottom-color:black ;
+                transform: rotate(180deg);
+                transform-origin: bottom center;
             }
         }
     }
