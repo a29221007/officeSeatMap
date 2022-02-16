@@ -1,6 +1,6 @@
 <template>
     <!-- 头部区域包括顶部的搜索栏以及图例区域 -->
-    <div class="header-container">
+    <div ref="headerContainerRef" class="header-container">
         <!-- 搜索栏 -->
         <div class="search">
             <div class="floor-switch">
@@ -31,19 +31,19 @@
                 <img :src="item.url"><span>{{item.name}}</span>
             </div>
         </div>
-        <!-- 抽屉式弹框 -->
-        <el-drawer custom-class='drawer' modal-class='drawer-mask' v-model="is_show" :with-header="false" direction='ltr' :modal='false' size='15%'>
-            <el-form label-width="auto">
-                <el-form-item label="姓名：">{{currentSeatInfo.name || '暂无数据'}}</el-form-item>
-                <el-form-item label="座位号：">{{currentSeatInfo.seat_id}}</el-form-item>
-                <el-form-item label="部门：">{{currentSeatInfo.depart || '暂无数据'}}</el-form-item>
-            </el-form>
-        </el-drawer>
     </div>
+    <!-- 抽屉式弹框 -->
+    <el-drawer custom-class='drawer' modal-class='drawer-mask' v-model="is_show" :with-header="false" direction='ltr' :modal='false' size='15%'>
+        <el-form label-width="auto">
+            <el-form-item label="姓名：">{{currentSeatInfo.name || '暂无数据'}}</el-form-item>
+            <el-form-item label="座位号：">{{currentSeatInfo.seat_id}}</el-form-item>
+            <el-form-item label="部门：">{{currentSeatInfo.depart || '暂无数据'}}</el-form-item>
+        </el-form>
+    </el-drawer>
 </template>
 
 <script>
-import {ref, reactive, toRefs, nextTick} from 'vue'
+import {ref, reactive, toRefs, nextTick, onMounted, inject} from 'vue'
 import { useStore } from 'vuex'
 import { ElMessageBox } from 'element-plus'
 // 导入消息提示框组件
@@ -55,6 +55,18 @@ import initMap from '@/utils/initMap.js'
 export default {
     name:'layout',
     setup(){
+        // 获取浏览器可视区宽高的依赖注入
+        const obj = inject('clent')
+        const headerContainerRef = ref(null)
+        // 组件挂载时
+        onMounted(() => {
+            /**
+             * 0.625和0.124是开发时，当前盒子的宽度和高度除以当前可视区宽度和高度，计算出来的比值
+             * 这样就实现了，简单的屏幕自适应，用户当前浏览器可视区的宽高乘以这个比例，就是合适的宽高
+            */
+            headerContainerRef.value.style.width = obj.width * 0.625 + 'px'
+            headerContainerRef.value.style.height = obj.height * 0.124 + 'px'
+        })
         // 监听兄弟组件Main发布的自定义事件from，将弹框显示
         emitter.on('form', data => {
             if(data){
@@ -190,6 +202,7 @@ export default {
             ...toRefs(legendData),
             ...toRefs(drawerData),
             handleClickFloor,
+            headerContainerRef
         }
     }
 }
@@ -197,8 +210,8 @@ export default {
 
 <style lang="less" scoped>
 .header-container{
-    width: 1200px; // 0.625
-    height: 120px; // 0.124
+    // width: 1200px; // 0.625
+    // height: 120px; // 0.124
     margin: 0 auto;
     .search{
         width: 100%;

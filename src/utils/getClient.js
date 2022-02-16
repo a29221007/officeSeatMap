@@ -1,7 +1,3 @@
-// window.addEventListener('resize',function(){
-//     console.log(client().height)
-//     console.log(client().width)
-// })    
 // 获取浏览器可视区的宽高
 function client(){
     return {
