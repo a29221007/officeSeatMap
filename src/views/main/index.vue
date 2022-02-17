@@ -1,7 +1,7 @@
 <template>
     <div ref="MapContainerRef" class="map-container">
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
-            <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)" v-on:mouseenter="seatMouseenter" v-on:mouseleave="seatMouseleave">
+            <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)" v-on:mouseenter="seatMouseenter(seatItem,$event)" v-on:mouseleave="seatMouseleave">
             </div>
             <!-- 鼠标经过每一个座位的提示框 -->
             <div ref="tooltipRef" class="tooltip" v-show="is_show_tooltip" v-text="tooltipText"></div>
@@ -43,11 +43,11 @@ export default {
                 }
             },
             // 鼠标进入每一个座位的处理程序
-            seatMouseenter($event) {
+            seatMouseenter(seatItem,$event) {
                 tooltipRef.value.style.top = $event.target.offsetTop - 38 + 'px'
                 tooltipRef.value.style.left = $event.target.offsetLeft - 14 + 'px'
                 is_show_tooltip.value = true
-                tooltipText.value = $event.target.id
+                tooltipText.value = seatItem.name || seatItem.seat_id
             },
             // 鼠标离开每一个座位的处理程序
             seatMouseleave() {
