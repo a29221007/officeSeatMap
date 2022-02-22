@@ -47,7 +47,7 @@ export default {
                 tooltipRef.value.style.top = $event.target.offsetTop - 38 + 'px'
                 tooltipRef.value.style.left = $event.target.offsetLeft - 14 + 'px'
                 is_show_tooltip.value = true
-                tooltipText.value = seatItem.name || seatItem.seat_id
+                tooltipText.value = seatItem.seat_id
             },
             // 鼠标离开每一个座位的处理程序
             seatMouseleave() {
