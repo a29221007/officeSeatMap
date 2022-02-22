@@ -1,6 +1,9 @@
 <template>
     <div ref="MapContainerRef" class="map-container">
+        <!-- 指针 -->
+        <i class="iconfont oamap-north"></i>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
+            <!-- 座位 -->
             <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)" v-on:mouseenter="seatMouseenter(seatItem,$event)" v-on:mouseleave="seatMouseleave">
             </div>
             <!-- 鼠标经过每一个座位的提示框 -->
@@ -218,23 +221,12 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    &::before{
-        content: '北';
+    .oamap-north {
         position: absolute;
-        top: 0;
-        left: 10px;
         z-index: 3;
-    }
-    &::after{
-        content: '';
-        position: absolute;
-        top: 8px;
-        left: 35px;
-        width: 10px;
-        height: 10px;
-        border-top: 1px solid rgb(12, 11, 11);
-        border-right: 1px solid rgb(12, 11, 11);
-        transform: rotate(-45deg);
+        top: 20px;
+        left: 20px;
+        font-size: 25px;
     }
     .map-box{
         position:absolute;
