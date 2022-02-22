@@ -2,6 +2,11 @@
     <div ref="MapContainerRef" class="map-container">
         <!-- 指针 -->
         <i class="iconfont oamap-north"></i>
+        <!-- 放大缩小按钮 -->
+        <div class="scale-btn">
+            <i v-on:click="MapBoxAmplification(0.7)" class="iconfont oamap-jiahao"></i>
+            <i v-on:click="MapBoxReduce(0.7)" class="iconfont oamap-jianhao"></i>
+        </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <!-- 座位 -->
             <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)" v-on:mouseenter="seatMouseenter(seatItem,$event)" v-on:mouseleave="seatMouseleave">
@@ -157,17 +162,16 @@ export default {
         }
         // 监听鼠标滚轮滚动的事件
         function handleScale(e){
-            MapBoxRef.value.style.transition = 'all 0.25s'
             // 阻止默认行为
             e.preventDefault()
             // 鼠标滚轮的参数
             let value = e.wheelDelta ? e.wheelDelta : e.detail
             if(value === 120 || value === -3){
                 // 执行放大的逻辑
-                MapBoxAmplification()
+                MapBoxAmplification(0.3)
             }else{
                 // 指向缩小的逻辑
-                MapBoxReduce()
+                MapBoxReduce(0.25)
             }
         }
         // 定义初始的缩放值100
@@ -179,16 +183,19 @@ export default {
             sacleY = store.state.scale[1]
             seatData.current = 0
         })
-        function MapBoxAmplification (){
+        // 地图放大的
+        function MapBoxAmplification (number){
+            MapBoxRef.value.style.transition = 'all 0.25s'
             if (sacleX > 7) return
-            sacleX += 0.3
-            sacleY += 0.3
+            sacleX += number
+            sacleY += number
             MapBoxRef.value.style.transform = `scale(${sacleX},${sacleY})`
         }
-        function MapBoxReduce(){
+        function MapBoxReduce(number){
+            MapBoxRef.value.style.transition = 'all 0.25s'
             if(sacleX < 0.4) return
-            sacleX -= 0.25
-            sacleY -= 0.25
+            sacleX -= number
+            sacleY -= number
             MapBoxRef.value.style.transform = `scale(${sacleX},${sacleY})`
         }
         // 在组件卸载时移除一些事件的监听
@@ -206,7 +213,9 @@ export default {
             MapBoxStyle,
             is_show_tooltip,
             tooltipText,
-            tooltipRef
+            tooltipRef,
+            MapBoxAmplification,
+            MapBoxReduce
         }
     }
 }
@@ -227,6 +236,24 @@ export default {
         top: 20px;
         left: 20px;
         font-size: 25px;
+    }
+    .scale-btn{
+        position: absolute;
+        z-index: 3;
+        right: 20px;
+        top: 20px;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        padding: 10px;
+        i{
+            font-size: 25px;
+            cursor: pointer;
+            border: 1px dashed #ccc;
+            &:first-child{
+                margin-bottom: 10px;
+            }
+        }
     }
     .map-box{
         position:absolute;
