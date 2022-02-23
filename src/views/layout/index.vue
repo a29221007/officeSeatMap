@@ -19,6 +19,8 @@ export default {
         store.commit('setCurrentFloor','three')
         store.dispatch('getSeatListOfthree')
         store.dispatch('getSeatListOfFour')
+        store.dispatch('getAreaListOfThree')
+        store.dispatch('getAreaListOfFour')
     }
 }
 </script>

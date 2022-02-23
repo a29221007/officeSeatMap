@@ -3,6 +3,8 @@ import { createStore } from 'vuex'
 import { setItem, getItem } from '@/utils/storage.js'
 // 导入获取座位信息的接口
 import { getSeatList } from '@/api/getSeatList'
+// 导入获取区域信息的接口
+import { getAreaList } from '@/api/getArea.js'
 // 导入消息提示框组件
 import { errorMessage } from '@/utils/message.js'
 export default createStore({
@@ -16,7 +18,12 @@ export default createStore({
         // 当前选中的图例(此项不做本地缓存)
         currentLegend:'', // 默认是空字符串
         // 当前的地图的初始缩放系数
-        scale:getItem('scale') || [1,1] // 默认是1
+        scale:getItem('scale') || [1,1], // 默认是1
+
+        // 3层的区域信息
+        areaListOfThree: getItem('areaListOfThree'),
+        // 4层的区域信息
+        areaListOfFour: getItem('areaListOfFour')
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -43,6 +50,17 @@ export default createStore({
         setScale(state,data) {
             state.scale = data
             setItem('scale',state.scale)
+        },
+
+        // 设置3层的区域信息列表
+        setAreaListOfThree(state,data){
+            state.areaListOfThree = data
+            setItem('areaListOfThree',state.areaListOfThree)
+        },
+        // 设置4层的区域信息列表
+        setAreaListOfFour(state,data){
+            state.areaListOfFour = data
+            setItem('areaListOfFour',state.areaListOfFour)
         }
     },
     actions: {
@@ -60,6 +78,26 @@ export default createStore({
             try{
                 const {data} = await getSeatList(4)
                 context.commit('setSeatListOfFour',data)
+            }catch(error){
+                errorMessage(error)
+            }
+        },
+
+        // 获取3层的区域信息
+        async getAreaListOfThree(context){
+            try{
+                const {data} = await getAreaList(3)
+                console.log(data)
+                context.commit('setAreaListOfThree',data)
+            }catch(error){
+                errorMessage(error)
+            }
+        },
+        // 获取4层的区域信息
+        async getAreaListOfFour(context){
+            try{
+                const {data} = await getAreaList(4)
+                context.commit('setAreaListOfFour',data)
             }catch(error){
                 errorMessage(error)
             }

@@ -8,6 +8,11 @@
             <i v-on:click="MapBoxReduce(0.7)" class="iconfont oamap-jianhao"></i>
         </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
+            <!-- 区域 -->
+            <!-- <div v-for="item in $store.state.areaListOfThree" :key="item.id" :style="{
+                position: 'absolute',
+                top:item.
+            }"></div> -->
             <!-- 座位 -->
             <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)" v-on:mouseenter="seatMouseenter(seatItem,$event)" v-on:mouseleave="seatMouseleave">
             </div>
@@ -62,6 +67,7 @@ export default {
                 is_show_tooltip.value = false
                 tooltipText.value = ''
             }
+            
         })
         // MapBoxRef盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
@@ -72,6 +78,7 @@ export default {
         })
         // 鼠标点击每一个座位的事件处理函数
         function handleClickSeat(seatItem,$event){
+            console.log();
             // 设置过度属性，以及过渡时间
             MapBoxRef.value.style.transition = 'all 1s'
             // store.commit('setMapBoxRef_Transition_Timer','all 1s')
