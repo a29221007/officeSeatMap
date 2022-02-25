@@ -11,8 +11,14 @@
             <!-- 区域 -->
             <!-- <div v-for="item in $store.state.areaListOfThree" :key="item.id" :style="{
                 position: 'absolute',
-                top:item.
-            }"></div> -->
+                top:item.coordinate.top / 1612 * 843 + 'px',
+                left:item.coordinate.left / 1777 * 930 + 'px',
+                width:item.coordinate.width / 1777 * 930 + 'px',
+                height: item.coordinate.height / 1612 * 843 + 'px',
+                backgroundColor: item.backgroundcolor || '#000',
+                color:'#fff',
+                fontSize:'12px'
+            }">{{item.name}}</div> -->
             <!-- 座位 -->
             <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)" v-on:mouseenter="seatMouseenter(seatItem,$event)" v-on:mouseleave="seatMouseleave">
             </div>
@@ -256,7 +262,7 @@ export default {
         i{
             font-size: 25px;
             cursor: pointer;
-            border: 1px dashed #ccc;
+            border: 1px dashed #ccc;·
             &:first-child{
                 margin-bottom: 10px;
             }
