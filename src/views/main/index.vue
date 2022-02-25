@@ -262,7 +262,6 @@ export default {
         i{
             font-size: 25px;
             cursor: pointer;
-            border: 1px dashed #ccc;·
             &:first-child{
                 margin-bottom: 10px;
             }
