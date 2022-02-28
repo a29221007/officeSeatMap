@@ -88,7 +88,30 @@ export default createStore({
             try{
                 const {data} = await getAreaList(3)
                 console.log(data)
-                context.commit('setAreaListOfThree',data)
+                let array = {}
+                data.forEach( item => {
+                    if(!array[item.code]) array[item.code] = []
+                    array[item.code].push(item)
+                })
+                for(let key in array){
+                    if(array[key].length !==0 && array[key].length !==1 ){
+                        array[key].forEach((item, index) => {
+                            if(index > 0){
+                                let flagTop = item.coordinate.top === array[key][index - 1].coordinate.top + array[key][index - 1].coordinate.height
+                                let flagLeft = item.coordinate.left === array[key][index - 1].coordinate.left + array[key][index - 1].coordinate.width
+                                if(flagTop || flagLeft){
+                                    item.name = ''
+                                    item.subtitle = ''
+                                }
+                            }
+                        })
+                    }
+                }
+                let arr = []
+                for(let key in array){
+                    arr.push(...array[key])
+                }
+                context.commit('setAreaListOfThree',arr)
             }catch(error){
                 errorMessage(error)
             }

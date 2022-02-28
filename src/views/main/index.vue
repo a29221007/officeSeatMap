@@ -9,16 +9,21 @@
         </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <!-- 区域 -->
-            <!-- <div v-for="item in $store.state.areaListOfThree" :key="item.id" :style="{
+            <div v-for="item in $store.state.areaListOfThree" :key="item.id" :id="item.code + item.id" :class="item.code" :style="{
                 position: 'absolute',
                 top:item.coordinate.top / 1612 * 843 + 'px',
                 left:item.coordinate.left / 1777 * 930 + 'px',
                 width:item.coordinate.width / 1777 * 930 + 'px',
                 height: item.coordinate.height / 1612 * 843 + 'px',
-                backgroundColor: item.backgroundcolor || '#000',
-                color:'#fff',
+                backgroundColor: item.backgroundcolor,
+                color:'#646464',
                 fontSize:'12px'
-            }">{{item.name}}</div> -->
+            }">
+                <div class="title">
+                    <span class="name">{{item.name}}</span>
+                    <span v-if="item.subtitle" class="subtitle">{{item.subtitle}}</span>
+                </div>
+            </div>
             <!-- 座位 -->
             <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)" v-on:mouseenter="seatMouseenter(seatItem,$event)" v-on:mouseleave="seatMouseleave">
             </div>
@@ -79,7 +84,7 @@ export default {
         const MapBoxStyle = computed(() => {
             // MapBoxRef盒子的行内样式暂时只有背景图片，后面页面初始化时要加入缩放的比例
             return {
-                backgroundImage: `url(/floor_image/${store.getters.floor}rd_floor_cleaned.png)`,
+                backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`,
             }
         })
         // 鼠标点击每一个座位的事件处理函数
@@ -257,7 +262,7 @@ export default {
         top: 20px;
         display: flex;
         flex-direction: column;
-        background-color: #fff;
+        background-color: #ffffff;
         padding: 10px;
         i{
             font-size: 25px;
@@ -285,6 +290,58 @@ export default {
                 // 使用动画
                 animation: scaleAnimation 1s infinite alternate;
             }
+        }
+        .title{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            text-align: center;
+            span{
+                display: inline-block;
+                white-space:nowrap;
+            }
+            .name{
+                transform: scale(0.85,0.9);
+            }
+            .subtitle{
+                transform: scale(0.65,0.65);
+            }
+        }
+        // 单独的样式覆盖掉之前的
+        // 采购部库房、采购库房
+        #QY010103004661,#QY010103004865{
+            .title{
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
+            }
+        }
+        // 消防前室
+        #QY010103005268{
+            .title{
+                top: unset;
+                bottom: -9px;
+            }
+        }
+        // 法务部&公共关系与政府事务部
+        #QY010103005066{
+            .title{
+                top: unset;
+                bottom: -9px;
+                left: 72px;
+            }
+        }
+        // it支持部、冰柠工作室
+        #QY010103004762,#QY010103003838{
+            .title{
+                top: 7px;
+            }
+        }
+        // 冰柠其余部门
+        #QY010103003737{
+            
         }
         // 设置提示框的样式
         .tooltip{
