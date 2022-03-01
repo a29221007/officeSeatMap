@@ -8,25 +8,27 @@
             <i v-on:click="MapBoxReduce(0.7)" class="iconfont oamap-jianhao"></i>
         </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
-            <!-- 区域 -->
-            <div v-for="item in $store.state.areaListOfThree" :key="item.id" :id="item.code + item.id" :class="item.code" :style="{
-                position: 'absolute',
-                top:item.coordinate.top / 1612 * 843 + 'px',
-                left:item.coordinate.left / 1777 * 930 + 'px',
-                width:item.coordinate.width / 1777 * 930 + 'px',
-                height: item.coordinate.height / 1612 * 843 + 'px',
-                backgroundColor: item.backgroundcolor,
-                color:'#646464',
-                fontSize:'12px'
-            }">
-                <div class="title">
-                    <span class="name">{{item.name}}</span>
-                    <span v-if="item.subtitle" class="subtitle">{{item.subtitle}}</span>
+            <template v-for="item in mapList" :key="item.id">
+                <!-- 区域 -->
+                <div v-if="item.type === 1 || item.type === 2 || item.type === 3" :id="item.code + item.id" :class="{'active-area':currentAreaCode === item.code}" :style="{
+                    position: 'absolute',
+                    top:item.coordinate.top / 1612 * 843 + 'px',
+                    left:item.coordinate.left / 1777 * 930 + 'px',
+                    width:item.coordinate.width / 1777 * 930 + 'px',
+                    height: item.coordinate.height / 1612 * 843 + 'px',
+                    backgroundColor: item.backgroundcolor,
+                    color:'#646464',
+                    fontSize:'12px'
+                }">
+                    <div class="title">
+                        <span class="name">{{item.name}}</span>
+                        <span v-if="item.subtitle" class="subtitle">{{item.subtitle}}</span>
+                    </div>
                 </div>
-            </div>
-            <!-- 座位 -->
-            <div class="seat" v-for="seatItem in seatList" :key="seatItem.seat_id" :id="seatItem.seat_id" :class="{'active':current === seatItem.seat_id}" v-on:click="handleClickSeat(seatItem,$event)" :style="seatItemStyle(seatItem)" v-on:mouseenter="seatMouseenter(seatItem,$event)" v-on:mouseleave="seatMouseleave">
-            </div>
+                <!-- 座位 -->
+                <div class="seat" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'" :id="item.seat_id" :class="{'active':current === item.seat_id}" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
+                </div>
+            </template>
             <!-- 鼠标经过每一个座位的提示框 -->
             <div ref="tooltipRef" class="tooltip" v-show="is_show_tooltip" v-text="tooltipText"></div>
         </div>
@@ -52,12 +54,14 @@ export default {
         const tooltipText = ref('')
         // 获取提示框的实例对象
         const tooltipRef = ref(null)
-        // 人员座位信息
+        // 当前地图的信息（包括人员、座位、区域、会议室等）
         let seatData = reactive({
             // 人员信息座位集合
-            seatList: computed(() => store.getters.FilterSeatListByLegend),
+            mapList: computed(() => store.getters.FilterSeatListByLegend),
             // 当前选中的座位
             current:0,
+            // 当前选中的区域
+            currentAreaCode:'QY0101030043',
             // 设置每一个座位的样式
             seatItemStyle(seatItem) {
                 return {
@@ -82,14 +86,14 @@ export default {
         })
         // MapBoxRef盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
-            // MapBoxRef盒子的行内样式暂时只有背景图片，后面页面初始化时要加入缩放的比例
+            // MapBoxRef盒子的行内样式暂时只有背景图片
             return {
                 backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`,
             }
         })
         // 鼠标点击每一个座位的事件处理函数
         function handleClickSeat(seatItem,$event){
-            console.log();
+            console.log('seatItem',seatItem)
             // 设置过度属性，以及过渡时间
             MapBoxRef.value.style.transition = 'all 1s'
             // store.commit('setMapBoxRef_Transition_Timer','all 1s')
@@ -286,10 +290,16 @@ export default {
             height: 8px;
             background-size: cover;
             background-repeat: no-repeat;
+            z-index: 5;
+            // 座位选中的高亮样式
             &.active{
                 // 使用动画
                 animation: scaleAnimation 1s infinite alternate;
             }
+        }
+        // 区域选中的高亮样式
+        .active-area{
+            background-color: #000!important;
         }
         .title{
             position: absolute;
@@ -339,9 +349,202 @@ export default {
                 top: 7px;
             }
         }
-        // 冰柠其余部门
+        // 冰柠（AX项目组）
         #QY010103003737{
-            
+            .title{
+                display: flex;
+                flex-direction: row-reverse;
+                align-items: center;
+                right: -11px;
+                left: unset;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
+                .name{
+                    margin-left: 8px;
+                }
+            }
+        }
+        // 冰柠工作室（EOS项目组）, （余烬风暴项目组）
+        #QY010103003939,#QY010103004040,#QY010103003131{
+            .title{
+                display: flex;
+                align-items: center;
+                left: -7px;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
+                .name{
+                    margin-right: 8px;
+                }
+            }
+        }
+        // QA部
+        #QY010103003030{
+            .title{
+                left: 4px;
+                top: 43%;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
+            }
+        }
+        // 平台技术部，it信息部
+        #QY010103003131{
+            .title{
+                left: 2px;
+            }
+        }
+        // 财务部
+        #QY010103003232{
+            .title{
+                top: 4px;
+            }
+        }
+        // 人力资源部
+        #QY010103003434,#QY010103003333{
+            .title{
+                top: unset;
+                bottom: -9px;
+            }
+        }
+        // 行政小仓库
+        #QY010103002727{
+            .title{
+                .name{
+                    transform: scale(0.6, 0.7);
+                }
+            }
+        }
+        // HR咨询服务办公室
+        #QY010103002828{
+            .title{
+                top: -7px;
+                left: -8px;
+                transform: unset;
+            }
+        }
+        // 媒介市场行政仓库
+        #QY010103002323{
+            .title{
+                .name{
+                    transform: scale(0.75,0.8);
+                }
+            }
+        }
+        // 一点咨询
+        #QY010103002424{
+            .title{
+                top: unset;
+                bottom: -9px;
+            }
+        }
+        // 引擎平台部
+        #QY010103002222{
+            .title{
+                left: 79%;
+                top: unset;
+                bottom: -12px;
+            }
+        }
+        // 采购部&商务支持部
+        #QY010103002141{
+            .title{
+                left: 0;
+                top: -36px;
+                transform: unset;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
+                .name{
+                    transform: scale(0.85, 0.5);
+                }
+            }
+        }
+        // 媒介部、采购部&商务支持部
+        #QY010103002020,#QY010103002121{
+            .title{
+                top: 64%;
+            }
+        }
+        // 公司市场部、产品市场部、视觉创意部
+        #QY010103001616,#QY010103001717,#QY010103001818{
+            .title{
+                top: 13%;
+            }
+        }
+        // Frebird工作室(小)
+        #QY010103004352,#QY010103005376{
+            .title{
+                top: unset;
+                bottom: -8px;
+            }
+        }
+        // Frebird工作室(大)
+        #QY010103004353{
+            .title{
+                top: 46%;
+            }
+        }
+        // 平行工作室-1
+        #QY010103004455{
+            .title{
+                span{
+                    width: 2px;
+                    white-space:unset;
+                    transform: scale(0.85, 0.7);
+                }
+            }
+        }
+        // 平行工作室-2
+        #QY010103004456{
+            .title{
+                left: unset;
+                top: 40%;
+                right: -15px;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                    transform: scale(0.85, 0.7);
+                }
+            }
+        }
+        // 陨星工作室-1
+        #QY010103004558{
+            .title{
+                top: unset;
+                bottom: -6px;
+            }
+        }
+        // 陨星工作室-2
+        #QY010103004559{
+            .title{
+                left: unset;
+                top: 51%;
+                right: 2px;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                    transform: scale(0.85, 0.7);
+                }
+            }
+        }
+        // 陨星工作室-3
+        #QY010103004560{
+            .title{
+                left: unset;
+                top: 55%;
+                right: 8px;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                    transform: scale(0.85, 0.7);
+                }
+            }
         }
         // 设置提示框的样式
         .tooltip{
@@ -352,6 +555,7 @@ export default {
             border-radius: 10px;
             min-width: 100px;
             text-align: center;
+            z-index: 5;
             &::after{
                 content: '';
                 position: absolute;

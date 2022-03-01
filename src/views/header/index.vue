@@ -9,14 +9,24 @@
             <el-autocomplete v-model="searchState" value-key='name' popper-class='autocomplete' :prefix-icon="Search" :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:clear="handleClearInput">
                 <!-- 自定义搜索建议列表模板(当有搜索建议时) -->
                 <template #default="{ item }" v-if="is_none_sugges">
-                    <div class="autoCompleteTemplate">
+                    <div class="autoCompleteTemplate" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                         <!-- 第一行左边显示姓名，右边显示座位号 -->
                         <div class="oneLine">
-                            <span><span class="title">名称：</span><span class="content">{{item.name || '暂无数据'}}</span></span>
+                            <span><span class="title">座位人员名称：</span><span class="content">{{item.name || '暂无数据'}}</span></span>
                             <span><span class="title">座位号：</span><span class="content">{{item.seat_id}}</span></span>
                         </div>
                         <!-- 第二行显示该座位所在部门 -->
                         <div class="twoLine"><span class="title">部门：</span><span class="content">{{item.depart || '暂无数据'}}</span></div>
+                    </div>
+                    <div class="autoCompleteTemplate" v-if="item.type === 1 || item.type === 2 || item.type === 3">
+                        <!-- 第一行左边显示姓名，右边显示座位号 -->
+                        <div class="oneLine">
+                            <span><span class="title">区域名称：</span><span class="content">{{item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") || '暂无数据'}}</span></span>
+                        </div>
+                        <!-- 第二行显示该座位所在部门 -->
+                        <div class="twoLine">
+                            <span><span class="title">区域编号：</span><span class="content">{{item.code}}</span></span>
+                        </div>
                     </div>
                 </template>
                 <!-- 自定义搜索建议列表模板（当无搜索建议时） -->
@@ -109,10 +119,30 @@ export default {
             querySearch(queryString, callback) {
                 searchData.is_none_sugges = true
                 const results = store.getters.AllSeatList.filter(item => {
-                    return (item.name && item.name.includes(queryString)) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase()))
+                    return (item.name && item.name.includes(queryString.toUpperCase())) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase())) || (item.code && item.code.includes(queryString.toUpperCase())) || (item.subtitle && item.subtitle.includes(queryString.toUpperCase()))
                 })
+                // 去除多个重复的项
+                // 保存关于座位的(这里面的值都是唯一的)
+                let array_seat = []
+                // 保存关于区域的(这里面的值可能是有重复的)
+                let array_area = []
+                results.forEach(item => {
+                    if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
+                        array_seat.push(item)
+                    }else{
+                        array_area.push(item)
+                    }
+                })
+                let obj = {}
+                array_area.forEach(item => {
+                    if(!obj[item.code]) obj[item.code] = []
+                    obj[item.code].push(item)
+                })
+                for(let key in obj){
+                    array_seat.push(obj[key][0])
+                }
                 if(results.length !== 0){
-                    callback(results)
+                    callback(array_seat)
                 }else{
                     callback([{name:''}])
                     searchData.is_none_sugges = false
@@ -174,8 +204,7 @@ export default {
                 {id:0,name:'员工',lable:'employees',type:'0',url:'/legend-image/image0.png'},
                 {id:1,name:'空闲',lable:'free',type:'0-1',url:'/legend-image/image1.png'},
                 {id:2,name:'占用',lable:'occupation',type:'0-2',url:'/legend-image/image2.png'},
-                {id:3,name:'维修',lable:'maintenance',type:'0-3',url:'/legend-image/image3.png'},
-                {id:4,name:'休闲区',lable:'Recreational-area',type:'0-4',url:'/legend-image/image4.png'},
+                {id:3,name:'会议室',lable:'meeting-room',type:1,url:'/legend-image/icon_meeting.png'},
             ],
             // 点击某一个图例触发的函数
             handleClickLegend(type) {
@@ -249,6 +278,7 @@ export default {
             transition: all 0.15s;
             img{
                 height: 32px;
+                width: 32px;
             }
         }
         .legendItemActive{

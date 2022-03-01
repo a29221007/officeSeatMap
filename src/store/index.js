@@ -82,35 +82,11 @@ export default createStore({
                 errorMessage(error)
             }
         },
-
         // 获取3层的区域信息
         async getAreaListOfThree(context){
             try{
                 const {data} = await getAreaList(3)
-                console.log(data)
-                let array = {}
-                data.forEach( item => {
-                    if(!array[item.code]) array[item.code] = []
-                    array[item.code].push(item)
-                })
-                for(let key in array){
-                    if(array[key].length !==0 && array[key].length !==1 ){
-                        array[key].forEach((item, index) => {
-                            if(index > 0){
-                                let flagTop = item.coordinate.top === array[key][index - 1].coordinate.top + array[key][index - 1].coordinate.height
-                                let flagLeft = item.coordinate.left === array[key][index - 1].coordinate.left + array[key][index - 1].coordinate.width
-                                if(flagTop || flagLeft){
-                                    item.name = ''
-                                    item.subtitle = ''
-                                }
-                            }
-                        })
-                    }
-                }
-                let arr = []
-                for(let key in array){
-                    arr.push(...array[key])
-                }
+                let arr = formatData(data)
                 context.commit('setAreaListOfThree',arr)
             }catch(error){
                 errorMessage(error)
@@ -128,23 +104,31 @@ export default createStore({
     },
     modules: {},
     getters: {
+        // 3层的座位人员信息和区域会议室信息集合
+        seatAndAreaListOfThree(state){
+            return state.seatListOfthree.concat(state.areaListOfThree)
+        },
+        // 4层的座位人员信息和区域会议室信息集合
+        seatAndAreaListOfFour(state){
+            return state.seatListOfFour.concat(state.areaListOfFour)
+        },
         // 全部的人员信息
-        AllSeatList(state){
-            return state.seatListOfFour.concat(state.seatListOfthree)
+        AllSeatList(state,getter){
+            return getter.seatAndAreaListOfThree.concat(getter.seatAndAreaListOfFour)
         },
         // 根据currentFloor得到当前的楼层（或地区）的数值
         floor(state) {
             return state.currentFloor === 'three' ? 3 : 4
         },
         // 点击图里筛选后的座位信息
-        FilterSeatListByLegend(state) {
+        FilterSeatListByLegend(state,getter) {
             // 1、判断当前的楼层，选择出要做筛选的数组
-            const currentFloorSeatList = state.currentFloor === 'three' ? state.seatListOfthree : state.seatListOfFour
+            const currentFloorSeatList = state.currentFloor === 'three' ? getter.seatAndAreaListOfThree : getter.seatAndAreaListOfFour
             // 2、判断当前是否有选中的图例
             if(state.currentLegend){
                 // 3、如果有选中的图例
                 return currentFloorSeatList.filter((item) => {
-                    return item.type === state.currentLegend
+                    return item.type === state.currentLegend || item.type === 2 || item.type === 3
                 })
             }else{
                 // 4、没有选中的图例，直接返回currentFloorSeatList
@@ -153,3 +137,30 @@ export default createStore({
         }
     }
 })
+
+function formatData(data) {
+    let array = {}
+    data.forEach( item => {
+        if(!array[item.code]) array[item.code] = []
+        array[item.code].push(item)
+    })
+    for(let key in array){
+        if(array[key].length !==0 && array[key].length !==1 ){
+            array[key].forEach((item, index) => {
+                if(index > 0){
+                    let flagTop = item.coordinate.top === array[key][index - 1].coordinate.top + array[key][index - 1].coordinate.height
+                    let flagLeft = item.coordinate.left === array[key][index - 1].coordinate.left + array[key][index - 1].coordinate.width
+                    if(flagTop || flagLeft){
+                        item.name = ''
+                        item.subtitle = ''
+                    }
+                }
+            })
+        }
+    }
+    let arr = []
+    for(let key in array){
+        arr.push(...array[key])
+    }
+    return arr
+}
