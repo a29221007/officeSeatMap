@@ -112,7 +112,7 @@ export default createStore({
         seatAndAreaListOfFour(state){
             return state.seatListOfFour.concat(state.areaListOfFour)
         },
-        // 全部的人员信息
+        // 全部座位人员以及区域信息集合
         AllSeatList(state,getter){
             return getter.seatAndAreaListOfThree.concat(getter.seatAndAreaListOfFour)
         },

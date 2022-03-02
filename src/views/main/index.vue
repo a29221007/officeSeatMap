@@ -10,7 +10,7 @@
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
                 <!-- 区域 -->
-                <div v-if="item.type === 1 || item.type === 2 || item.type === 3" :id="item.code + item.id" :class="{'active-area':currentAreaCode === item.code}" :style="{
+                <div v-if="item.type === 1 || item.type === 2 || item.type === 3" :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="{
                     position: 'absolute',
                     top:item.coordinate.top / 1612 * 843 + 'px',
                     left:item.coordinate.left / 1777 * 930 + 'px',
@@ -45,6 +45,13 @@ import emitter from '../eventbus.js'
 export default {
     name:'layout',
     setup(){
+        emitter.on('activeArea',({code, scaleX, scaleY}) => {
+            // 触发了区域高亮事件时，将座位的动画停止
+            seatData.current = 0
+            seatData.currentAreaCode = code
+            sacleX = scaleX || store.state.scale[0]
+            sacleY = scaleY || store.state.scale[1]
+        })
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
         const store = useStore()
@@ -61,7 +68,7 @@ export default {
             // 当前选中的座位
             current:0,
             // 当前选中的区域
-            currentAreaCode:'QY0101030043',
+            currentAreaCode:'',
             // 设置每一个座位的样式
             seatItemStyle(seatItem) {
                 return {
@@ -93,7 +100,8 @@ export default {
         })
         // 鼠标点击每一个座位的事件处理函数
         function handleClickSeat(seatItem,$event){
-            console.log('seatItem',seatItem)
+            // 触发座位的点击事件，将区域的选中状态置空
+            seatData.currentAreaCode = ''
             // 设置过度属性，以及过渡时间
             MapBoxRef.value.style.transition = 'all 1s'
             // store.commit('setMapBoxRef_Transition_Timer','all 1s')
@@ -299,7 +307,7 @@ export default {
         }
         // 区域选中的高亮样式
         .active-area{
-            background-color: #000!important;
+            background-color:rgba(255, 165, 0, 0.5)!important;
         }
         .title{
             position: absolute;

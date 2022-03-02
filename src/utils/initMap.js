@@ -14,5 +14,8 @@ function initMap() {
     MapBox.style.transformOrigin = `50% 50%`
     MapBox.style.transform = `scale(${store.state.scale[0]},${store.state.scale[1]})`
     emitter.emit('initScale')
+    emitter.emit('activeArea',{
+        code:'',
+    })
 }
 export default initMap
