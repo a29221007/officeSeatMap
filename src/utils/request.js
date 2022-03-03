@@ -9,7 +9,6 @@ const instance = axios.create({
 
 // 请求拦截
 instance.interceptors.request.use((config) => {
-    config.headers.Authorization = 'Bearer 482255dde15bb198ab98cb5c7352e100753bebad'
     return config
 }, (error) => {
     return Promise.reject(error)
