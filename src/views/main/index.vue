@@ -9,25 +9,51 @@
         </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
-                <!-- 区域 -->
-                <div v-if="item.type === 1 || item.type === 2 || item.type === 3" :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="{
-                    position: 'absolute',
-                    top:item.coordinate.top / 1612 * 843 + 'px',
-                    left:item.coordinate.left / 1777 * 930 + 'px',
-                    width:item.coordinate.width / 1777 * 930 + 'px',
-                    height: item.coordinate.height / 1612 * 843 + 'px',
-                    backgroundColor: item.backgroundcolor,
-                    color:'#646464',
-                    fontSize:'12px'
-                }">
-                    <div class="title">
-                        <span class="name">{{item.name}}</span>
-                        <span v-if="item.subtitle" class="subtitle">{{item.subtitle}}</span>
+                <template v-if="item.type === 1 || item.type === 2 || item.type === 3">
+                    <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
+                        <!-- 区域 -->
+                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="{
+                            position: 'absolute',
+                            top:item.coordinate.top / 1612 * 843 + 'px',
+                            left:item.coordinate.left / 1777 * 930 + 'px',
+                            width:item.coordinate.width / 1777 * 930 + 'px',
+                            height: item.coordinate.height / 1612 * 843 + 'px',
+                            backgroundColor: item.backgroundcolor,
+                            color:'#646464',
+                            fontSize:'12px'
+                        }">
+                            <div class="title">
+                                <span class="name">{{item.name}}</span>
+                                <span v-if="item.subtitle" class="subtitle">{{item.subtitle}}</span>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
+                        <template v-for="item2 in item.coordinate">
+                            <!-- 区域 -->
+                            <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="{
+                                position: 'absolute',
+                                top:item2.top / 1612 * 843 + 'px',
+                                left:item2.left / 1777 * 930 + 'px',
+                                width:item2.width / 1777 * 930 + 'px',
+                                height: item2.height / 1612 * 843 + 'px',
+                                backgroundColor: item.backgroundcolor,
+                                color:'#646464',
+                                fontSize:'12px'
+                            }">
+                                <div class="title" v-if="item2.show_area_name">
+                                    <span class="name">{{item.name}}</span>
+                                    <span v-if="item.subtitle" class="subtitle">{{item.subtitle}}</span>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                </template>
+                <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
+                    <!-- 座位 -->
+                    <div class="seat" :id="item.seat_id" :class="{'active':current === item.seat_id}" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
                     </div>
-                </div>
-                <!-- 座位 -->
-                <div class="seat" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'" :id="item.seat_id" :class="{'active':current === item.seat_id}" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
-                </div>
+                </template>
             </template>
             <!-- 鼠标经过每一个座位的提示框 -->
             <div ref="tooltipRef" class="tooltip" v-show="is_show_tooltip" v-text="tooltipText"></div>
