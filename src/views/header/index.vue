@@ -210,21 +210,17 @@ export default {
                             }
                         ).then(() => {
                             // 将要切换的楼层
-                            // let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
-                            // handleClickFloor(pushFloor)
-                            // drawerData.is_show = true
-                            // drawerData.currentSeatInfo.depart = depart
-                            // drawerData.currentSeatInfo.seat_id = seat_id
-                            // drawerData.currentSeatInfo.name = name
-                            // nextTick(() => {
-                            //     let el = document.getElementById(item.seat_id)
-                            //     el.click()
-                            //     successMessage('切换成功')
-                            // })
+                            let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                            handleClickFloor(pushFloor)
+                            nextTick(() => {
+                                searchData.searchArea(item.code)
+                                successMessage('切换成功')
+                            })
                         }).catch(() => {
                             infoMessage(`您可以手动切换到${item.floor}楼查找`)
                         })
                     }
+                    searchData.searchState = item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")
                 }
             },
             // 区域搜索公共的方法
@@ -285,8 +281,15 @@ export default {
                 // 6、设置过度属性，以及过渡时间
                 mapBox.style.transition = 'all 1s'
                 // 7、计算缩放比例
-                let scaleX = (mapBox.offsetWidth / currentAreaWidth > 3 ? 3 : mapBox.offsetWidth / currentAreaWidth) - 0.5
-                let scaleY = (mapBox.offsetHeight / currentAreaHeight > 3 ? 3 : mapBox.offsetHeight / currentAreaHeight) - 0.5
+                let scaleX = ((mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth > 3 ? 3 : (mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth) - 0.1
+                let scaleY = ((mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight > 3 ? 3 : (mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight) - 0.1
+                // 7.1、判断两个缩放比例差值绝对值是否大于1
+                if(Math.abs(scaleX - scaleY) > 1){
+                    // 如果大于1，则将将两个缩放的比例取最小的那一个
+                    const minScale = scaleX > scaleY ? scaleY : scaleX
+                    scaleX = minScale
+                    scaleY = minScale
+                }
                 // 8、计算被搜索的区域在map-container中的距离
                 let mapContainer_X = minLeft + (currentAreaWidth / 2) + mapBox.offsetLeft
                 let mapContainer_Y = minTop + (currentAreaHeight / 2) + mapBox.offsetTop

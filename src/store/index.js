@@ -86,8 +86,7 @@ export default createStore({
         async getAreaListOfThree(context){
             try{
                 const {data} = await getAreaList(3)
-                let arr = formatData(data)
-                context.commit('setAreaListOfThree',arr)
+                context.commit('setAreaListOfThree',data)
             }catch(error){
                 errorMessage(error)
             }
@@ -137,30 +136,3 @@ export default createStore({
         }
     }
 })
-
-function formatData(data) {
-    let array = {}
-    data.forEach( item => {
-        if(!array[item.code]) array[item.code] = []
-        array[item.code].push(item)
-    })
-    for(let key in array){
-        if(array[key].length !==0 && array[key].length !==1 ){
-            array[key].forEach((item, index) => {
-                if(index > 0){
-                    let flagTop = item.coordinate.top === array[key][index - 1].coordinate.top + array[key][index - 1].coordinate.height
-                    let flagLeft = item.coordinate.left === array[key][index - 1].coordinate.left + array[key][index - 1].coordinate.width
-                    if(flagTop || flagLeft){
-                        item.name = ''
-                        item.subtitle = ''
-                    }
-                }
-            })
-        }
-    }
-    let arr = []
-    for(let key in array){
-        arr.push(...array[key])
-    }
-    return arr
-}
