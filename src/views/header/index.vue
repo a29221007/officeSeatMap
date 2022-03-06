@@ -375,6 +375,7 @@ export default {
         justify-content: space-between;
         padding: 5px;
         .floor-switch{
+            font-size: 16px;
             span{
                 cursor: pointer;
                 &.active{

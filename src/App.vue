@@ -1,29 +1,48 @@
 <template>
-    <LayOut></LayOut>
+    <!-- <PCLayOut v-if="is_PC"></PCLayOut>
+    <MLayOut v-else></MLayOut> -->
+    <!-- <PCLayOut></PCLayOut> -->
+    <MLayOut></MLayOut>
 </template>
 
 <script>
-import { provide } from 'vue'
-// 导入布局组件layout
-import LayOut from './views/layout'
+import { provide,ref } from 'vue'
+// 导入PC端布局组件PCLayOut
+import PCLayOut from './views/layout'
+// 导入移动端的布局组件MLayout
+import MLayOut from './views-rem/layout'
 // 导入获取浏览器可视区的宽高
 import getClient from './utils/getClient.js'
+import { useStore } from 'vuex'
 export default {
     name:'App',
     components:{
-        LayOut
+        PCLayOut,
+        MLayOut
     },
     setup() {
+        // 在App组件中初始化store中的状态
+        const store = useStore()
+        store.commit('setCurrentFloor','three')
+        store.dispatch('getSeatListOfthree')
+        store.dispatch('getSeatListOfFour')
+        store.dispatch('getAreaListOfThree')
+        store.dispatch('getAreaListOfFour')
         // 获取当前浏览器可视区的大小
         const obj = getClient()
         // 依赖注入
         provide('clent',obj)
-        // let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
-        // if(flag){
-        //     alert('手机端')
-        // }else{
-        //     alert('pc端')
-        // }
+        // 判断是pc端还是移动端的变量
+        const is_PC = ref(true)
+        let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+        if(flag){
+            is_PC.value = false
+        }else{
+            is_PC.value = true
+        }
+        return {
+            is_PC
+        }
     }
 }
 </script>

@@ -6,4 +6,5 @@ import './style/index.less'
 import './style/iconfont.css'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import './utils/flexible.js'
 createApp(App).use(router).use(store).use(ElementPlus).mount('#app')

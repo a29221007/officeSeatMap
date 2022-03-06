@@ -7,7 +7,7 @@
 import Header from '../header'
 import Main from '../main'
 export default {
-    name:'layout',
+    name:'M-Layout',
     components:{
         Header,
         Main,
