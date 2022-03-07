@@ -48,3 +48,6 @@
 .drawer-mask {
   z-index: -10 !important;
 }
+input {
+  outline: none;
+}

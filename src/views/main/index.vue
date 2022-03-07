@@ -69,7 +69,7 @@ import getMouseX_Y from '@/utils/getmouseX_Y.js'
 // 导入事件中心
 import emitter from '../eventbus.js'
 export default {
-    name:'layout',
+    name:'Main',
     setup(){
         emitter.on('activeArea',({code, scaleX, scaleY}) => {
             // 触发了区域高亮事件时，将座位的动画停止

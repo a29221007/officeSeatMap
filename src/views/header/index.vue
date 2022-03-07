@@ -64,7 +64,7 @@ import emitter from '../eventbus'
 import initMap from '@/utils/initMap.js'
 import { Search } from '@element-plus/icons-vue'
 export default {
-    name:'layout',
+    name:'Header',
     setup(){
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
