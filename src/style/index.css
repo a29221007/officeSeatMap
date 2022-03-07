@@ -3,6 +3,16 @@
   padding: 0;
   box-sizing: border-box;
 }
+html,
+body,
+#app {
+  height: 100%;
+}
+@media screen and (min-width: 930px) {
+  html {
+    font-size: 93px!important;
+  }
+}
 .el-input__inner:focus {
   border-color: #dcdfe6 !important;
 }

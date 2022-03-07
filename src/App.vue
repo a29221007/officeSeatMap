@@ -10,7 +10,7 @@ import { provide,ref } from 'vue'
 // 导入PC端布局组件PCLayOut
 import PCLayOut from './views/layout'
 // 导入移动端的布局组件MLayout
-import MLayOut from './views-rem/layout'
+import MLayOut from './views-rem'
 // 导入获取浏览器可视区的宽高
 import getClient from './utils/getClient.js'
 import { useStore } from 'vuex'
