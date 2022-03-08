@@ -10,13 +10,13 @@
             </template>
         </div>
         <!-- 底部用固定定位的盒子展示楼层图例还有搜索 -->
-
     </div>
 </template>
 
 <script>
 import {ref, computed, toRefs, reactive, onMounted} from 'vue'
 import { useStore } from 'vuex'
+import AlloyFinger from 'alloyfinger'
 export default {
     name:'M-Home',
     setup(){
@@ -26,55 +26,102 @@ export default {
         const MapBoxRef = ref(null)
         // 获取 BodyContainer DOM 对象
         const BodyContainerRef = ref(null)
-        // MapBoxRef 盒子的初始坐标
-        let MapBoxRef_X = null
-        let MapBoxRef_Y = null
+        // MapBox 盒子的初始坐标
+        let MapBox_X = null
+        let MapBox_Y = null
         // 初始手指的坐标
         let finger_X = null
         let finger_Y = null
-        // 判断是否是点击事件
-        let is_click = null
-        // 点击事件的开始事件和结束时间
-        let startTimer = null
-        let endTimer = null
+        // MapBox 盒子的初始缩放比例1
+        let scale_init_x = 1
+        let scale_init_y = 1
         // 在mounted函数中对地图盒子注册监听事件
         onMounted(() => {
-            // 1、注册 touchstart 事件
-            MapBoxRef.value.addEventListener('touchstart',(e) => {
-                // 是一个点击事件
-                is_click = true
-                // 记录开始事件
-                MapBoxRef_X = e.target.offsetLeft
-                MapBoxRef_Y = e.target.offsetTop
-                finger_X = e.targetTouches[0].pageX
-                finger_Y = e.targetTouches[0].pageY
-            })
-            // 2、注册 touchmove 事件
-            MapBoxRef.value.addEventListener('touchmove',(e) => {
-                // 如果触发了 touchmove，则不是一个点击事件
-                is_click = false
-                // 在 touchmove 事件中取消元素的过渡效果
-                MapBoxRef.value.style.transition = 'none'
-                MapBoxRef.value.style.left = MapBoxRef_X + (e.targetTouches[0].pageX - finger_X) + 'px'
-                MapBoxRef.value.style.top = MapBoxRef_Y + (e.targetTouches[0].pageY - finger_Y) + 'px'
-            })
-            // 3、注册 touchend 事件
-            MapBoxRef.value.addEventListener('touchend',(e) => {
-                console.log('touchend')
-            })
-            // 4、将地图铺满整个屏幕
-            // 4.1计算出高度的缩放比例 = 屏幕的高度 / 盒子的高度
+            // 1、将地图铺满整个屏幕
+            // 1.1计算出高度的缩放比例 = 屏幕的高度 / 盒子的高度
             const scale = BodyContainerRef.value.offsetHeight / MapBoxRef.value.offsetHeight
             MapBoxRef.value.style.transition = 'all 0.5s'
-            MapBoxRef.value.style.transform = `scale(${scale},${scale})`
+            scale_init_x = scale
+            scale_init_y = scale
+            MapBoxRef.value.style.transform = `scale(${scale_init_x},${scale_init_y})`
+            // 2、监听 MapBox 地图盒子的各种事件
+            // 2.1 实例化 AlloyFinger 这个构造函数，并将地图盒子的DOM元素传递进去
+            let MapBox = new AlloyFinger(MapBoxRef.value,{})
+            // 2.2 监听 MapBox 盒子的 tap 事件
+            MapBox.on('touchStart', MapBoxTouchStartFn)
+            // 2.3 监听 MapBox 盒子的 touchStart 事件
+            MapBox.on('tap', MapBoxTapFn)
+            // 2.4 监听 MapBox 盒子的 doubleTap 事件
+            MapBox.on('doubleTap', MapBoxDoubleTapFn)
+            // 2.5 监听 MapBox 盒子的 pinch 事件
+            MapBox.on('pinch', MapBoxPinchFn)
+            // 2.6 监听 MapBox 盒子的 pressMove 事件
+            MapBox.on('pressMove', MapBoxPressMoveFn)
+            // 2.7 监听 MapBox 盒子的 touchEnd 事件
+            MapBox.on('touchEnd', MapBoxTouchEndFn)
         })
-        // MapBoxRef盒子的行内样式设置为计算属性
+        // MapBox 盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
             // MapBoxRef盒子的行内样式暂时只有背景图片
             return {
                 backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`,
             }
         })
+        // MapBox盒子 touchStart 事件的处理函数
+        function MapBoxTouchStartFn(e) {
+            // 记录 MapBox 盒子的初始位置 offsetLeft 和 offsetTop
+            MapBox_X = e.target.offsetLeft
+            MapBox_Y = e.target.offsetTop
+            // 记录手指触摸时的初始坐标
+            finger_X = e.targetTouches[0].pageX
+            finger_Y = e.targetTouches[0].pageY
+        }
+        // MapBox盒子 tap 事件的处理函数
+        function MapBoxTapFn() {
+
+        }
+        // MapBox盒子 doubleTap 事件的处理函数
+        function MapBoxDoubleTapFn() {
+
+        }
+        // 触发 pinch 事件时首次 zoom 的值
+        let firstZoomValue = 0
+        // 触发 pinch 事件的次数
+        let pinchCount = 0
+        // MapBox盒子 pinch 事件的处理函数
+        function MapBoxPinchFn(e) {
+            if(timer) return
+            pinchCount++
+            if(pinchCount === 1){
+                firstZoomValue = e.zoom
+            }else{
+                if(e.zoom > firstZoomValue){
+                    scale_init_x += 0.5
+                    scale_init_y += 0.5
+                }else{
+                    scale_init_x -= 0.5
+                    scale_init_y -= 0.5
+                }
+                firstZoomValue = e.zoom
+                if(scale_init_x < 0.75 || scale_init_x > 8) return
+                MapBoxRef.value.style.transition = 'all 0.3s'
+                MapBoxRef.value.style.transform = `scale(${scale_init_x},${scale_init_y})`
+            }
+        }
+        // MapBox盒子 pressMove 事件的处理函数
+        function MapBoxPressMoveFn(e) {
+            // 取消元素的过渡效果
+            MapBoxRef.value.style.transition = 'none'
+            // 移动时要阻止浏览器的默认行为
+            e.preventDefault()
+            MapBoxRef.value.style.left = MapBox_X + (e.targetTouches[0].pageX - finger_X) + 'px'
+            MapBoxRef.value.style.top = MapBox_Y + (e.targetTouches[0].pageY - finger_Y) + 'px'
+        }
+        // MapBox盒子 touchEnd 事件
+        function MapBoxTouchEndFn() {
+            firstZoomValue = 0
+            pinchCount = 0
+        }
         let seatData = reactive({
             // 人员信息座位集合
             mapList: computed(() => store.getters.FilterSeatListByLegend),
@@ -118,6 +165,7 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
+    background-color: #fff;
     // 地图盒子
     .map-box{
         position: absolute;

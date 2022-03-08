@@ -230,7 +230,7 @@ export default {
                 MapBoxReduce(0.25)
             }
         }
-        // 定义初始的缩放值100
+        // 定义初始的缩放值1
         let sacleX = 1
         let sacleY = 1
         // 监听切换楼层或者切换图例时发布的自定义事件initScale，将此时的缩放系数与缩放时的缩放系数同步
