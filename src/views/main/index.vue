@@ -130,7 +130,6 @@ export default {
             seatData.currentAreaCode = ''
             // 设置过度属性，以及过渡时间
             MapBoxRef.value.style.transition = 'all 1s'
-            // store.commit('setMapBoxRef_Transition_Timer','all 1s')
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
             if(seatItem.seat_id === seatData.current){
                 seatData.current = 0
