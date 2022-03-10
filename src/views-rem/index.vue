@@ -242,7 +242,7 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
-    background-color: #fff;
+    background-color: #f3f4f6;
     // 地图盒子
     .map-box{
         position: absolute;

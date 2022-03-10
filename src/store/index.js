@@ -119,7 +119,7 @@ export default createStore({
         floor(state) {
             return state.currentFloor === 'three' ? 3 : 4
         },
-        // 点击图里筛选后的座位信息
+        // 点击图例筛选后的座位信息
         FilterSeatListByLegend(state,getter) {
             // 1、判断当前的楼层，选择出要做筛选的数组
             const currentFloorSeatList = state.currentFloor === 'three' ? getter.seatAndAreaListOfThree : getter.seatAndAreaListOfFour
