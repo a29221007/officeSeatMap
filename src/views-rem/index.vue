@@ -7,15 +7,14 @@
                 <template v-if="item.type === 1 || item.type === 2 || item.type === 3">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 区域 -->
-                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="{
+                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code},'area']" :style="{
                             position: 'absolute',
                             top:(item.coordinate.top / 1612 * 843) / 93 + 'rem',
                             left:(item.coordinate.left / 1777 * 930) / 93 + 'rem',
                             width:(item.coordinate.width / 1777 * 930) / 93 + 'rem',
                             height: (item.coordinate.height / 1612 * 843) / 93 + 'rem',
                             backgroundColor: item.backgroundcolor,
-                            color:'#646464',
-                            fontSize: 12 / 93 + 'rem'
+                            color:'#646464'
                         }">
                             <div class="title">
                                 <span class="name">{{item.name}}</span>
@@ -26,15 +25,14 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate">
                             <!-- 区域 -->
-                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="{
+                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code},'area']" :style="{
                                 position: 'absolute',
                                 top:(item2.top / 1612 * 843) / 93 + 'rem',
                                 left:(item2.left / 1777 * 930) / 93 + 'rem',
                                 width:(item2.width / 1777 * 930) / 93 + 'rem',
                                 height: (item2.height / 1612 * 843) / 93 + 'rem',
                                 backgroundColor: item.backgroundcolor,
-                                color:'#646464',
-                                fontSize:12 / 93 + 'rem'
+                                color:'#646464'
                             }">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
@@ -251,6 +249,9 @@ export default {
         background-size: cover;
         background-repeat: no-repeat;
         transition: all 0.5s;
+        .area{
+            font-size: .129rem;
+        }
         .seat{
             position: absolute;
             z-index: 5;
