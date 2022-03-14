@@ -17,7 +17,35 @@
         <template v-if="SearchLegendContant === 'search'">
             <div class="search-input">
                 <i class="iconfont oamap-sousuo"></i>
-                <input ref="inputRef" v-model="inputValue" type="search" placeholder=" 搜索">
+                <input ref="inputRef" v-model="inputValue" type="search" placeholder=" 搜索" v-on:input="handleInputSearch">
+            </div>
+            <div class="querySearch">
+                <template v-if="is_none_sugges">
+                    <div class="querySearch-item" v-for="item in querySearchList" :key="item.id">
+                        <div class="autoCompleteTemplate" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
+                            <!-- 第一行左边显示姓名，右边显示座位号 -->
+                            <div class="oneLine">
+                                <span><span class="title">座位人员名称：</span><span class="content">{{item.name || '暂无数据'}}</span></span>
+                                <span><span class="title">座位号：</span><span class="content">{{item.seat_id}}</span></span>
+                            </div>
+                            <!-- 第二行显示该座位所在部门 -->
+                            <div class="twoLine"><span class="title">部门：</span><span class="content">{{item.depart || '暂无数据'}}</span></div>
+                        </div>
+                        <div class="autoCompleteTemplate" v-if="item.type === 1 || item.type === 2 || item.type === 3">
+                            <!-- 第一行左边显示姓名，右边显示座位号 -->
+                            <div class="oneLine">
+                                <span><span class="title">区域名称：</span><span class="content">{{item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") || '暂无数据'}}</span></span>
+                            </div>
+                            <!-- 第二行显示该座位所在部门 -->
+                            <div class="twoLine">
+                                <span><span class="title">区域编号：</span><span class="content">{{item.code}}</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="is_none_sugges">暂无匹配项</div>
+                </template>
             </div>
         </template>
     </div>
@@ -65,6 +93,40 @@ export default {
         const FloorSwitchRef = ref(null)
         const legendRef = ref(null)
         const searchBoxRef = ref(null)
+
+        // // 记录触摸 SearchLegendRef 盒子的初始坐标 Y
+        // let touchstartPageY = 0
+        // // 记录触摸时 SearchLegendRef 盒子的初始高度 (正常高度)
+        // // let SearchLegendHeight = 0
+        // // 记录 SearchLegendRef 盒子初始的top值(页面加载时的 top 值)
+        // let SearchLegendTop = 0
+        // // 记录触摸时 SearchLegendRef 盒子的实时 Top 值
+        // let SearchLegendNowTop = 0
+        // // 记录当前屏幕的高度
+        // // let clientHeight = document.documentElement.clientHeight
+        // // SearchLegendRef 盒子的 bottom 值
+        // let SearchLegendBottom = 0
+        // // SearchLegendRef 盒子高度的最大值
+        // let SearchLegendMaxHeight = 0
+        // // SearchLegendRef 盒子高度的最小值
+        // let SearchLegendMinHeight = 0
+        // 判断滑动的方向
+        let flag = ''
+
+        // ----------------------
+        // 记录触摸 SearchLegendRef 盒子的初始坐标 Y
+        let touchstartPageY = 0
+        // 记录 SearchLegendRef 盒子初始的top值(页面加载时的 top 值)
+        let SearchLegendTop = 0
+        // 记录触摸时 SearchLegendRef 盒子的实时 Top 值
+        let SearchLegendNowTop = 0
+        // 记录当前屏幕的高度
+        let clientHeight = document.documentElement.clientHeight
+        // 最小的 top 值 （也是最顶端的）
+        let SearchLegendMinTop = 0
+        // 最大的 top 值 （也是最低端的）
+        let SearchLegendMaxTop = 0
+        let searchBox = null
         // 在 mounted 中给 SearchLegendRef 注册手势事件
         onMounted(() => {
             // 1、注册 touchstart 事件
@@ -75,41 +137,35 @@ export default {
             SearchLegendRef.value.addEventListener('touchend', SearchLegendTouchendFn)
 
             // ---- 变量的计算
-            // 计算 SearchLegendRef 盒子的 bottom 值
-            SearchLegendBottom = clientHeight - SearchLegendRef.value.offsetHeight - SearchLegendRef.value.offsetTop
-            // 计算 SearchLegendRef 盒子高度的最大值
-            SearchLegendMaxHeight = Math.ceil(clientHeight * 0.9) - SearchLegendBottom
-            // 计算 SearchLegendRef 盒子高度的最小值
-            SearchLegendMinHeight = FloorSwitchRef.value.offsetHeight - SearchLegendBottom + legendRef.value.offsetTop
-            // 计算 SearchLegendRef 盒子高度的正常值
-            SearchLegendHeight = SearchLegendRef.value.offsetHeight
-
-            let searchBox = new AlloyFinger(searchBoxRef.value,{})
+            // // 计算 SearchLegendRef 盒子的 bottom 值
+            // SearchLegendBottom = clientHeight - SearchLegendRef.value.offsetHeight - SearchLegendRef.value.offsetTop
+            // // 计算 SearchLegendRef 盒子高度的最大值
+            // SearchLegendMaxHeight = Math.ceil(clientHeight * 0.9) - SearchLegendBottom
+            // // 计算 SearchLegendRef 盒子高度的最小值
+            // SearchLegendMinHeight = FloorSwitchRef.value.offsetHeight - SearchLegendBottom + legendRef.value.offsetTop
+            // // 计算 SearchLegendRef 盒子高度的正常值
+            // SearchLegendHeight = SearchLegendRef.value.offsetHeight
+            // 计算 top 值,并将盒子的高度取消，设置为top值
+            SearchLegendTop = SearchLegendRef.value.offsetTop
+            SearchLegendRef.value.style.height = 'unset'
+            SearchLegendRef.value.style.top = SearchLegendTop + 'px'
+            // 计算最小的top值
+            SearchLegendMinTop = clientHeight * 0.9
+            // 计算最大的top值
+            SearchLegendMaxTop = SearchLegendTop + legendRef.value.offsetHeight
+            // 计算最小的top值
+            SearchLegendMinTop = clientHeight * 0.15
+            searchBox = new AlloyFinger(searchBoxRef.value,{})
             searchBox.on('tap',handleTapSearchBox)
         })
-        // 记录触摸 SearchLegendRef 盒子的初始坐标 Y
-        let touchstartPageY = 0
-        // 记录触摸时 SearchLegendRef 盒子的初始高度 (正常高度)
-        let SearchLegendHeight = 0
-        // 记录触摸时 SearchLegendRef 盒子的实时高度
-        let SearchLegendNowHeight = 0
-        // 记录当前屏幕的高度
-        let clientHeight = window.screen.height
-        // SearchLegendRef 盒子的 bottom 值
-        let SearchLegendBottom = 0
-        // SearchLegendRef 盒子高度的最大值
-        let SearchLegendMaxHeight = 0
-        // SearchLegendRef 盒子高度的最小值
-        let SearchLegendMinHeight = 0
-        // 判断滑动的方向
-        let flag = ''
         // SearchLegend 盒子 touchstart 事件的处理函数
         function SearchLegendTouchstartFn(e) {
             // 首先判断作用在当前元素上的手指列表长度
             if(e.changedTouches.length === 1){
                 // 如果作用在当前事件的手指列表长度为1,记录初始坐标
                 touchstartPageY = e.changedTouches[0].pageY
-                SearchLegendNowHeight = SearchLegendRef.value.offsetHeight
+                // SearchLegendNowHeight = SearchLegendRef.value.offsetHeight
+                SearchLegendNowTop = SearchLegendRef.value.offsetTop
             }
         }
         // SearchLegend 盒子 touchmove 事件的处理函数
@@ -122,15 +178,15 @@ export default {
                 if(value >= 0){
                     flag = 'down'
                     // 如果大于0，则说明是向下滑
-                    // 向下滑动时，如果 SearchLegend 盒子的高度小于最小值，则停止
-                    if(SearchLegendRef.value.offsetHeight <= SearchLegendMinHeight) return SearchLegendRef.value.style.height = SearchLegendMinHeight + 'px'
+                    // 向下滑动时，如果 SearchLegend 盒子的 top 值比最大的还大，则停止
+                    if(SearchLegendRef.value.offsetTop >= SearchLegendMaxTop) return
                 }else{
                     flag = 'up'
                     // 小于0，则说明是向上滑动
-                    // 向上滑动时，如果 SearchLegend 盒子的高度大于了最大值，则停止
-                    if(SearchLegendRef.value.offsetHeight >= SearchLegendMaxHeight) return SearchLegendRef.value.style.height = SearchLegendMaxHeight + 'px'
+                    // 向上滑动时，如果 SearchLegend 盒子的 top 值比最小的还小，则停止
+                    if(SearchLegendRef.value.offsetTop <= SearchLegendMinTop) return
                 }
-                SearchLegendRef.value.style.height = SearchLegendRef.value.offsetHeight - value + 'px'
+                SearchLegendRef.value.style.top = SearchLegendRef.value.offsetTop + value + 'px'
                 touchstartPageY = e.changedTouches[0].pageY
             }
         }
@@ -139,26 +195,37 @@ export default {
             // 给 SearchLegendRef 盒子添加过渡效果
             SearchLegendRef.value.style.transition = `all 0.5s`
             // 判断是否超过临界值，如果超过了，则就return，并等于临界值
-            if(SearchLegendRef.value.offsetHeight <= SearchLegendMinHeight) return SearchLegendRef.value.style.height = SearchLegendMinHeight + 'px'
-            if(SearchLegendRef.value.offsetHeight >= SearchLegendMaxHeight) return SearchLegendRef.value.style.height = SearchLegendMaxHeight + 'px'
+            if(SearchLegendRef.value.offsetTop >= SearchLegendMaxTop) return SearchLegendRef.value.style.top = SearchLegendMaxTop + 'px'
+            if(SearchLegendRef.value.offsetTop <= SearchLegendMinTop) return SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
             // 触摸结束时的盒子高度（目的是将判断语句中抽离出来，简化if判断语句的条件）
-            let height = SearchLegendRef.value.offsetHeight
-            if(flag === 'up'){
-                // 执行向上的逻辑
-                if(height >= SearchLegendHeight * 0.8 && height <= (SearchLegendHeight + SearchLegendHeight * 0.3)){
-                    return SearchLegendRef.value.style.height = SearchLegendHeight + 'px'
-                }else if(height > (SearchLegendHeight + SearchLegendHeight * 0.5)){
-                    return SearchLegendRef.value.style.height = SearchLegendMaxHeight + 'px'
+            let top = SearchLegendRef.value.offsetTop
+            if(SearchLegendContant.value === 'init') {
+                if(flag === 'up'){
+                    // 执行向上的逻辑
+                    if(top < SearchLegendTop + SearchLegendTop * 0.1 && top > SearchLegendTop * 0.85){
+                        return SearchLegendRef.value.style.top = SearchLegendTop + 'px'
+                    }else if(top <= SearchLegendTop * 0.85){
+                        return SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
+                    }
+                    SearchLegendRef.value.style.top = SearchLegendNowTop + 'px'
+                }else{
+                    // 执行向下的逻辑
+                    if(top >= (SearchLegendMinTop + SearchLegendMinTop * 0.3)){
+                        return SearchLegendRef.value.style.top = SearchLegendTop + 'px'
+                    }else if(top >= SearchLegendTop + SearchLegendTop * 0.15){
+                        return SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
+                    }
+                    SearchLegendRef.value.style.top = SearchLegendNowTop + 'px'
                 }
-                SearchLegendRef.value.style.height = SearchLegendNowHeight + 'px'
-            }else{
-                // 执行向下的逻辑
-                if(height <= SearchLegendHeight * 0.87){
-                    return SearchLegendRef.value.style.height = SearchLegendMinHeight + 'px'
-                }else if(height <= SearchLegendMaxHeight * 0.8){
-                    return SearchLegendRef.value.style.height = SearchLegendHeight + 'px'
+            }else if(SearchLegendContant.value === 'search'){
+                if(flag === 'down'){
+                    SearchLegendContant.value = 'init'
+                    SearchLegendRef.value.style.top = SearchLegendTop + 'px'
+                    nextTick(() => {
+                        searchBox = new AlloyFinger(searchBoxRef.value,{})
+                        searchBox.on('tap',handleTapSearchBox)
+                    })
                 }
-                SearchLegendRef.value.style.height = SearchLegendNowHeight + 'px'
             }
         }
 
@@ -167,12 +234,13 @@ export default {
         const inputRef = ref(null)
         // 点击搜索的盒子的处理函数
         function handleTapSearchBox() {
+            console.log(123)
             // 将 SearchLegendRef 盒子的bottom值设置为0，置底
             SearchLegendRef.value.style.bottom = 0
             // 给 SearchLegendRef 盒子添加过渡效果
             SearchLegendRef.value.style.transition = `all 0.5s`
             // 将 SearchLegendRef 盒子的高度设置为最大值
-            SearchLegendRef.value.style.height = SearchLegendMaxHeight + 'px'
+            SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
             // 将控制变量 SearchLegendContant 设置为 search
             SearchLegendContant.value = 'search'
             // 让输入框自动获得焦点
@@ -182,6 +250,48 @@ export default {
         }
         // 输入框的值
         let inputValue = ref('')
+        // 搜索事件的防抖变量
+        let searchTimer = null
+        // 搜索建议列表
+        let querySearchList = ref([])
+        // 是否有匹配项
+        let is_none_sugges = ref(true) // 默认是有匹配项
+        // 搜索的逻辑
+        function handleInputSearch() {
+            is_none_sugges.value = true
+            clearTimeout(searchTimer)
+            searchTimer = setTimeout(() => {
+                // 写搜索的逻辑
+                const results = store.getters.AllSeatList.filter(item => {
+                    return (item.name && item.name.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase())) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase())) || (item.code && item.code.toUpperCase().includes(queryString.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase()))
+                })
+                // 去除多个重复的项
+                // 保存关于座位的(这里面的值都是唯一的)
+                let array_seat = []
+                // 保存关于区域的(这里面的值可能是有重复的)
+                let array_area = []
+                results.forEach(item => {
+                    if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
+                        array_seat.push(item)
+                    }else{
+                        array_area.push(item)
+                    }
+                })
+                let obj = {}
+                array_area.forEach(item => {
+                    if(!obj[item.code]) obj[item.code] = []
+                    obj[item.code].push(item)
+                })
+                for(let key in obj){
+                    array_seat.push(obj[key][0])
+                }
+                if(results.length !== 0){
+                    querySearchList.value = array_seat
+                }else{
+                    is_none_sugges.value = false
+                }
+            },300)
+        }
         return {
             AllArea,
             handleTouchFloor,
@@ -193,7 +303,9 @@ export default {
             searchBoxRef,
             SearchLegendContant,
             inputValue,
-            inputRef
+            inputRef,
+            handleInputSearch,
+            querySearchList
         }
     }
 }
@@ -233,7 +345,6 @@ export default {
             caret-color: skyblue;
             &::-webkit-input-placeholder{
                 color: #b1b2b4;
-                font-size: .4301rem;
             }
         }
     }
