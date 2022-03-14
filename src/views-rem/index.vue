@@ -44,7 +44,7 @@
                 </template>
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                     <!-- 座位 -->
-                    <div class="seat" v-on:touchstart="handleTapSeat" :id="item.seat_id" :style="seatItemStyle(item)">
+                    <div class="seat" :class="{'active':current === item.seat_id}" v-on:touchstart="handleTapSeat(item,$event)" :id="item.seat_id" :style="seatItemStyle(item)">
                     </div>
                 </template>
             </template>
@@ -196,12 +196,18 @@ export default {
                 }
             },
             // 点击每一个座位
-            handleTapSeat(e){
+            handleTapSeat(seatItem,$event){
                 // 阻止冒泡
-                e.stopPropagation()
+                $event.stopPropagation()
+                // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
+                if(seatItem.seat_id === seatData.current){
+                    seatData.current = 0
+                }else{
+                    seatData.current = seatItem.seat_id
+                }
                 // 1、首先计算出触摸时当前盒子距离 BodyContainerRef 盒子的距离
-                let MapContainerRef_x = e.target.offsetLeft + MapBoxRef.value.offsetLeft
-                let MapContainerRef_y = e.target.offsetTop + MapBoxRef.value.offsetTop
+                let MapContainerRef_x = $event.target.offsetLeft + MapBoxRef.value.offsetLeft
+                let MapContainerRef_y = $event.target.offsetTop + MapBoxRef.value.offsetTop
                 // 2、得到MapContainerRef盒子的宽、高 / 2 (得到一半的值)
                 BodyContainerRef.value.offsetWidth / 2
                 BodyContainerRef.value.offsetHeight / 2
@@ -212,7 +218,7 @@ export default {
                 MapBoxRef.value.style.left = (MapBoxRef.value.offsetLeft - valueX) + 'px'
                 MapBoxRef.value.style.top = (MapBoxRef.value.offsetTop - valueY) + 'px'
                 // 5、设置缩放的中心点，放大地图
-                MapBoxRef.value.style.transformOrigin = `${e.target.offsetLeft}px ${e.target.offsetTop}px`
+                MapBoxRef.value.style.transformOrigin = `${$event.target.offsetLeft}px ${$event.target.offsetTop}px`
                 scale_init_x = 4
                 scale_init_y = 4
                 MapBoxScaleFn(0.5)
@@ -240,7 +246,6 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
-    background-color: #f3f4f6;
     // 地图盒子
     .map-box{
         position: absolute;
@@ -259,6 +264,538 @@ export default {
             height: .086rem;
             background-size: cover;
             background-repeat: no-repeat;
+            // 座位选中的高亮样式
+            &.active{
+                // 使用动画
+                animation: scaleAnimation 1s infinite alternate;
+            }
+        }
+        // 区域选中的高亮样式
+        .active-area{
+            background-color:rgba(255, 165, 0, 0.5)!important;
+        }
+        .title{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            text-align: center;
+            span{
+                display: inline-block;
+                white-space:nowrap;
+            }
+            .name{
+                transform: scale(0.85,0.9);
+            }
+            .subtitle{
+                transform: scale(0.65,0.65);
+            }
+        }
+        // 单独的样式覆盖掉之前的公共样式（3层）
+        // 采购部库房、采购库房
+        #QY010103004661,#QY010103004865{
+            .title{
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+            }
+        }
+        // 消防前室
+        #QY010103005268{
+            .title{
+                top: unset;
+                bottom: -0.0968rem;
+            }
+        }
+        // 法务部&公共关系与政府事务部
+        #QY010103005066{
+            .title{
+                top: unset;
+                bottom: -0.0968rem;
+                left: .7742rem;
+            }
+        }
+        // it支持部、冰柠工作室
+        #QY010103004762,#QY010103003838{
+            .title{
+                top: .0753rem;
+            }
+        }
+        // 冰柠（AX项目组）
+        #QY010103003737{
+            .title{
+                display: flex;
+                flex-direction: row-reverse;
+                align-items: center;
+                right: -0.1183rem;
+                left: unset;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+                .name{
+                    margin-left: .086rem;
+                }
+            }
+        }
+        // 冰柠工作室（EOS项目组）、（余烬风暴项目组）、平台技术部
+        #QY010103003939,#QY010103004040,#QY010103003131{
+            .title{
+                display: flex;
+                align-items: center;
+                left: -0.0753rem;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+                .name{
+                    margin-right: .086rem;
+                }
+            }
+        }
+        // QA部
+        #QY010103003030{
+            .title{
+                left: .043rem;
+                top: 43%;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+            }
+        }
+        // 平台技术部，it信息部
+        #QY010103003131{
+            .title{
+                left: .0215rem;
+            }
+        }
+        // 财务部
+        #QY010103003232{
+            .title{
+                top: .043rem;
+            }
+        }
+        // 人力资源部、薪酬福利咨询处
+        #QY010103003434,#QY010103003333{
+            .title{
+                top: unset;
+                bottom: -0.0968rem;
+            }
+        }
+        // 行政小仓库
+        #QY010103002727{
+            .title{
+                .name{
+                    transform: scale(0.6, 0.7);
+                }
+            }
+        }
+        // HR咨询服务办公室
+        #QY010103002828{
+            .title{
+                top: -0.0753rem;
+                left: -0.086rem;
+                transform: unset;
+            }
+        }
+        // 媒介市场行政仓库
+        #QY010103002323{
+            .title{
+                .name{
+                    transform: scale(0.75,0.8);
+                }
+            }
+        }
+        // 一点咨询
+        #QY010103002424{
+            .title{
+                top: unset;
+                bottom: -0.0968rem;
+            }
+        }
+        // 引擎平台部
+        #QY01010300220{
+            .title{
+                left: 79%;
+                top: unset;
+                bottom: -0.129rem;
+            }
+        }
+        // 采购部&商务支持部
+        #QY010103002141{
+            .title{
+                left: 0;
+                top: -0.3871rem;
+                transform: unset;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+                .name{
+                    transform: scale(0.85, 0.5);
+                }
+            }
+        }
+        // 媒介部、采购部&商务支持部
+        #QY010103002020,#QY010103002121{
+            .title{
+                top: 64%;
+            }
+        }
+        // 公司市场部、产品市场部、视觉创意部
+        #QY010103001616,#QY010103001717,#QY010103001818{
+            .title{
+                top: 13%;
+            }
+        }
+        // Frebird工作室(小)、运营部
+        #QY010103004352,#QY010103005376{
+            .title{
+                top: unset;
+                bottom: -0.086rem;
+            }
+        }
+        // Frebird工作室(大)
+        #QY01010300430{
+            .title{
+                top: 46%;
+            }
+        }
+        // 平行工作室-1
+        #QY010103004455{
+            .title{
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                    transform: scale(0.85, 0.7);
+                }
+            }
+        }
+        // 平行工作室-2
+        #QY01010300440{
+            .title{
+                left: unset;
+                top: 40%;
+                right: -0.1613rem;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                    transform: scale(0.85, 0.7);
+                }
+            }
+        }
+        // 陨星工作室-1
+        #QY010103004558{
+            .title{
+                top: unset;
+                bottom: -0.0645rem;
+            }
+        }
+        // 陨星工作室-2
+        #QY010103004559{
+            .title{
+                left: unset;
+                top: 51%;
+                right: .0215rem;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                    transform: scale(0.85, 0.7);
+                }
+            }
+        }
+        // 陨星工作室-3
+        #QY010103004560{
+            .title{
+                left: unset;
+                top: 55%;
+                right: .086rem;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                    transform: scale(0.85, 0.7);
+                }
+            }
+        }
+        // 电梯样式-1
+        #QY010103005580{
+            .title{
+                left: unset;
+                right: -0.4731rem;
+            }
+        }
+        // 楼梯样式-1
+        #QY010103005681{
+            .title{
+                top: 15%;
+            }
+        }
+        // 货梯厅
+        #QY010103005782{
+            .title{
+                top: 30%;
+            }
+        }
+        // 前台
+        #QY010103005986{
+            .title{
+                top: 80%;
+            }
+        }
+        // 用户体验部
+        #QY01010300251{
+            .title{
+                top: 75%;
+                left: 37%;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+            }
+        }
+        // 行政部
+        #QY01010300260{
+            .title{
+                left: unset;
+                right: .2151rem;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+            }
+        }
+        // 单独的样式覆盖掉之前的公共样式（4层）
+        // ATC + 引擎
+        #QY010104000270{
+            .title{
+                top: unset;
+                bottom: 0;
+            }
+        }
+        // 微传播（会议室-顶部）
+        #QY010104000371{
+            .title{
+                .name{
+                    transform: scale(0.7,0.9);
+                }
+                .subtitle{
+                    transform: scale(0.5,0.65);
+                }
+            }
+        }
+        // 奥尔坦西亚、金银岛
+        #QY010104000472,#QY01010400050{
+            .title{
+                .name{
+                    transform: scale(0.45,0.9);
+                }
+            }
+        }
+        // 儒博会议室
+        #QY010104000787{
+            .title{
+                .name{
+                    transform: scale(0.7,0.9);
+                }
+            }
+        }
+        // 异界
+        #QY0101040029115{
+            .title{
+                top: 6%;
+            }
+        }
+        // 微传播（部门）
+        #QY0101040030116{
+            .title{
+                top: 45%;
+            }
+        }
+        // 灵回诗社
+        #QY0101040028114{
+            .title{
+                top: 5%;
+                left: 35%;
+            }
+        }
+        // 蓝图救援中心、琥珀工作室、优格资本（部门）、卫生间-1
+        #QY0101040032118,#QY0101040031117,#QY0101040042131,#QY0101040061159{
+            .title{
+                left: 20%;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+            }
+        }
+        // 琥珀工作室
+        #QY0101040031117{
+            .title{
+                left: 10%;
+            }
+        }
+        // Heyyo工作室
+        #QY0101040037123{
+            .title{
+                top: unset;
+                bottom: -0.0215rem;
+            }
+        }
+        // 北斗工作室、发行技术部
+        #QY0101040039125,#QY0101040040126{
+            .title{
+                top: unset;
+                bottom: -0.0968rem;
+            }
+        }
+        // 龙图游戏（客服部）
+        #QY0101040038124{
+            .title{
+                top: unset;
+                bottom: -0.2151rem;
+                .name{
+                    transform:translate(0px,5px) scale(0.85, 0.9)
+                }
+            }
+        }
+        // 商务部
+        #QY0101040036122{
+            .title{
+                top: unset;
+                bottom: -0.0538rem;
+            }
+        }
+        // 创新中心（动画组）
+        #QY0101040035121{
+            .title{
+                top: unset;
+                bottom: -0.1935rem;
+                .name{
+                    transform:translate(0px,5px) scale(0.85, 0.9)
+                }
+            }
+        }
+        // 格尔威森林
+        #QY010104001696{
+            .name{
+                transform:scale(0.65, 0.9)
+            }
+        }
+        // 儒博库房、监控室
+        #QY0101040047143,#QY0101040048144{
+            .name{
+                transform:scale(0.5, 0.9)
+            }
+        }
+        // 未知部门-5
+        #QY01010400411{
+            .title{
+                top: 45%;
+            }
+        }
+        // 未知部门-5
+        #QY01010400412{
+            .title{
+                top: 48%;
+            }
+        }
+        // 直播间1
+        #QY01010400510{
+            .title{
+                left: .1935rem;
+            }
+        }
+        // 直播间2、4、6、7、9、10
+        #QY01010400521,#QY0101040058156,#QY01010400530,#QY01010400540,#QY0101040059157,#QY0101040060158{
+            .name{
+                transform:scale(0.5, 0.9)
+            }
+        }
+        // 直播间8
+        #QY01010400550{
+            .title{
+                top: 61%;
+            }
+        }
+        // 机房
+        #QY0101040064164{
+            .title{
+                top: 20%;
+            }
+        }
+        // 微传播（部门-底部）
+        #QY01010400300{
+            .title{
+                left: unset;
+                right: .0968rem;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+            }
+        }
+        // 男浴室、女浴室
+        #QY01010400621,#QY01010400631{
+            .title{
+                left: 42%;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+            }
+        }
+        // 卫生间-2
+        #QY0101040061161{
+            .title{
+                top: 10%;
+                left: 40%;
+            }
+        }
+        // 卫生间-3
+        #QY0101040061160{
+            .title{
+                top: 38%;
+                left: 40%;
+            }
+        }
+        // 前台
+        #QY0101040065165{
+            .title{
+                top: 60%;
+                left: unset;
+                right: -30px;
+            }
+        }
+        // 鬼武
+        #QY01010400450{
+            .title{
+                top: 30%;
+                left: 10%;
+                span{
+                    width: .0215rem;
+                    white-space:unset;
+                }
+            }
+        }
+        // 聚礼1/4半圆
+        #QY01010400220{
+            border-radius: .0538rem 0 0 0;
+        }
+        // 聚英1/4半圆
+        #QY01010400230{
+            border-radius:0 .0538rem 0 0;
+        }
+        // 微传播（会议室）1/4半圆
+        #QY01010400030{
+            border-radius:.1505rem 0 0 0;
+        }
+    }
+    // 定义动画
+    @keyframes scaleAnimation {
+        to {
+            transform:scale(3);
         }
     }
 }
