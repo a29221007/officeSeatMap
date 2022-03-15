@@ -1,7 +1,8 @@
 <template>
-    <!-- 搜索和图例区域 -->
+    <!-- 上面滑动区域 -->
     <div ref="SearchLegendRef" class="search-legend">
-        <template v-if="SearchLegendContant === 'init'">
+        <!-- 1、页面加载，显示搜索框和图例 -->
+        <div class="init" v-if="SearchLegendContant === 'init'">
             <!-- 搜索框 -->
             <div ref="searchBoxRef" class="search-box"><i class="iconfont oamap-sousuo"></i><span>查找座位、人员、区域信息</span></div>
             <!-- 图例 -->
@@ -13,15 +14,17 @@
                     <span>{{item.name}}</span>
                 </div>
             </div>
-        </template>
-        <template v-if="SearchLegendContant === 'search'">
+        </div>
+        <!-- 2、点击了搜索后，显示搜索框和搜索建议列表 -->
+        <div class="search" v-if="SearchLegendContant === 'search'">
             <div class="search-input">
-                <i class="iconfont oamap-sousuo"></i>
-                <input ref="inputRef" v-model="inputValue" type="search" placeholder=" 搜索" v-on:input="handleInputSearch">
+                <i v-on:click="handleClickBack" class="iconfont oamap-zuojiantou"></i>
+                <input ref="inputRef" v-model="inputValue" type="text" placeholder=" 搜索" v-on:input="handleInputSearch">
+                <i v-if="inputValue" v-on:click="handleClickClear" class="iconfont oamap-qingchu"></i>
             </div>
-            <div class="querySearch">
+            <div class="querySearch" ref="querySearchRef" v-on:touchmove="querySearchMove">
                 <template v-if="is_none_sugges">
-                    <div class="querySearch-item" v-for="item in querySearchList" :key="item.id">
+                    <div class="querySearch-item" v-for="item in querySearchList" :key="item.id" v-on:click="handleClickQuerySearchItem()">
                         <div class="autoCompleteTemplate" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                             <!-- 第一行左边显示姓名，右边显示座位号 -->
                             <div class="oneLine">
@@ -47,9 +50,11 @@
                     <div class="is_none_sugges">暂无匹配项</div>
                 </template>
             </div>
-        </template>
+        </div>
+        <!-- 3、点击了搜索结果的某一项后，显示对应区域或座位的详细信息 -->
+
     </div>
-    <!-- 切换楼层 -->
+    <!-- 下面切换楼层区域 -->
     <div ref="FloorSwitchRef" class="floor-switch" v-if="SearchLegendContant === 'init'">
         <div :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key='item.id' v-on:touchstart="handleTouchFloor(item.lable)">{{item.name}}</div>
     </div>
@@ -94,30 +99,16 @@ export default {
         const legendRef = ref(null)
         const searchBoxRef = ref(null)
 
-        // // 记录触摸 SearchLegendRef 盒子的初始坐标 Y
-        // let touchstartPageY = 0
-        // // 记录触摸时 SearchLegendRef 盒子的初始高度 (正常高度)
-        // // let SearchLegendHeight = 0
-        // // 记录 SearchLegendRef 盒子初始的top值(页面加载时的 top 值)
-        // let SearchLegendTop = 0
-        // // 记录触摸时 SearchLegendRef 盒子的实时 Top 值
-        // let SearchLegendNowTop = 0
-        // // 记录当前屏幕的高度
-        // // let clientHeight = document.documentElement.clientHeight
-        // // SearchLegendRef 盒子的 bottom 值
-        // let SearchLegendBottom = 0
-        // // SearchLegendRef 盒子高度的最大值
-        // let SearchLegendMaxHeight = 0
-        // // SearchLegendRef 盒子高度的最小值
-        // let SearchLegendMinHeight = 0
+        // ----------------------
+        
         // 判断滑动的方向
         let flag = ''
-
-        // ----------------------
         // 记录触摸 SearchLegendRef 盒子的初始坐标 Y
         let touchstartPageY = 0
         // 记录 SearchLegendRef 盒子初始的top值(页面加载时的 top 值)
         let SearchLegendTop = 0
+        // 记录初始 SearchLegendRef 盒子的bottom值
+        let SearchLegendBottom = 0
         // 记录触摸时 SearchLegendRef 盒子的实时 Top 值
         let SearchLegendNowTop = 0
         // 记录当前屏幕的高度
@@ -126,6 +117,7 @@ export default {
         let SearchLegendMinTop = 0
         // 最大的 top 值 （也是最低端的）
         let SearchLegendMaxTop = 0
+        // 保存搜索盒子的变量
         let searchBox = null
         // 在 mounted 中给 SearchLegendRef 注册手势事件
         onMounted(() => {
@@ -137,24 +129,22 @@ export default {
             SearchLegendRef.value.addEventListener('touchend', SearchLegendTouchendFn)
 
             // ---- 变量的计算
-            // // 计算 SearchLegendRef 盒子的 bottom 值
-            // SearchLegendBottom = clientHeight - SearchLegendRef.value.offsetHeight - SearchLegendRef.value.offsetTop
-            // // 计算 SearchLegendRef 盒子高度的最大值
-            // SearchLegendMaxHeight = Math.ceil(clientHeight * 0.9) - SearchLegendBottom
-            // // 计算 SearchLegendRef 盒子高度的最小值
-            // SearchLegendMinHeight = FloorSwitchRef.value.offsetHeight - SearchLegendBottom + legendRef.value.offsetTop
-            // // 计算 SearchLegendRef 盒子高度的正常值
-            // SearchLegendHeight = SearchLegendRef.value.offsetHeight
             // 计算 top 值,并将盒子的高度取消，设置为top值
             SearchLegendTop = SearchLegendRef.value.offsetTop
             SearchLegendRef.value.style.height = 'unset'
             SearchLegendRef.value.style.top = SearchLegendTop + 'px'
-            // 计算最小的top值
-            SearchLegendMinTop = clientHeight * 0.9
+
+
             // 计算最大的top值
-            SearchLegendMaxTop = SearchLegendTop + legendRef.value.offsetHeight
+            // 计算初始 SearchLegendRef 盒子的bottom值
+            SearchLegendBottom = clientHeight - SearchLegendRef.value.offsetTop - SearchLegendRef.value.offsetHeight
+            // 计算重叠部分
+            let repeatHeight = FloorSwitchRef.value.offsetHeight - SearchLegendBottom
+            // 计算最大的top值
+            SearchLegendMaxTop = SearchLegendTop + (SearchLegendRef.value.offsetHeight - repeatHeight - legendRef.value.offsetTop)
+
             // 计算最小的top值
-            SearchLegendMinTop = clientHeight * 0.15
+            SearchLegendMinTop = clientHeight * 0.05
             searchBox = new AlloyFinger(searchBoxRef.value,{})
             searchBox.on('tap',handleTapSearchBox)
         })
@@ -168,6 +158,9 @@ export default {
                 SearchLegendNowTop = SearchLegendRef.value.offsetTop
             }
         }
+        // 实现一个互锁
+        let b = true // 管上
+        let c = true // 管下
         // SearchLegend 盒子 touchmove 事件的处理函数
         function SearchLegendTouchmoveFn(e) {
             SearchLegendRef.value.style.transition = `none`
@@ -175,18 +168,27 @@ export default {
                 // 滑动的变量
                 const value = e.changedTouches[0].pageY - touchstartPageY
                 // 判断滑动的方向
-                if(value >= 0){
+                if(value >= 0 && c){
                     flag = 'down'
+                    b = true
                     // 如果大于0，则说明是向下滑
                     // 向下滑动时，如果 SearchLegend 盒子的 top 值比最大的还大，则停止
-                    if(SearchLegendRef.value.offsetTop >= SearchLegendMaxTop) return
-                }else{
+                    if(SearchLegendRef.value.offsetTop >= SearchLegendMaxTop) {
+                        SearchLegendRef.value.style.top = SearchLegendMaxTop + 'px'
+                        return c = false
+                    }
+                    SearchLegendRef.value.style.top = SearchLegendRef.value.offsetTop + value + 'px'
+                }else if(value < 0 && b){
                     flag = 'up'
+                    c = true
                     // 小于0，则说明是向上滑动
                     // 向上滑动时，如果 SearchLegend 盒子的 top 值比最小的还小，则停止
-                    if(SearchLegendRef.value.offsetTop <= SearchLegendMinTop) return
+                    if(SearchLegendRef.value.offsetTop < SearchLegendMinTop) {
+                        SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
+                        return b = false
+                    }
+                    SearchLegendRef.value.style.top = SearchLegendRef.value.offsetTop + value + 'px'
                 }
-                SearchLegendRef.value.style.top = SearchLegendRef.value.offsetTop + value + 'px'
                 touchstartPageY = e.changedTouches[0].pageY
             }
         }
@@ -219,12 +221,11 @@ export default {
                 }
             }else if(SearchLegendContant.value === 'search'){
                 if(flag === 'down'){
-                    SearchLegendContant.value = 'init'
-                    SearchLegendRef.value.style.top = SearchLegendTop + 'px'
-                    nextTick(() => {
-                        searchBox = new AlloyFinger(searchBoxRef.value,{})
-                        searchBox.on('tap',handleTapSearchBox)
-                    })
+                    // 向下滑动
+                    handleClickBack()
+                }else{
+                    // 向上滑动
+                    SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
                 }
             }
         }
@@ -234,7 +235,6 @@ export default {
         const inputRef = ref(null)
         // 点击搜索的盒子的处理函数
         function handleTapSearchBox() {
-            console.log(123)
             // 将 SearchLegendRef 盒子的bottom值设置为0，置底
             SearchLegendRef.value.style.bottom = 0
             // 给 SearchLegendRef 盒子添加过渡效果
@@ -261,9 +261,12 @@ export default {
             is_none_sugges.value = true
             clearTimeout(searchTimer)
             searchTimer = setTimeout(() => {
+                if(!inputValue.value){
+                    return querySearchList.value = []
+                }
                 // 写搜索的逻辑
                 const results = store.getters.AllSeatList.filter(item => {
-                    return (item.name && item.name.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase())) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase())) || (item.code && item.code.toUpperCase().includes(queryString.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase()))
+                    return (item.name && item.name.replace(/\s/g,"").toUpperCase().includes(inputValue.value.toUpperCase())) || (item.seat_id && item.seat_id.includes(inputValue.value.toUpperCase())) || (item.code && item.code.toUpperCase().includes(inputValue.value.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(inputValue.value.toUpperCase()))
                 })
                 // 去除多个重复的项
                 // 保存关于座位的(这里面的值都是唯一的)
@@ -292,6 +295,35 @@ export default {
                 }
             },300)
         }
+        // 点击清除按钮
+        function handleClickClear() {
+            inputValue.value = ''
+            querySearchList.value = []
+            is_none_sugges.value = true
+        }
+        // 点击返回按钮
+        function handleClickBack() {
+            // 向下滑动
+            SearchLegendContant.value = 'init'
+            SearchLegendRef.value.style.top = SearchLegendTop + 'px'
+            // SearchLegendRef.value.style.bottom = SearchLegendBottom + 'px'
+            is_none_sugges.value = true
+            inputValue.value = ''
+            querySearchList.value = []
+            nextTick(() => {
+                searchBox = new AlloyFinger(searchBoxRef.value,{})
+                searchBox.on('tap',handleTapSearchBox)
+            })
+        }
+        // 绑定 touchmove 事件,将事件冒泡阻止掉，防止下滑时，触发返回事件
+        function querySearchMove(e){
+            // if(!inputValue.value || !is_none_sugges.value) return
+            e.stopPropagation()
+        }
+        // 点击搜索建议列表的某一项
+        function handleClickQuerySearchItem(){
+
+        }
         return {
             AllArea,
             handleTouchFloor,
@@ -305,7 +337,12 @@ export default {
             inputValue,
             inputRef,
             handleInputSearch,
-            querySearchList
+            querySearchList,
+            is_none_sugges,
+            handleClickClear,
+            handleClickBack,
+            querySearchMove,
+            handleClickQuerySearchItem
         }
     }
 }
@@ -324,73 +361,124 @@ export default {
     height: 2.7957rem;
     border-radius: 10px 10px 0 0;
     padding: .3226rem;
-    .search-input{
+    // 页面初始化时的样式
+    .init{
         width: 100%;
-        height: .8602rem;
-        background-color: #262729;
-        border-radius: 7px;
-        display: flex;
-        align-items: center;
-        margin-bottom: .2688rem;
-        .oamap-sousuo{
-            color: #f8f9fa;
-            font-size: .4301rem;
-            margin: 0 .3226rem 0 .3226rem;
-        }
-        input{
+        height: 100%;
+        .search-box{
             width: 100%;
-            height: .4301rem;
-            background-color: unset;
-            border: none;
-            caret-color: skyblue;
-            &::-webkit-input-placeholder{
-                color: #b1b2b4;
-            }
-        }
-    }
-    .search-box{
-        width: 100%;
-        height: .8602rem;
-        background-color: #262729;
-        border-radius: 7px;
-        display: flex;
-        align-items: center;
-        margin-bottom: .2688rem;
-        .oamap-sousuo{
-            color: #f8f9fa;
-            font-size: .4301rem;
-            margin: 0 .3226rem 0 .3226rem;
-        }
-        span{
-            color: #b1b2b4;
-            font-size: .4301rem;
-        }
-    }
-
-    .legend{
-        display: flex;
-        justify-content: space-between;
-        .legend-item{
-            width: 25%;
-            height: 1.0753rem;
+            height: .8602rem;
+            background-color: #262729;
+            border-radius: 7px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            .legend-image{
-                width: .4301rem;
-                height: .4301rem;
-                border-radius: 50%;
-                img{
-                    width: 100%;
-                }
+            margin-bottom: .2688rem;
+            .oamap-sousuo{
+                color: #f8f9fa;
+                font-size: .4301rem;
+                margin: 0 .3226rem 0 .3226rem;
             }
             span{
-                color: #fff;
-                font-size: .2151rem;
+                color: #b1b2b4;
+                font-size: .4301rem;
             }
-            &.legendItemActive{
-                transform: scale(1.4);
+        }
+    
+        .legend{
+            display: flex;
+            justify-content: space-between;
+            .legend-item{
+                width: 25%;
+                height: 1.0753rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                .legend-image{
+                    width: .4301rem;
+                    height: .4301rem;
+                    border-radius: 50%;
+                    img{
+                        width: 100%;
+                    }
+                }
+                span{
+                    color: #fff;
+                    font-size: .2151rem;
+                }
+                &.legendItemActive{
+                    transform: scale(1.4);
+                }
+            }
+        }
+    }
+    // 搜索框以及搜索建议列表的样式
+    .search{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        .search-input{
+            width: 100%;
+            height: .8602rem;
+            background-color: #262729;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            margin-bottom: .2688rem;
+            .oamap-zuojiantou,.oamap-qingchu{
+                color: #f8f9fa;
+                font-size: .4301rem;
+                margin: 0 .3226rem 0 .3226rem;
+            }
+            input{
+                width: 100%;
+                height: .4301rem;
+                background-color: unset;
+                border: none;
+                caret-color: skyblue;
+                color: #f8f9fb;
+                &::-webkit-input-placeholder{
+                    color: #b1b2b4;
+                }
+            }
+        }
+        .querySearch{
+            width: 100%;
+            flex: 1;
+            overflow: auto;
+            .querySearch-item{
+                padding: .2151rem;
+                & ~ .querySearch-item {
+                    border-top: 1px solid #30322f;
+                }
+                .autoCompleteTemplate{
+                    // 第一行
+                    .oneLine{
+                        display: flex;
+                        justify-content: space-between;
+                        color: #f4f4f4;
+                    }
+                    // 第二行
+                    .twoLine{
+                        color: #a0a0a0;
+                        overflow:hidden;
+                        text-overflow:ellipsis;
+                        white-space:nowrap;
+                    }
+                    .title{
+                        font-size:.3763rem;
+                    }
+                    .content{
+                        font-size: .3226rem;
+                    }
+                }
+            }
+            .is_none_sugges{
+                font-size: .3763rem;
+                color: #e8e8e8;
+                text-align: center;
+                margin-top: .2151rem;
             }
         }
     }
