@@ -44,14 +44,14 @@
                 </template>
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                     <!-- 座位 -->
-                    <div class="seat" :class="{'active':current === item.seat_id}" v-on:touchstart="handleTapSeat(item,$event)" :id="item.seat_id" :style="seatItemStyle(item)">
+                    <div class="seat" :class="{'active':current === item.seat_id}" v-on:click="handleClickSeat(item,$event)" :id="item.seat_id" :style="seatItemStyle(item)">
                     </div>
                 </template>
             </template>
         </div>
     </div>
     <!-- 底部搜索组件 -->
-    <Search></Search>
+    <Search v-on:setCurrentAreaCode='setCurrentAreaCode'></Search>
 </template>
 
 <script>
@@ -182,11 +182,17 @@ export default {
         }
         let seatData = reactive({
             // 人员信息座位集合
-            mapList: computed(() => store.getters.FilterSeatListByLegend),
+            mapList: computed(() => store.getters.FilterSeatListByLegend ? store.getters.FilterSeatListByLegend : []),
             // 当前选中的座位
             current:0,
             // 当前选中的区域
             currentAreaCode:'',
+            // 设置当前选中的区域
+            setCurrentAreaCode({code, scaleX, scaleY}) {
+                seatData.currentAreaCode = code
+                scale_init_x = scaleX
+                scale_init_y = scaleY
+            },
             // 设置每一个座位的样式
             seatItemStyle(seatItem) {
                 return {
@@ -196,7 +202,7 @@ export default {
                 }
             },
             // 点击每一个座位
-            handleTapSeat(seatItem,$event){
+            handleClickSeat(seatItem,$event){
                 // 阻止冒泡
                 $event.stopPropagation()
                 // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
@@ -246,6 +252,7 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
+    background-color: #f3f4f6;
     // 地图盒子
     .map-box{
         position: absolute;

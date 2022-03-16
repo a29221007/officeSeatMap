@@ -6,6 +6,8 @@
 </template>
 
 <script>
+// 调试工具
+eruda.init()
 import { provide,ref } from 'vue'
 // 导入PC端布局组件PCLayOut
 import PCLayOut from './views/layout'

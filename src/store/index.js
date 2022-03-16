@@ -105,15 +105,15 @@ export default createStore({
     getters: {
         // 3层的座位人员信息和区域会议室信息集合
         seatAndAreaListOfThree(state){
-            return state.seatListOfthree.concat(state.areaListOfThree)
+            return state.seatListOfthree && state.seatListOfthree.concat(state.areaListOfThree)
         },
         // 4层的座位人员信息和区域会议室信息集合
         seatAndAreaListOfFour(state){
-            return state.seatListOfFour.concat(state.areaListOfFour)
+            return state.seatListOfFour && state.seatListOfFour.concat(state.areaListOfFour)
         },
         // 全部座位人员以及区域信息集合
         AllSeatList(state,getter){
-            return getter.seatAndAreaListOfThree.concat(getter.seatAndAreaListOfFour)
+            return getter.seatAndAreaListOfThree && getter.seatAndAreaListOfThree.concat(getter.seatAndAreaListOfFour)
         },
         // 根据currentFloor得到当前的楼层（或地区）的数值
         floor(state) {

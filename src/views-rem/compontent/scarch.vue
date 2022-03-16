@@ -24,7 +24,7 @@
             </div>
             <div class="querySearch" ref="querySearchRef" v-on:touchmove="querySearchMove">
                 <template v-if="is_none_sugges">
-                    <div class="querySearch-item" v-for="item in querySearchList" :key="item.id" v-on:click="handleClickQuerySearchItem()">
+                    <div class="querySearch-item" v-for="item in querySearchList" :key="item.id" v-on:click="handleClickQuerySearchItem(item)">
                         <div class="autoCompleteTemplate" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                             <!-- 第一行左边显示姓名，右边显示座位号 -->
                             <div class="oneLine">
@@ -52,11 +52,13 @@
             </div>
         </div>
         <!-- 3、点击了搜索结果的某一项后，显示对应区域或座位的详细信息 -->
-
+        <div class="Seat-Area-Information" v-if="SearchLegendContant === 'information'">
+            区域或座位的详细信息
+        </div>
     </div>
     <!-- 下面切换楼层区域 -->
     <div ref="FloorSwitchRef" class="floor-switch" v-if="SearchLegendContant === 'init'">
-        <div :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key='item.id' v-on:touchstart="handleTouchFloor(item.lable)">{{item.name}}</div>
+        <div :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key='item.id' v-on:click="handleClickFloor(item.lable)">{{item.name}}</div>
     </div>
 </template>
 
@@ -64,9 +66,13 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import AlloyFinger from 'alloyfinger'
+import { Dialog, Toast } from 'vant'
+// 导入点击搜索建议列表中座位的复用逻辑
+import searchEnterSeat from '../rem-hooks/search_enter_seat'
 export default {
     name:'search',
-    setup() {
+    emits:['setCurrentAreaCode'],
+    setup(prop,{emit}) {
         // 创建 store 实例
         const store = useStore()
 
@@ -76,7 +82,7 @@ export default {
             {id:1,name:'4楼',lable:'four'}
         ]
         // 触摸切换楼层（或地区）触发的函数
-        function handleTouchFloor(floor) {
+        function handleClickFloor(floor) {
             // 设置当前选中的楼层（或地区）
             store.commit('setCurrentFloor',floor)
         }
@@ -152,9 +158,11 @@ export default {
         function SearchLegendTouchstartFn(e) {
             // 首先判断作用在当前元素上的手指列表长度
             if(e.changedTouches.length === 1){
+                // 触摸时，将方向的变量重置为 '' 空
+                flag = ''
                 // 如果作用在当前事件的手指列表长度为1,记录初始坐标
                 touchstartPageY = e.changedTouches[0].pageY
-                // SearchLegendNowHeight = SearchLegendRef.value.offsetHeight
+                // 记录触摸式的当前的 top 值
                 SearchLegendNowTop = SearchLegendRef.value.offsetTop
             }
         }
@@ -221,6 +229,7 @@ export default {
                 }
             }else if(SearchLegendContant.value === 'search'){
                 if(flag === 'down'){
+                    console.log('touchend');
                     // 向下滑动
                     handleClickBack()
                 }else{
@@ -306,7 +315,7 @@ export default {
             // 向下滑动
             SearchLegendContant.value = 'init'
             SearchLegendRef.value.style.top = SearchLegendTop + 'px'
-            // SearchLegendRef.value.style.bottom = SearchLegendBottom + 'px'
+            SearchLegendRef.value.style.bottom = SearchLegendBottom + 'px'
             is_none_sugges.value = true
             inputValue.value = ''
             querySearchList.value = []
@@ -317,16 +326,176 @@ export default {
         }
         // 绑定 touchmove 事件,将事件冒泡阻止掉，防止下滑时，触发返回事件
         function querySearchMove(e){
-            // if(!inputValue.value || !is_none_sugges.value) return
+            if(!inputValue.value || !is_none_sugges.value) return
             e.stopPropagation()
         }
         // 点击搜索建议列表的某一项
-        function handleClickQuerySearchItem(){
+        function handleClickQuerySearchItem(item){
+            if(!is_none_sugges.value) return
+            // 判断搜索的类型，是座位还是区域
+            if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
+                // 如果搜索的是座位，则执行下面的逻辑
+                const { depart, name, seat_id } = item
+                // 选中某一项，首先判断该员工的座位，是否在当前楼层
+                if(item.floor == store.getters.floor){
+                    // 将控制变量 SearchLegendContant 设置为 information
+                    SearchLegendContant.value = 'information'
+                    // 调用点击座位建议列表项的逻辑
+                    searchEnterSeat(SearchLegendRef.value, seat_id, SearchLegendTop)
+                }else{
+                    // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
+                    Dialog.confirm({
+                        title: '提示',
+                        message:`查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
+                    }).then(() => {
+                        // 用户如果确认跳转
+                        let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                        handleClickFloor(pushFloor)
+                        nextTick(() => {
+                            // 将控制变量 SearchLegendContant 设置为 information
+                            SearchLegendContant.value = 'information'
+                            // 调用点击座位建议列表项的逻辑
+                            searchEnterSeat(SearchLegendRef.value, seat_id, SearchLegendTop)
+                            Toast.success('切换成功')
+                        })
+                    }).catch(() => {
+                        // 用户如果取消跳转
+                        Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
+                    })
+                }
+                inputValue.value = name
+            }else{
+                // 如果是区域，执行先的逻辑
+                if(item.floor == store.getters.floor){
+                    // 将控制变量 SearchLegendContant 设置为 information
+                    SearchLegendContant.value = 'information'
+                    // 如果搜索的区域在当前楼层
+                    // 1、获取区域 code 对应的元素DOM，将其高亮
+                    searchArea(item.code)
+                }else{
+                    // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
+                    Dialog.confirm({
+                        title: '提示',
+                        message:`查找的区域信息不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
+                    }).then(() => {
+                        // 用户如果确认跳转
+                        let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                        handleClickFloor(pushFloor)
+                        nextTick(() => {
+                            searchArea(item.code)
+                            Toast.success('切换成功')
+                        })
+                    }).catch(() => {
+                        // 用户如果取消跳转
+                        Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
+                    })
+                }
+                inputValue.value = item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")
+            }
+        }
+        // 区域搜索公共的方法
+        function searchArea(code){
+            // 0、搜索区域时，将座位的提示框关闭
 
+            // 1、获取code的所有区域
+            let elList = [...document.querySelectorAll(`.${code}`)]
+            // 2、找出同一个code区域的所有宽、高、以及位置信息
+            let code_Array = elList.reduce((result,item) => {
+                return result.concat({
+                    left:item.offsetLeft,
+                    top:item.offsetTop,
+                    width:item.offsetWidth,
+                    height:item.offsetHeight
+                })
+            },[])
+            // 3、确定code编码区域的整体大小以及整体区域的位置
+            // 获取code_Array中最大left、最小left、最大top、最小top的值，以及最大left项的width、最大top的height
+            let maxLeft = 0 // 最大left
+            let minLeft = 0 // 最小left
+            let maxTop = 0 // 最大top
+            let minTop = 0 // 最小top
+            code_Array.forEach((item,index) => {
+                const {left, top} = item
+                if(index === 0){
+                    maxLeft = left
+                    minLeft = left
+                    maxTop = top
+                    minTop = top
+                }else{
+                    if(left > maxLeft) maxLeft = left
+                    if(left < minLeft) minLeft = left
+                    if(top > maxTop) maxTop = top
+                    if(top < minTop) minTop = top
+                }    
+            })
+            let maxLeftWidth = code_Array.find(item => item.left === maxLeft).width // 最大left项的width
+            let maxLeftHeight = code_Array.find(item => item.top === maxTop).height // 最大top的height
+
+            /**
+             * 4、计算
+             * 整体区域大小的宽度 = 大left - 小left + 大left的width
+             * 整体区域大小的高度 = 大top - 小top + 大top的height
+             * 整体区域的位置 top = 小top
+             * 整体区域的位置 left = 小left
+             * 整体区域的缩放比例
+             * mapBox的宽度 / 整体区域的宽度 （值不能大于3）
+             * mapBox的高度 / 整体区域的高度 （值不能大于3）
+            */
+            let currentAreaWidth = maxLeft - minLeft + maxLeftWidth // 整体区域大小的宽度
+            let currentAreaHeight = maxTop - minTop + maxLeftHeight // 整体区域大小的高度
+            // 5、获取mapBox元素
+            let mapBox = document.querySelector('.map-box')
+            // 6、设置过度属性，以及过渡时间
+            mapBox.style.transition = 'all 1s'
+            // 7、计算缩放比例
+            let scaleX = ((mapBox.offsetWidth) / currentAreaWidth > 3 ? 3 : (mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth) - 0.1
+            let scaleY = ((mapBox.offsetHeight) / currentAreaHeight > 3 ? 3 : (mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight) - 0.1
+            // 7.1、判断两个缩放比例差值绝对值是否大于1
+            if(Math.abs(scaleX - scaleY) > 1){
+                // 如果大于1，则将将两个缩放的比例取最小的那一个
+                const minScale = scaleX > scaleY ? scaleY : scaleX
+                scaleX = minScale
+                scaleY = minScale
+            }
+            // 8、计算被搜索的区域在map-container中的距离
+            let mapContainer_X = minLeft + (currentAreaWidth / 2) + mapBox.offsetLeft
+            let mapContainer_Y = minTop + (currentAreaHeight / 2) + mapBox.offsetTop
+            // 9、得到MapContainerRef盒子的宽、高 / 2 (得到一半的值)
+            let MapContainerBox = document.querySelector('.body-container')
+            MapContainerBox.offsetWidth / 2
+            MapContainerBox.offsetHeight / 2
+            // 10、得到了视图应该移动的距离
+            let valueX = mapContainer_X - (MapContainerBox.offsetWidth / 2)
+            let valueY = mapContainer_Y - (MapContainerBox.offsetHeight / 2)
+            // 12、设置MapBoxRef盒子的位置
+            mapBox.style.left = (mapBox.offsetLeft - valueX) + 'px'
+            mapBox.style.top = (mapBox.offsetTop - valueY) + 'px'
+            // 13、设置缩放的中心点，放大地图
+            mapBox.style.transformOrigin = `${minLeft + (currentAreaWidth / 2)}px ${minTop + (currentAreaHeight / 2)}px`
+            mapBox.style.transform = `scale(${scaleX},${scaleY})`
+            
+            
+            // 11、向父组件发布事件，设置盒子的高亮状态
+            emit('setCurrentAreaCode',{
+                code,
+                scaleX,
+                scaleY
+            })
+        }
+        // 
+        function fn(){
+            // 将控制变量 SearchLegendContant 设置为 information
+            SearchLegendContant.value = 'information'
+            // 给 SearchLegendRef 盒子添加过渡效果
+            SearchLegendRef.value.style.transition = `all 0.5s`
+            // 将 SearchLegendRef 盒子的bottom值设置为0，置底
+            SearchLegendRef.value.style.bottom = 0
+            // 将 SearchLegendRef 盒子的高度设置为最大值
+            SearchLegendRef.value.style.top = SearchLegendTop + 'px'
         }
         return {
             AllArea,
-            handleTouchFloor,
+            handleClickFloor,
             legendList,
             handleClickLegend,
             SearchLegendRef,
@@ -361,7 +530,7 @@ export default {
     height: 2.7957rem;
     border-radius: 10px 10px 0 0;
     padding: .3226rem;
-    // 页面初始化时的样式
+    // 1、页面初始化时的样式
     .init{
         width: 100%;
         height: 100%;
@@ -412,7 +581,7 @@ export default {
             }
         }
     }
-    // 搜索框以及搜索建议列表的样式
+    // 2、搜索框以及搜索建议列表的样式
     .search{
         width: 100%;
         height: 100%;
@@ -481,6 +650,11 @@ export default {
                 margin-top: .2151rem;
             }
         }
+    }
+    // 3、座位或区域的详细信息盒子样式
+    .Seat-Area-Information{
+        width: 100%;
+        height: 100%;
     }
 }
 .floor-switch{
