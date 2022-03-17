@@ -9,8 +9,6 @@
 */
 
 function searchArea(flag, code) {
-    // 0、搜索区域时，将座位的提示框关闭
-
     // 1、获取code的所有区域
     let elList = [...document.querySelectorAll(`.${code}`)]
     // 2、找出同一个code区域的所有宽、高、以及位置信息
@@ -62,8 +60,8 @@ function searchArea(flag, code) {
     // 6、设置过度属性，以及过渡时间
     mapBox.style.transition = 'all 1s'
     // 7、计算缩放比例
-    let scaleX = ((mapBox.offsetWidth) / currentAreaWidth > 3 ? 3 : (mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth) - 0.1
-    let scaleY = ((mapBox.offsetHeight) / currentAreaHeight > 3 ? 3 : (mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight) - 0.1
+    let scaleX = ((mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth > 3 ? 3 : (mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth) - 0.1
+    let scaleY = ((mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight > 3 ? 3 : (mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight) - 0.1
     // 7.1、判断两个缩放比例差值绝对值是否大于1
     if(Math.abs(scaleX - scaleY) > 1){
         // 如果大于1，则将将两个缩放的比例取最小的那一个
@@ -75,16 +73,16 @@ function searchArea(flag, code) {
     let mapContainer_X = minLeft + (currentAreaWidth / 2) + mapBox.offsetLeft
     let mapContainer_Y = minTop + (currentAreaHeight / 2) + mapBox.offsetTop
     // 9、得到MapContainerRef盒子的宽、高 / 2 (得到一半的值)
-    let MapContainerBox = document.querySelector('.body-container')
+    let MapContainerBox = document.querySelector(flag === 'pc' ? '.map-container' : '.body-container')
     MapContainerBox.offsetWidth / 2
     MapContainerBox.offsetHeight / 2
     // 10、得到了视图应该移动的距离
     let valueX = mapContainer_X - (MapContainerBox.offsetWidth / 2)
     let valueY = mapContainer_Y - (MapContainerBox.offsetHeight / 2)
-    // 12、设置MapBoxRef盒子的位置
+    // 11、设置MapBoxRef盒子的位置
     mapBox.style.left = (mapBox.offsetLeft - valueX) + 'px'
     mapBox.style.top = (mapBox.offsetTop - valueY) + 'px'
-    // 13、设置缩放的中心点，放大地图
+    // 12、设置缩放的中心点，放大地图
     mapBox.style.transformOrigin = `${minLeft + (currentAreaWidth / 2)}px ${minTop + (currentAreaHeight / 2)}px`
     mapBox.style.transform = `scale(${scaleX},${scaleY})`
 }

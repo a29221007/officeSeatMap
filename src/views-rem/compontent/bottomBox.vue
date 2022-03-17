@@ -2,10 +2,10 @@
     <!-- 上面滑动区域 -->
     <div ref="SearchLegendRef" class="search-legend">
         <!-- 1、页面加载，显示搜索框和图例 -->
-        <div class="init" v-if="SearchLegendContant === 'init'">
-            <!-- 搜索框 -->
-            <div ref="searchBoxRef" class="search-box"><i class="iconfont oamap-sousuo"></i><span>查找座位、人员、区域信息</span></div>
-            <!-- 图例 -->
+        <!-- <div class="init" v-if="SearchLegendContant === 'init'">
+            搜索框
+            <div class="search-box" v-on:click="handleClickSearchBox"><i class="iconfont oamap-sousuo"></i><span>查找座位、人员、区域信息</span></div>
+            图例
             <div ref="legendRef" class="legend">
                 <div class="legend-item" :class="{'legendItemActive':item.type === $store.state.currentLegend}" v-for="item in legendList" :key="item.id" v-on:click="handleClickLegend(item.type)">
                     <div class="legend-image">
@@ -14,9 +14,9 @@
                     <span>{{item.name}}</span>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!-- 2、点击了搜索后，显示搜索框和搜索建议列表 -->
-        <div class="search" v-if="SearchLegendContant === 'search'">
+        <!-- <div class="search" v-if="SearchLegendContant === 'search'">
             <div class="search-input">
                 <i v-on:click="handleClickBack" class="iconfont oamap-zuojiantou"></i>
                 <input ref="inputRef" v-model="inputValue" type="text" placeholder=" 搜索" v-on:input="handleInputSearch">
@@ -26,20 +26,20 @@
                 <template v-if="is_none_sugges">
                     <div class="querySearch-item" v-for="item in querySearchList" :key="item.id" v-on:click="handleClickQuerySearchItem(item)">
                         <div class="autoCompleteTemplate" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
-                            <!-- 第一行左边显示姓名，右边显示座位号 -->
+                            第一行左边显示姓名，右边显示座位号
                             <div class="oneLine">
                                 <span><span class="title">座位人员名称：</span><span class="content">{{item.name || '暂无数据'}}</span></span>
                                 <span><span class="title">座位号：</span><span class="content">{{item.seat_id}}</span></span>
                             </div>
-                            <!-- 第二行显示该座位所在部门 -->
+                            第二行显示该座位所在部门
                             <div class="twoLine"><span class="title">部门：</span><span class="content">{{item.depart || '暂无数据'}}</span></div>
                         </div>
                         <div class="autoCompleteTemplate" v-if="item.type === 1 || item.type === 2 || item.type === 3">
-                            <!-- 第一行左边显示姓名，右边显示座位号 -->
+                            第一行左边显示姓名，右边显示座位号
                             <div class="oneLine">
                                 <span><span class="title">区域名称：</span><span class="content">{{item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") || '暂无数据'}}</span></span>
                             </div>
-                            <!-- 第二行显示该座位所在部门 -->
+                            第二行显示该座位所在部门
                             <div class="twoLine">
                                 <span><span class="title">区域编号：</span><span class="content">{{item.code}}</span></span>
                             </div>
@@ -50,11 +50,11 @@
                     <div class="is_none_sugges">暂无匹配项</div>
                 </template>
             </div>
-        </div>
+        </div> -->
         <!-- 3、点击了搜索结果的某一项后，显示对应区域或座位的详细信息 -->
-        <div class="Seat-Area-Information" v-if="SearchLegendContant === 'information'">
+        <!-- <div class="Seat-Area-Information" v-if="SearchLegendContant === 'information'">
             区域或座位的详细信息
-        </div>
+        </div> -->
     </div>
     <!-- 下面切换楼层区域 -->
     <div ref="FloorSwitchRef" class="floor-switch" v-if="SearchLegendContant === 'init'">
@@ -65,12 +65,14 @@
 <script>
 import { ref, onMounted, nextTick } from 'vue'
 import { useStore } from 'vuex'
-import AlloyFinger from 'alloyfinger'
 import { Dialog, Toast } from 'vant'
-// 导入点击搜索建议列表中座位的复用逻辑
-import searchEnterSeat from '../rem-hooks/search_enter_seat'
+// 导入子组件
+import Init from './bottomBox-init'
+import Search from './bottomBox-search'
+import Information from './bottomBox-Information'
+// 导入
 export default {
-    name:'search',
+    name:'bottomBox',
     emits:['setCurrentAreaCode'],
     setup(prop,{emit}) {
         // 创建 store 实例
@@ -103,7 +105,6 @@ export default {
         const SearchLegendRef = ref(null)
         const FloorSwitchRef = ref(null)
         const legendRef = ref(null)
-        const searchBoxRef = ref(null)
 
         // ----------------------
         
@@ -123,8 +124,6 @@ export default {
         let SearchLegendMinTop = 0
         // 最大的 top 值 （也是最低端的）
         let SearchLegendMaxTop = 0
-        // 保存搜索盒子的变量
-        let searchBox = null
         // 在 mounted 中给 SearchLegendRef 注册手势事件
         onMounted(() => {
             // 1、注册 touchstart 事件
@@ -140,7 +139,6 @@ export default {
             SearchLegendRef.value.style.height = 'unset'
             SearchLegendRef.value.style.top = SearchLegendTop + 'px'
 
-
             // 计算最大的top值
             // 计算初始 SearchLegendRef 盒子的bottom值
             SearchLegendBottom = clientHeight - SearchLegendRef.value.offsetTop - SearchLegendRef.value.offsetHeight
@@ -151,8 +149,6 @@ export default {
 
             // 计算最小的top值
             SearchLegendMinTop = clientHeight * 0.05
-            searchBox = new AlloyFinger(searchBoxRef.value,{})
-            searchBox.on('tap',handleTapSearchBox)
         })
         // SearchLegend 盒子 touchstart 事件的处理函数
         function SearchLegendTouchstartFn(e) {
@@ -229,7 +225,6 @@ export default {
                 }
             }else if(SearchLegendContant.value === 'search'){
                 if(flag === 'down'){
-                    console.log('touchend');
                     // 向下滑动
                     handleClickBack()
                 }else{
@@ -243,7 +238,7 @@ export default {
         let SearchLegendContant = ref('init')
         const inputRef = ref(null)
         // 点击搜索的盒子的处理函数
-        function handleTapSearchBox() {
+        function handleClickSearchBox() {
             // 将 SearchLegendRef 盒子的bottom值设置为0，置底
             SearchLegendRef.value.style.bottom = 0
             // 给 SearchLegendRef 盒子添加过渡效果
@@ -319,10 +314,6 @@ export default {
             is_none_sugges.value = true
             inputValue.value = ''
             querySearchList.value = []
-            nextTick(() => {
-                searchBox = new AlloyFinger(searchBoxRef.value,{})
-                searchBox.on('tap',handleTapSearchBox)
-            })
         }
         // 绑定 touchmove 事件,将事件冒泡阻止掉，防止下滑时，触发返回事件
         function querySearchMove(e){
@@ -340,8 +331,11 @@ export default {
                 if(item.floor == store.getters.floor){
                     // 将控制变量 SearchLegendContant 设置为 information
                     SearchLegendContant.value = 'information'
-                    // 调用点击座位建议列表项的逻辑
-                    searchEnterSeat(SearchLegendRef.value, seat_id, SearchLegendTop)
+                    // 将 SearchLegendRef 盒子的bottom值设置为0，置底
+                    let el = document.getElementById(seat_id)
+                    el.click()
+                    SearchLegendRef.value.style.bottom = 0
+                    SearchLegendRef.value.style.top = SearchLegendTop + 'px'
                 }else{
                     // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                     Dialog.confirm({
@@ -354,8 +348,11 @@ export default {
                         nextTick(() => {
                             // 将控制变量 SearchLegendContant 设置为 information
                             SearchLegendContant.value = 'information'
-                            // 调用点击座位建议列表项的逻辑
-                            searchEnterSeat(SearchLegendRef.value, seat_id, SearchLegendTop)
+                            // 将 SearchLegendRef 盒子的bottom值设置为0，置底
+                            let el = document.getElementById(seat_id)
+                            el.click()
+                            SearchLegendRef.value.style.bottom = 0
+                            SearchLegendRef.value.style.top = SearchLegendTop + 'px'
                             Toast.success('切换成功')
                         })
                     }).catch(() => {
@@ -482,17 +479,6 @@ export default {
                 scaleY
             })
         }
-        // 
-        function fn(){
-            // 将控制变量 SearchLegendContant 设置为 information
-            SearchLegendContant.value = 'information'
-            // 给 SearchLegendRef 盒子添加过渡效果
-            SearchLegendRef.value.style.transition = `all 0.5s`
-            // 将 SearchLegendRef 盒子的bottom值设置为0，置底
-            SearchLegendRef.value.style.bottom = 0
-            // 将 SearchLegendRef 盒子的高度设置为最大值
-            SearchLegendRef.value.style.top = SearchLegendTop + 'px'
-        }
         return {
             AllArea,
             handleClickFloor,
@@ -501,7 +487,6 @@ export default {
             SearchLegendRef,
             FloorSwitchRef,
             legendRef,
-            searchBoxRef,
             SearchLegendContant,
             inputValue,
             inputRef,
@@ -511,7 +496,8 @@ export default {
             handleClickClear,
             handleClickBack,
             querySearchMove,
-            handleClickQuerySearchItem
+            handleClickQuerySearchItem,
+            handleClickSearchBox
         }
     }
 }

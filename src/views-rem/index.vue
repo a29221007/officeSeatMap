@@ -51,7 +51,7 @@
         </div>
     </div>
     <!-- 底部搜索组件 -->
-    <Search v-on:setCurrentAreaCode='setCurrentAreaCode'></Search>
+    <BottomBox v-on:setCurrentAreaCode='setCurrentAreaCode'></BottomBox>
 </template>
 
 <script>
@@ -59,11 +59,11 @@ import {ref, computed, toRefs, reactive, onMounted} from 'vue'
 import { useStore } from 'vuex'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
-import Search from './compontent/scarch.vue'
+import BottomBox from './compontent/bottomBox.vue'
 export default {
     name:'M-Home',
     components:{
-        Search
+        BottomBox
     },
     setup(){
         // 获取vuex实例
