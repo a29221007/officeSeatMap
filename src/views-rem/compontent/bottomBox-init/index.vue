@@ -4,7 +4,7 @@
         <!-- 搜索框 -->
         <div class="search-box" v-on:click="handleClickSearchBox"><i class="iconfont oamap-sousuo"></i><span>查找座位、人员、区域信息</span></div>
         <!-- 图例 -->
-        <div ref="legendRef" class="legend">
+        <div class="legend">
             <div class="legend-item" :class="{'legendItemActive':item.type === $store.state.currentLegend}" v-for="item in legendList" :key="item.id" v-on:click="handleClickLegend(item.type)">
                 <div class="legend-image">
                     <img :src="item.url">
@@ -20,12 +20,13 @@ import { reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 export default {
     name:'BottomBoxInit',
-    setup() {
+    emits:['setSearchLegendContant'],
+    setup(prop,{ emit }) {
         const store = useStore()
-
         // 点击搜索盒子触发的函数
         function handleClickSearchBox(){
-
+            // 点击搜索的盒子，向父组件发布一个事件，并传递参数
+            emit('setSearchLegendContant','search')
         }
 
         // 图例相关的数据和逻辑

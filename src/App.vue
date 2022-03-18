@@ -1,8 +1,5 @@
 <template>
-    <!-- <PCLayOut v-if="is_PC"></PCLayOut>
-    <MLayOut v-else></MLayOut> -->
-    <!-- <PCLayOut></PCLayOut> -->
-    <MLayOut></MLayOut>
+    <component :is="is_PC"></component>
 </template>
 
 <script>
@@ -35,12 +32,12 @@ export default {
         // 依赖注入
         provide('clent',obj)
         // 判断是pc端还是移动端的变量
-        const is_PC = ref(true)
+        const is_PC = ref('PCLayOut')
         let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
         if(flag){
-            is_PC.value = false
+            is_PC.value = 'MLayOut'
         }else{
-            is_PC.value = true
+            is_PC.value = 'PCLayOut'
         }
         return {
             is_PC

@@ -23,7 +23,10 @@ export default createStore({
         // 3层的区域信息
         areaListOfThree: getItem('areaListOfThree'),
         // 4层的区域信息
-        areaListOfFour: getItem('areaListOfFour')
+        areaListOfFour: getItem('areaListOfFour'),
+
+        // 移动端中的数据，当前选中的项
+        activeInfo: getItem('activeInfo')
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -61,6 +64,12 @@ export default createStore({
         setAreaListOfFour(state,data){
             state.areaListOfFour = data
             setItem('areaListOfFour',state.areaListOfFour)
+        },
+
+        // 设置移动端中选中项的数据
+        setActiveInfo(state,data) {
+            state.activeInfo = data
+            setItem('activeInfo',state.activeInfo)
         }
     },
     actions: {

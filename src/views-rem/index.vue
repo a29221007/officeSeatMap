@@ -51,11 +51,11 @@
         </div>
     </div>
     <!-- 底部搜索组件 -->
-    <BottomBox v-on:setCurrentAreaCode='setCurrentAreaCode'></BottomBox>
+    <BottomBox></BottomBox>
 </template>
 
 <script>
-import {ref, computed, toRefs, reactive, onMounted} from 'vue'
+import {ref, computed, toRefs, reactive, onMounted, provide} from 'vue'
 import { useStore } from 'vuex'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
@@ -180,6 +180,12 @@ export default {
             MapBoxRef.value.style.transition = `all ${timer}s`
             MapBoxRef.value.style.transform = `scale(${scale_init_x},${scale_init_y})`
         }
+        // 储存可见区域的高度
+        let ClentHeight = ref(0)
+        function setHeight(value) {
+            ClentHeight.value = value
+        }
+        provide('upDataHeight',setHeight)
         let seatData = reactive({
             // 人员信息座位集合
             mapList: computed(() => store.getters.FilterSeatListByLegend ? store.getters.FilterSeatListByLegend : []),
@@ -219,7 +225,7 @@ export default {
                 BodyContainerRef.value.offsetHeight / 2
                 // 3、得到了视图应该移动的距离
                 let valueX = MapContainerRef_x - (BodyContainerRef.value.offsetWidth / 2)
-                let valueY = MapContainerRef_y - (BodyContainerRef.value.offsetHeight / 2)
+                let valueY = MapContainerRef_y - (ClentHeight.value / 2)
                 // 4、设置MapBoxRef盒子的位置
                 MapBoxRef.value.style.left = (MapBoxRef.value.offsetLeft - valueX) + 'px'
                 MapBoxRef.value.style.top = (MapBoxRef.value.offsetTop - valueY) + 'px'
@@ -230,6 +236,7 @@ export default {
                 MapBoxScaleFn(0.5)
             }
         })
+        provide('upCurrentAreaCode',seatData.setCurrentAreaCode)
         return {
             ...toRefs(seatData),
             MapBoxStyle,
@@ -772,7 +779,7 @@ export default {
             .title{
                 top: 60%;
                 left: unset;
-                right: -30px;
+                right: -0.3226rem;
             }
         }
         // 鬼武
