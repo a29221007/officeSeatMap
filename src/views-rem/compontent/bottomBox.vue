@@ -109,7 +109,7 @@ export default {
         let c = true // 管下
         // SearchLegend 盒子 touchmove 事件的处理函数
         function SearchLegendTouchmoveFn(e) {
-            if(SearchLegendContant.value === 'information') return 
+            if(SearchLegendContant.value === 'information') return
             SearchLegendRef.value.style.transition = `none`
             if(e.changedTouches.length === 1){
                 // 滑动的变量

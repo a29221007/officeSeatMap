@@ -240,7 +240,6 @@ export default {
             let mapBox = document.querySelector('.map-box')
             // 6、设置过度属性，以及过渡时间
             mapBox.style.transition = 'all 1s'
-            console.log('mapBox.offsetHeight',mapBox.offsetHeight)
             // 7、计算缩放比例
             let scaleX = ((mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth > 3 ? 3 : (mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth) - 0.1
             let scaleY = ((mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight > 3 ? 3 : (mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight) - 0.1

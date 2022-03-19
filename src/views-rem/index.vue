@@ -2,7 +2,7 @@
     <!-- 设置一个版心容器，里面放地图 -->
     <div ref="BodyContainerRef" class="body-container">
         <!-- 中间用标准流布局展示地图 -->
-        <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
+        <div ref="MapBoxRef" v-on:click="handleClickMap" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
                 <template v-if="item.type === 1 || item.type === 2 || item.type === 3">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
@@ -50,8 +50,8 @@
             </template>
         </div>
     </div>
-    <!-- 底部搜索组件 -->
-    <BottomBox></BottomBox>
+    <!-- 底部搜索相关组件 -->
+    <BottomBox ref="BottomBoxRef"></BottomBox>
 </template>
 
 <script>
@@ -97,10 +97,6 @@ export default {
             let MapBox = new AlloyFinger(MapBoxRef.value,{})
             // 2.2 监听 MapBox 盒子的 tap 事件
             MapBox.on('touchStart', MapBoxTouchStartFn)
-            // 2.3 监听 MapBox 盒子的 touchStart 事件
-            MapBox.on('tap', MapBoxTapFn)
-            // 2.4 监听 MapBox 盒子的 doubleTap 事件
-            MapBox.on('doubleTap', MapBoxDoubleTapFn)
             // 2.5 监听 MapBox 盒子的 pinch 事件
             MapBox.on('pinch', MapBoxPinchFn)
             // 2.6 监听 MapBox 盒子的 pressMove 事件
@@ -115,6 +111,20 @@ export default {
                 backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`,
             }
         })
+        // 点击地图盒子触发的函数
+        //点击次数
+        let times = 0
+        function handleClickMap() {
+            times++
+            setTimeout(() => {
+                if(1 == times){
+                    MapBoxTapFn()
+                }else if(2 == times){
+                    MapBoxDoubleTapFn()
+                }
+                times = 0
+            }, 150)
+        }
         // MapBox盒子 touchStart 事件的处理函数
         function MapBoxTouchStartFn(e) {
             // 记录 MapBox 盒子的初始位置 offsetLeft 和 offsetTop
@@ -124,10 +134,29 @@ export default {
             finger_X = e.targetTouches[0].pageX
             finger_Y = e.targetTouches[0].pageY
         }
-        // MapBox盒子 tap 事件的处理函数
+        // 控制盒子伸缩的变量
+        let scaling = true
+        // MapBox盒子点击事件的处理函数
         function MapBoxTapFn() {
+            let searchLegend = document.querySelector('.search-legend')
+            let floorSwitch = document.querySelector('.floor-switch')
+
+            let searchLegendHeight = searchLegend.offsetHeight
+            let floorSwitchHeight = floorSwitch ? floorSwitch.offsetHeight : 0
+            // 确定伸缩量
+            let value1 = scaling ? searchLegendHeight + floorSwitchHeight : 0
+            let value2 = scaling ? floorSwitchHeight : 0
+            searchLegend.style.transition = `all 0.5s`
+            if(floorSwitchHeight){
+                floorSwitch.style.transition = `all 0.5s`
+            }
+            searchLegend.style.transform = `translate(-50%,${value1 + 'px'})`
+            if(floorSwitchHeight){
+                floorSwitch.style.transform = `translate(-50%,${value2 + 'px'})`
+            }
+            scaling = scaling ? false : true
         }
-        // MapBox盒子 doubleTap 事件的处理函数
+        // MapBox盒子双击事件的处理函数
         function MapBoxDoubleTapFn() {
             scale_init_x += 2
             scale_init_y += 2
@@ -186,6 +215,8 @@ export default {
             ClentHeight.value = value
         }
         provide('upDataHeight',setHeight)
+        // 获取 BottomBoxRef 实例
+        const BottomBoxRef = ref(null)
         let seatData = reactive({
             // 人员信息座位集合
             mapList: computed(() => store.getters.FilterSeatListByLegend ? store.getters.FilterSeatListByLegend : []),
@@ -213,7 +244,7 @@ export default {
                 $event.stopPropagation()
                 // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
                 if(seatItem.seat_id === seatData.current){
-                    seatData.current = 0
+                    return seatData.current = 0
                 }else{
                     seatData.current = seatItem.seat_id
                 }
@@ -234,6 +265,9 @@ export default {
                 scale_init_x = 4
                 scale_init_y = 4
                 MapBoxScaleFn(0.5)
+                // 6、调用子组件的方法，设置子组件的状态变量
+                BottomBoxRef.value.setSearchLegendContant('information')
+                store.commit('setActiveInfo',seatItem)
             }
         })
         provide('upCurrentAreaCode',seatData.setCurrentAreaCode)
@@ -241,7 +275,9 @@ export default {
             ...toRefs(seatData),
             MapBoxStyle,
             MapBoxRef,
-            BodyContainerRef
+            BodyContainerRef,
+            handleClickMap,
+            BottomBoxRef
         }
     }
 }
@@ -812,5 +848,6 @@ export default {
             transform:scale(3);
         }
     }
+    // transform: translateY();
 }
 </style>

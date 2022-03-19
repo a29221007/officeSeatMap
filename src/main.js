@@ -7,4 +7,5 @@ import './style/iconfont.css'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import './utils/flexible.js'
-createApp(App).use(router).use(store).use(ElementPlus).mount('#app')
+import { Col, Row } from 'vant'
+createApp(App).use(router).use(store).use(ElementPlus).use(Col).use(Row).mount('#app')

@@ -134,7 +134,7 @@ export default {
             if(seatItem.seat_id === seatData.current){
                 seatData.current = 0
                 // 向兄弟组件header发布一个自定义事件form，参数为空字符串
-                emitter.emit('form','')
+                return emitter.emit('form','')
             }else{
                 seatData.current = seatItem.seat_id
                 emitter.emit('form',seatItem)
