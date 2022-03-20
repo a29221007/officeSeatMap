@@ -1,44 +1,36 @@
 <template>
-    <!-- 第一行 -->
-    <div class="line">
-        <!-- 标题 -->
-        <span class="title">区域名称：</span>
-        <!-- 内容 -->
-        <span class="content">{{$store.state.activeInfo.name + $store.state.activeInfo.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")}}</span>
-    </div>
-    <!-- 第二行 -->
-    <div class="line">
-        <!-- 标题 -->
-        <span class="title">区域编号：</span>
-        <!-- 内容 -->
-        <span class="content">{{$store.state.activeInfo.code}}</span>
-    </div>
-    <!-- 第三行 -->
-    <div class="line">
-        <!-- 标题 -->
-        <span class="title">区域背景色：</span>
-        <!-- 内容 -->
-        <span class="content">{{$store.state.activeInfo.backgroundcolor}}</span>
-    </div>
+    <el-form label-width="auto">
+        <el-form-item label="区域名称：">{{$store.state.activeInfo.name + $store.state.activeInfo.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")}}</el-form-item>
+        <el-form-item label="区域编号：">{{$store.state.activeInfo.code}}</el-form-item>
+        <el-form-item label="区域背景色：">{{$store.state.activeInfo.backgroundcolor}}</el-form-item>
+    </el-form>
 </template>
 
 <script>
 export default {
-    name:'region'
+    name:'region',
 }
 </script>
 
 <style lang="less" scoped>
-.line{
-    padding: .1075rem 0;
-    height: 0.8rem;
-    display: flex;
-    align-items: center;
-    .title{
-        display: inline-block;
-        font-size: .3763rem;
-        min-width: 2.3656rem;
-        text-align: end;
+.el-form{
+    width: 100%;
+    .el-form-item{
+        --font-size: unset;
+        margin-bottom: 0;
+        height: .8602rem;
+        /deep/.el-form-item__label-wrap{
+            align-items: center;
+            .el-form-item__label{
+                font-size: .3763rem;
+                color: #f8f9fa;
+                padding: 0;
+                line-height: unset;
+            }
+        }
+        /deep/.el-form-item__content{
+            line-height: unset;
+        }
     }
 }
 </style>

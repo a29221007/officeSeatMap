@@ -1,8 +1,8 @@
 <template>
     <!-- 设置一个版心容器，里面放地图 -->
-    <div ref="BodyContainerRef" class="body-container">
+    <div ref="BodyContainerRef" v-on:click="handleClickMap" class="body-container">
         <!-- 中间用标准流布局展示地图 -->
-        <div ref="MapBoxRef" v-on:click="handleClickMap" class="map-box" :style="MapBoxStyle">
+        <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
                 <template v-if="item.type === 1 || item.type === 2 || item.type === 3">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import {ref, computed, toRefs, reactive, onMounted, provide} from 'vue'
+import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount} from 'vue'
 import { useStore } from 'vuex'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
@@ -84,6 +84,10 @@ export default {
 
         // 互锁变量
         let a = true
+
+        // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
+        let BodyContainer
+        let MapBox
         // 在mounted函数中对地图盒子注册监听事件
         onMounted(() => {
             // 1、将地图铺满整个屏幕
@@ -94,15 +98,17 @@ export default {
             MapBoxScaleFn(0.5)
             // 2、监听 MapBox 地图盒子的各种事件
             // 2.1 实例化 AlloyFinger 这个构造函数，并将地图盒子的DOM元素传递进去
-            let MapBox = new AlloyFinger(MapBoxRef.value,{})
+            // 将地图盒子的移动扩大到整个屏幕，不在是之前的手指放到地图上才能移动
+            BodyContainer = new AlloyFinger(BodyContainerRef.value,{}) 
+            MapBox = new AlloyFinger(MapBoxRef.value,{})
             // 2.2 监听 MapBox 盒子的 tap 事件
-            MapBox.on('touchStart', MapBoxTouchStartFn)
+            BodyContainer.on('touchStart', MapBoxTouchStartFn)
             // 2.5 监听 MapBox 盒子的 pinch 事件
             MapBox.on('pinch', MapBoxPinchFn)
             // 2.6 监听 MapBox 盒子的 pressMove 事件
-            MapBox.on('pressMove', MapBoxPressMoveFn)
+            BodyContainer.on('pressMove', MapBoxPressMoveFn)
             // 2.7 监听 MapBox 盒子的 touchEnd 事件
-            MapBox.on('touchEnd', MapBoxTouchEndFn)
+            BodyContainer.on('touchEnd', MapBoxTouchEndFn)
         })
         // MapBox 盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
@@ -111,12 +117,15 @@ export default {
                 backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`,
             }
         })
+        
         // 点击地图盒子触发的函数
         //点击次数
         let times = 0
+        // 延时器二的id
+        let timer2 = null
         function handleClickMap() {
             times++
-            setTimeout(() => {
+            timer2 = setTimeout(() => {
                 if(1 == times){
                     MapBoxTapFn()
                 }else if(2 == times){
@@ -189,12 +198,14 @@ export default {
             MapBoxRef.value.style.left = MapBox_X + (e.targetTouches[0].pageX - finger_X) + 'px'
             MapBoxRef.value.style.top = MapBox_Y + (e.targetTouches[0].pageY - finger_Y) + 'px'
         }
+        // 延时器一的id
+        let timer1 = null
         // MapBox盒子 touchEnd 事件
         function MapBoxTouchEndFn() {
             a = false
             firstZoomValue = 0
             pinchCount = 0
-            setTimeout(() => {a = true},200)
+            timer1 = setTimeout(() => {a = true},200)
         }
         //  MapBox盒子缩放的函数
         function MapBoxScaleFn(timer){
@@ -271,6 +282,22 @@ export default {
             }
         })
         provide('upCurrentAreaCode',seatData.setCurrentAreaCode)
+
+        // 卸载阶段，事件解绑
+        onBeforeUnmount(() => {
+            // 1 卸载 MapBox 盒子的 tap 事件
+            BodyContainer.off('touchStart', MapBoxTouchStartFn)
+            // 2 卸载 MapBox 盒子的 pinch 事件
+            MapBox.off('pinch', MapBoxPinchFn)
+            // 3 卸载 MapBox 盒子的 pressMove 事件
+            BodyContainer.off('pressMove', MapBoxPressMoveFn)
+            // 4 卸载 MapBox 盒子的 touchEnd 事件
+            BodyContainer.off('touchEnd', MapBoxTouchEndFn)
+
+            // 清除延时器id
+            clearTimeout(timer1)
+            clearTimeout(timer2)
+        })
         return {
             ...toRefs(seatData),
             MapBoxStyle,

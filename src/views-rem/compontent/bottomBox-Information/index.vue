@@ -36,7 +36,7 @@ export default {
         })
         // 点击编辑按钮触发的事件
         function handleClickEdit() {
-
+            
         }
         // 切换组件变量
         let compontentType = computed(() => {
@@ -109,6 +109,8 @@ export default {
     }
     .content{
         flex: 3;
+        display: flex;
+        align-items: center;
     }
 
 }

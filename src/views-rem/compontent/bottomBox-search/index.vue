@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, nextTick, inject, ref} from 'vue'
+import { reactive, toRefs, nextTick, inject, ref, onBeforeUnmount} from 'vue'
 import { useStore } from 'vuex'
 import { Dialog, Toast } from 'vant'
 export default {
@@ -176,7 +176,6 @@ export default {
                             Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
                         })
                     }
-                    // inputValue.value = item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")
                 }
             },
             // 给搜索建议列表绑定一个 touchmove 事件，并阻止冒泡行为
@@ -273,6 +272,11 @@ export default {
             mapBox.style.transformOrigin = `${minLeft + (currentAreaWidth / 2)}px ${minTop + (currentAreaHeight / 2)}px`
             mapBox.style.transform = `scale(${scaleX},${scaleY})`
         }
+
+        // 卸载阶段
+        onBeforeUnmount(() => {
+            clearTimeout(searchInput.searchTimer)
+        })
         return {
             ...toRefs(searchInput),
             ...toRefs(querySearch),

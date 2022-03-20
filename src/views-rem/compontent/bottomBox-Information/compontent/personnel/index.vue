@@ -1,51 +1,70 @@
 <template>
-    <van-row align='center'>
-        <van-col span="8">
-            <span class="title">姓名：</span>
-            <span class="content">{{$store.state.activeInfo.name}}</span>
-        </van-col>
-        <van-col span="8">
-            <span class="title">工号：</span>
-            <span class="content">{{$store.state.activeInfo.id}}</span>
-        </van-col>
-        <van-col span="8">
-            <span class="title">工位号：</span>
-            <span class="content">{{$store.state.activeInfo.seat_id}}</span>
-        </van-col>
-    </van-row>
-    <van-row align='center'>
-        <van-col span="24">
-            <span class="title">部门：</span>
-            <span class="content">{{$store.state.activeInfo.depart}}</span>
-        </van-col>
-    </van-row>
+    <el-form label-width="auto">
+        <div class="inline">
+            <el-form-item label="姓名："><span class="scroll">{{$store.state.activeInfo.name}}</span></el-form-item>
+            <el-form-item label="工号："><span class="scroll">{{$store.state.activeInfo.id}}</span></el-form-item>
+            <el-form-item label="工位号："><span class="scroll">{{$store.state.activeInfo.seat_id}}</span></el-form-item>
+        </div>
+        <el-form-item class="unwind" label="部门：">{{$store.state.activeInfo.depart}}</el-form-item>
+    </el-form>
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import animate from '../../hook/animate'
 export default {
     name:'personnel',
     setup() {
-        onMounted(() => {
-            let content = document.querySelectorAll('.content')
-            console.log(content)
-        })
+        animate()
     }
 }
 </script>
 
 <style lang="less" scoped>
-.van-row{
-    padding: .1075rem 0;
-    height: 0.8rem;
-    .van-col{
-        overflow:hidden;
-        text-overflow:ellipsis;
-        white-space:nowrap;
+.el-form{
+    width: 100%;
+    .inline{
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+        .el-form-item{
+            flex: 1;
+        }
     }
-    .title{
-        display: inline-block;
-        font-size: .3763rem;
+    .el-form-item{
+        --font-size: unset;
+        margin-bottom: 0;
+        height: .8602rem;
+        /deep/.el-form-item__label-wrap{
+            align-items: center;
+            .el-form-item__label{
+                font-size: .3763rem;
+                color: #f8f9fa;
+                padding: 0;
+                line-height: unset;
+            }
+        }
+        /deep/.el-form-item__content{
+            line-height: unset;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            .scroll{
+                position: relative;
+                padding: 0 .0538rem;
+                white-space:nowrap;
+                overflow:hidden;
+                text-overflow:ellipsis;
+            }
+        }
+    }
+    .unwind{
+        /deep/.el-form-item__content{
+            line-height: unset;
+            white-space: unset;
+            overflow: unset;
+            text-overflow: unset;
+        }
     }
 }
 </style>

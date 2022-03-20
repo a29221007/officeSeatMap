@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, provide, inject } from 'vue'
+import { ref, onMounted, watch, provide, inject, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 // 导入子组件
 import Init from './bottomBox-init'
@@ -61,6 +61,7 @@ export default {
         // 传递给子组件使用的变量
         let MapContainerBoxHeight = ref(0)
         provide('MapContainerBoxHeight',MapContainerBoxHeight)
+        // 父组件获取屏幕可用区域的高度的依赖注入函数
         let upDataHeight = inject('upDataHeight')
         // 在 mounted 中给 SearchLegendRef 注册手势事件
         onMounted(() => {
@@ -90,6 +91,7 @@ export default {
             SearchLegendMinTop = clientHeight * 0.05
 
             MapContainerBoxHeight.value = SearchLegendTop
+            // 调用父组件的依赖注入函数，将屏幕可视区域的高度，传递给父组件
             upDataHeight(SearchLegendTop)
         })
         // SearchLegend 盒子 touchstart 事件的处理函数
@@ -115,7 +117,7 @@ export default {
                 // 滑动的变量
                 const value = e.changedTouches[0].pageY - touchstartPageY
                 // 判断滑动的方向
-                if(value >= 0 && c){
+                if(value > 0 && c){
                     flag = 'down'
                     b = true
                     // 如果大于0，则说明是向下滑
@@ -202,6 +204,16 @@ export default {
                 SearchLegendRef.value.style.bottom = 0
                 SearchLegendRef.value.style.top = SearchLegendTop + 'px'
             }
+        })
+
+        // 卸载阶段，将事件接触
+        onBeforeUnmount(() => {
+            // 1、移除 touchstart 事件
+            SearchLegendRef.value.removeEventListener('touchstart', SearchLegendTouchstartFn)
+            // 2、移除 touchmove 事件
+            SearchLegendRef.value.removeEventListener('touchmove', SearchLegendTouchmoveFn)
+            // 3、移除 touchend 事件
+            SearchLegendRef.value.removeEventListener('touchend', SearchLegendTouchendFn)
         })
         return {
             AllArea,

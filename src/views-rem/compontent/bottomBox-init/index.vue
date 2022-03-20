@@ -100,6 +100,11 @@ export default {
             &.legendItemActive{
                 transform: scale(1.4);
             }
+            &:last-child{
+                .legend-image{
+                    padding-top: .0215rem;
+                }
+            }
         }
     }
 }
