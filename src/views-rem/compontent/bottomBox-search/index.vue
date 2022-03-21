@@ -21,7 +21,7 @@
                     <div class="autoCompleteTemplate" v-if="item.type === 1 || item.type === 2 || item.type === 3">
                         <!-- 第一行左边显示姓名，右边显示座位号 -->
                         <div class="oneLine">
-                            <span><span class="title">区域名称：</span><span class="content">{{item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") || '暂无数据'}}</span></span>
+                            <span><span class="title">区域名称：</span><span class="content">{{item.name + (item.subtitle ? item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '') || '暂无数据'}}</span></span>
                         </div>
                         <!-- 第二行显示该座位所在部门 -->
                         <div class="twoLine">
@@ -147,7 +147,6 @@ export default {
                             Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
                         })
                     }
-
                 }else{
                     // 如果是区域
                     if(item.floor == store.getters.floor){

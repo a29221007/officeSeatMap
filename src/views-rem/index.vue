@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount} from 'vue'
+import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick} from 'vue'
 import { useStore } from 'vuex'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
@@ -228,6 +228,8 @@ export default {
         provide('upDataHeight',setHeight)
         // 获取 BottomBoxRef 实例
         const BottomBoxRef = ref(null)
+        // 是否为搜索时触发的座位点击事件
+        let is_srearch = false
         let seatData = reactive({
             // 人员信息座位集合
             mapList: computed(() => store.getters.FilterSeatListByLegend ? store.getters.FilterSeatListByLegend : []),
@@ -255,7 +257,7 @@ export default {
                 $event.stopPropagation()
                 // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
                 if(seatItem.seat_id === seatData.current){
-                    return seatData.current = 0
+                    seatData.current = 0
                 }else{
                     seatData.current = seatItem.seat_id
                 }
@@ -278,9 +280,62 @@ export default {
                 MapBoxScaleFn(0.5)
                 // 6、调用子组件的方法，设置子组件的状态变量
                 BottomBoxRef.value.setSearchLegendContant('information')
+                // 7、设置选中项的数据
                 store.commit('setActiveInfo',seatItem)
+                // 8、修改之前的bug，（之前在 bottomBox-Information 信息展示组件中的 onMounted 钩子中，判断数据是否超过父盒子，如果超过，则做往复动画），现在将逻辑放到点击事件中，修复一些bug
+                nextTick(() => {
+                    clearTimer()
+                    obj = []
+                    timer123 = null
+                    let content = document.querySelectorAll('.scroll')
+                    content.forEach((item) => {
+                        // 当前节点的宽度
+                        let currentNodeWidth = item.offsetWidth
+                        // 当前节点父元素的宽度
+                        let curentParentNdoeWidth = item.parentNode.offsetWidth
+                        // 子元素和父元素的差值
+                        let value = curentParentNdoeWidth - currentNodeWidth
+                        if(value < 0){
+                            timer123 = setTimeout(() => {
+                                clearInterval(item.timer)
+                                let target = Math.floor(value)
+                                let leader = 0
+                                item.timer = setInterval(() => {
+                                    console.log(123)
+                                    let step = 1
+                                    if(Math.abs(leader - target) >= Math.abs(step)){
+                                        step = leader > target ? -step : step
+                                        leader = leader + step
+                                        item.style.left = leader + 'px'
+                                    }else{
+                                        item.style.left = target + 'px'
+                                        target = leader === 0 ? value : 0
+                                    }
+                                },200)
+                                obj.push(item)
+                            },1000)
+                        }else{
+                            item.style.left = 0
+                        }
+                    })
+                })
             }
         })
+        // 储存做动画元素，将来要清除元素上的定时器
+        let obj = []
+        // 这个是延时器的id
+        let timer123 = null
+        // 定义一个清除定时器的函数，并通过 provide 传递给子组件，将来信息展示组件的销毁阶段要清除定时器，防止内存泄漏
+        function clearTimer(){
+            obj.forEach(item => {
+                clearInterval(item.timer)
+            })
+            clearTimeout(timer123)
+        }
+        // 向子组件传递清除定时器的方法
+        provide('clear',clearTimer)
+
+        // 向子组件传递设置区域高亮的方法
         provide('upCurrentAreaCode',seatData.setCurrentAreaCode)
 
         // 卸载阶段，事件解绑

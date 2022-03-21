@@ -1,5 +1,5 @@
 <template>
-    <el-form label-width="auto">
+    <!-- <el-form label-width="auto">
         <div class="inline">
             <el-form-item label="固资名称："><span class="scroll">{{$store.state.activeInfo.name}}</span></el-form-item>
             <el-form-item label="固资编号："><span class="scroll">123345667555</span></el-form-item>
@@ -8,16 +8,12 @@
             <el-form-item label="位置："><span class="scroll">平台技术部平台技术部</span></el-form-item>
             <el-form-item label="工位号："><span class="scroll">{{$store.state.activeInfo.seat_id}}</span></el-form-item>
         </div>
-    </el-form>
+    </el-form> -->
 </template>
 
 <script>
-import animate from '../../hook/animate'
 export default {
     name:'takeUp',
-    setup() {
-        animate()
-    }
 }
 </script>
 

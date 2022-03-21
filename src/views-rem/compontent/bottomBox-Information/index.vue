@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed,inject,onBeforeUnmount,onMounted } from 'vue'
 import { useStore } from 'vuex'
 
 import Area from './compontent/area'
@@ -70,6 +70,11 @@ export default {
             // 点击搜索的盒子，向父组件发布一个事件，并传递参数
             emit('setSearchLegendContant','search')
         }
+        let cleartime = inject('clear')
+        // 组件卸载阶段
+        onBeforeUnmount(() => {
+            cleartime()
+        })
         return {
             activeInfo,
             handleClickEdit,
@@ -109,8 +114,6 @@ export default {
     }
     .content{
         flex: 3;
-        display: flex;
-        align-items: center;
     }
 
 }

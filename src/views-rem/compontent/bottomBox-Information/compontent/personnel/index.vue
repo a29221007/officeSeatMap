@@ -1,69 +1,117 @@
 <template>
-    <el-form label-width="auto">
-        <div class="inline">
-            <el-form-item label="姓名："><span class="scroll">{{$store.state.activeInfo.name}}</span></el-form-item>
-            <el-form-item label="工号："><span class="scroll">{{$store.state.activeInfo.id}}</span></el-form-item>
-            <el-form-item label="工位号："><span class="scroll">{{$store.state.activeInfo.seat_id}}</span></el-form-item>
+    <div class="container">
+        <!-- 第一行 -->
+        <div class="oneline">
+            <!-- 第一列 -->
+            <div class="col">
+                <div class="title">姓名：</div>
+                <div class="content"><span class="scroll">{{$store.state.activeInfo.name}}</span></div>
+            </div>
+            <!-- 第二列 -->
+            <div class="col">
+                <div class="title">工号：</div>
+                <div class="content"><span class="scroll">{{$store.state.activeInfo.id}}</span></div>
+            </div>
+            <!-- 第三列 -->
+            <div class="col">
+                <div class="title">工位号：</div>
+                <div class="content"><span class="scroll">{{$store.state.activeInfo.seat_id}}</span></div>
+            </div>
         </div>
-        <el-form-item class="unwind" label="部门：">{{$store.state.activeInfo.depart}}</el-form-item>
-    </el-form>
+        <!-- 第二行 -->
+        <div class="towline">
+            <div class="title">部门：</div>
+            <div class="content over">{{$store.state.activeInfo.depart}}</div>
+        </div>
+    </div>
 </template>
 
 <script>
-import animate from '../../hook/animate'
+import { onMounted } from 'vue'
 export default {
     name:'personnel',
     setup() {
-        animate()
+        let el = null
+        onMounted(() => {
+            el = document.querySelector('.over')
+            if(el.scrollWidth > el.offsetWidth){
+                // 如果内容的宽度比盒子的宽度大，则向最后添加一个展开按钮
+                let span = document.createElement('span')
+                span.innerHTML = '展开'
+                span.style.float = 'right'
+                span.style.marginTop = '2px'
+                span.style.backgroundColor = '#f8f9fa'
+                span.style.color = '#1b1b1d'
+                span.style.borderRadius = '2px'
+                el.appendChild(span)
+                span.addEventListener('click',show)
+            }
+        })
+        function show(e){
+            el.style.transition = 'all 0.5s'
+            let value = e.target.innerHTML
+            if(value === '展开'){
+                el.style.whiteSpace = 'unset'
+                e.target.innerHTML = '收起'
+            }else{
+                el.style.whiteSpace = 'nowrap'
+                e.target.innerHTML = '展开'
+            }
+        }
     }
 }
 </script>
 
 <style lang="less" scoped>
-.el-form{
+.container{
     width: 100%;
-    .inline{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .oneline{
         display: flex;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        align-items: center;
-        .el-form-item{
-            flex: 1;
-        }
-    }
-    .el-form-item{
-        --font-size: unset;
-        margin-bottom: 0;
         height: .8602rem;
-        /deep/.el-form-item__label-wrap{
-            align-items: center;
-            .el-form-item__label{
+        align-items: center;
+        justify-content: space-between;
+        .col{
+            flex: 1;
+            white-space:nowrap;
+            overflow: hidden;
+            display: flex;
+            align-items: baseline;
+            .title{
+                flex: 1;
                 font-size: .3763rem;
                 color: #f8f9fa;
-                padding: 0;
-                line-height: unset;
             }
-        }
-        /deep/.el-form-item__content{
-            line-height: unset;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
-            .scroll{
-                position: relative;
-                padding: 0 .0538rem;
-                white-space:nowrap;
-                overflow:hidden;
-                text-overflow:ellipsis;
+            .content{
+                flex: 3;
+                overflow: hidden;
+                span{
+                    position: relative;
+                }
+            }
+            &:nth-child(2){
+                margin: 0 .0538rem;
             }
         }
     }
-    .unwind{
-        /deep/.el-form-item__content{
-            line-height: unset;
-            white-space: unset;
-            overflow: unset;
-            text-overflow: unset;
+    .towline{
+        display: flex;
+        align-items: baseline;
+        .title{
+            flex: 1;
+            font-size: .3763rem;
+            color: #f8f9fa;
+            white-space:nowrap
+        }
+        .content{
+            position: relative;
+            flex: 7;
+            white-space:nowrap;
+            overflow: auto;
+            text-overflow:ellipsis;
         }
     }
 }
