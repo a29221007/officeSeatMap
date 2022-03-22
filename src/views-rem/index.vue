@@ -23,7 +23,7 @@
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
-                        <template v-for="(item2,index) in item.coordinate">
+                        <template v-for="(item2,index) in item.coordinate" :key="item2.id">
                             <!-- 区域 -->
                             <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code},'area']" :style="{
                                 position: 'absolute',
@@ -55,37 +55,17 @@
 </template>
 
 <script>
-import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, inject} from 'vue'
+import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, watch} from 'vue'
 import { useStore } from 'vuex'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
 import BottomBox from './compontent/bottomBox.vue'
-// 导入获取座位信息的接口
-import { getSeatList } from '@/api/getSeatList'
 export default {
     name:'M-Home',
     components:{
         BottomBox
     },
-    // props:{
-    //     seatListOfthree:{
-    //         type:Array,
-    //     }
-    // },
-    setup(prop){
-        let bbb = ref([])
-        // 获取数据
-        getSeat_Area_List()
-        async function getSeat_Area_List(){
-            const {data:data1} = await getSeatList(3)
-            bbb.value = data1
-            console.log('bbb.value',bbb.value);
-            // try{
-            //     console.log(bbb.value)
-            // }catch(error){
-            //     errorMessage(error)
-            // }
-        }
+    setup(){
         // 获取vuex实例
         const store = useStore()
         // 获取 MapBoxRef DOM 对象
@@ -108,9 +88,58 @@ export default {
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
         let BodyContainer = null
         let MapBox = null
+        watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
+            if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
+                // 3、根据 url 中的参数跳转到对应区域
+                // 3.1 获取url中的参数
+                let requestSearch = window.location.search
+                // 3.2 判断是否有参数
+                if(!requestSearch) return // 没有参数说明不是扫码进的项目,则不执行后续的逻辑
+                let requestSearchArray = requestSearch.slice(1).split('&')
+                let requestSearchObj = {
+                    floor:3,
+                    type:2,
+                    seat_id:'QY0101030004'
+                }
+                // requestSearchArray.forEach(item => {
+                //     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
+                // })
+                // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
+                const floor = requestSearchObj.floor === 3 ? 'three' : 'four'
+                store.commit('setCurrentFloor',floor)
+                // 3.4 找出当前扫码查找的项，并向 vuex 设置
+                let value = requestSearchObj.type === 1 ? 'seat_id' : 'code' // 匹配的字段
+                // 3.5 找出当前项
+                let FindArray = []
+                if(requestSearchObj.floor === 3 && requestSearchObj.type === 1){
+                    // 3层的座位
+                    FindArray = store.state.seatListOfthree
+                }else if(requestSearchObj.floor === 3 && requestSearchObj.type === 2){
+                    // 3层的区域
+                    FindArray = store.state.areaListOfThree
+                }else if(requestSearchObj.floor === 4 && requestSearchObj.type === 1){
+                    // 4层的座位
+                    FindArray = store.state.seatListOfFour
+                }else if(requestSearchObj.floor === 4 && requestSearchObj.type === 2){
+                    // 4层的区域
+                    FindArray = store.state.areaListOfFour
+                }
+                let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
+                // 3.6 将当前项设置到 vuex 中
+                store.commit('setActiveInfo',item)
+                let searchLegend = document.querySelector('.search-legend')
+                searchLegend.style.display = 'none'
+                // 3.7 调用子组件的方法，将seaech组件显示出来
+                BottomBoxRef.value.setSearchLegendContant('search')
+                nextTick(() => {
+                    BottomBoxRef.value.setSearchLegendContant('information')
+                    BottomBoxRef.value.componentRef.searchArea(requestSearchObj.seat_id)
+                    searchLegend.style.display = 'block'
+                })
+            }
+        })
         // 在mounted函数中对地图盒子注册监听事件
         onMounted(() => {
-            console.log('bbb',bbb.value)
             // 1、将地图铺满整个屏幕
             // 1.1计算出高度的缩放比例 = 屏幕的高度 / 盒子的高度
             const scale = BodyContainerRef.value.offsetHeight / MapBoxRef.value.offsetHeight
@@ -130,50 +159,6 @@ export default {
             BodyContainer.on('pressMove', MapBoxPressMoveFn)
             // 2.7 监听 MapBox 盒子的 touchEnd 事件
             BodyContainer.on('touchEnd', MapBoxTouchEndFn)
-
-            // 3、根据 url 中的参数跳转到对应区域
-            // 3.1 获取url中的参数
-            // let requestSearch = window.location.search
-            // // 3.2 判断是否有参数
-            // if(!requestSearch) return // 没有参数说明不是扫码进的项目,则不执行后续的逻辑
-            // let requestSearchArray = requestSearch.slice(1).split('&')
-            let requestSearchObj = {
-                floor:3,
-                type:2,
-                seat_id:'QY0101030031'
-            }
-            // requestSearchArray.forEach(item => {
-            //     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
-            // })
-            // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
-            const floor = requestSearchObj.floor === 3 ? 'three' : 'four'
-            store.commit('setCurrentFloor',floor)
-            // 3.4 找出当前扫码查找的项，并向 vuex 设置
-            let value = requestSearchObj.type === 1 ? 'seat_id' : 'code' // 匹配的字段
-            // 3.5 找出当前项
-            let FindArray = []
-            if(requestSearchObj.floor === 3 && requestSearchObj.type === 1){
-                // 3层的座位
-                FindArray = store.state.seatListOfthree
-            }else if(requestSearchObj.floor === 3 && requestSearchObj.type === 2){
-                // 3层的区域
-                FindArray = store.state.areaListOfThree
-            }else if(requestSearchObj.floor === 4 && requestSearchObj.type === 1){
-                // 4层的座位
-                FindArray = store.state.seatListOfFour
-            }else if(requestSearchObj.floor === 4 && requestSearchObj.type === 2){
-                // 4层的区域
-                FindArray = store.state.areaListOfFour
-            }
-            let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
-            // 3.6 将当前项设置到 vuex 中
-            store.commit('setActiveInfo',item)
-            // 3.7 调用子组件的方法，将seaech组件显示出来
-            BottomBoxRef.value.setSearchLegendContant('search')
-            nextTick(() => {
-                BottomBoxRef.value.setSearchLegendContant('information')
-                BottomBoxRef.value.componentRef.searchArea(requestSearchObj.seat_id)
-            })
         })
         // MapBox 盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
@@ -294,8 +279,25 @@ export default {
         // 获取 BottomBoxRef 实例
         const BottomBoxRef = ref(null)
         let seatData = reactive({
-            // 人员信息座位集合
-            mapList: computed(() => store.getters.FilterSeatListByLegend ? store.getters.FilterSeatListByLegend : []),
+            mapList: computed(() => {
+                // 3层的座位人员信息和区域会议室信息集合
+                let seatAndAreaListOfThree = store.state.seatListOfthree.concat(store.state.areaListOfThree)
+                // 4层的座位人员信息和区域会议室信息集合
+                let seatAndAreaListOfFour = store.state.seatListOfFour.concat(store.state.areaListOfFour)
+                // 点击图例筛选后的座位信息
+                // 1、判断当前的楼层，选择出要做筛选的数组
+                const currentFloorSeatList = store.state.currentFloor === 'three' ? seatAndAreaListOfThree : seatAndAreaListOfFour
+                // 2、判断当前是否有选中的图例
+                if(store.state.currentLegend){
+                    // 3、如果有选中的图例
+                    return currentFloorSeatList.filter((item) => {
+                        return item.type === store.state.currentLegend || item.type === 2 || item.type === 3
+                    })
+                }else{
+                    // 4、没有选中的图例，直接返回currentFloorSeatList
+                    return currentFloorSeatList
+                }
+            }),
             // 当前选中的座位
             current:0,
             // 子组件发布的事件，切换路层后，将当前的选中座位和区域的高亮重置

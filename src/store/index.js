@@ -12,18 +12,18 @@ export default createStore({
         // 当前选中的楼层（或地区）
         currentFloor:getItem('currentFloor'),
         // 3层的座位信息
-        seatListOfthree:getItem('seatListOfthree'),
+        seatListOfthree:getItem('seatListOfthree') || [],
         // 4层的座位信息
-        seatListOfFour:getItem('seatListOfFour'),
+        seatListOfFour:getItem('seatListOfFour') || [],
         // 当前选中的图例(此项不做本地缓存)
         currentLegend:'', // 默认是空字符串
         // 当前的地图的初始缩放系数
         scale:getItem('scale') || [1,1], // 默认是1
 
         // 3层的区域信息
-        areaListOfThree: getItem('areaListOfThree'),
+        areaListOfThree: getItem('areaListOfThree') || [],
         // 4层的区域信息
-        areaListOfFour: getItem('areaListOfFour'),
+        areaListOfFour: getItem('areaListOfFour') || [],
 
         // 移动端中的数据，当前选中的项
         activeInfo: getItem('activeInfo')
@@ -110,7 +110,6 @@ export default createStore({
             }
         }
     },
-    modules: {},
     getters: {
         // 3层的座位人员信息和区域会议室信息集合
         seatAndAreaListOfThree(state){
@@ -127,21 +126,6 @@ export default createStore({
         // 根据currentFloor得到当前的楼层（或地区）的数值
         floor(state) {
             return state.currentFloor === 'three' ? 3 : 4
-        },
-        // 点击图例筛选后的座位信息
-        FilterSeatListByLegend(state,getter) {
-            // 1、判断当前的楼层，选择出要做筛选的数组
-            const currentFloorSeatList = state.currentFloor === 'three' ? getter.seatAndAreaListOfThree : getter.seatAndAreaListOfFour
-            // 2、判断当前是否有选中的图例
-            if(state.currentLegend){
-                // 3、如果有选中的图例
-                return currentFloorSeatList.filter((item) => {
-                    return item.type === state.currentLegend || item.type === 2 || item.type === 3
-                })
-            }else{
-                // 4、没有选中的图例，直接返回currentFloorSeatList
-                return currentFloorSeatList
-            }
         }
     }
 })

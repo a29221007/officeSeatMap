@@ -29,7 +29,7 @@
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
-                        <template v-for="(item2,index) in item.coordinate">
+                        <template v-for="(item2,index) in item.coordinate" :key="item2.id">
                             <!-- 区域 -->
                             <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="{
                                 position: 'absolute',
@@ -90,7 +90,25 @@ export default {
         // 当前地图的信息（包括人员、座位、区域、会议室等）
         let seatData = reactive({
             // 人员信息座位集合
-            mapList: computed(() => store.getters.FilterSeatListByLegend),
+            mapList: computed(() => {
+                // 3层的座位人员信息和区域会议室信息集合
+                let seatAndAreaListOfThree = store.state.seatListOfthree.concat(store.state.areaListOfThree)
+                // 4层的座位人员信息和区域会议室信息集合
+                let seatAndAreaListOfFour = store.state.seatListOfFour.concat(store.state.areaListOfFour)
+                // 点击图例筛选后的座位信息
+                // 1、判断当前的楼层，选择出要做筛选的数组
+                const currentFloorSeatList = store.state.currentFloor === 'three' ? seatAndAreaListOfThree : seatAndAreaListOfFour
+                // 2、判断当前是否有选中的图例
+                if(store.state.currentLegend){
+                    // 3、如果有选中的图例
+                    return currentFloorSeatList.filter((item) => {
+                        return item.type === store.state.currentLegend || item.type === 2 || item.type === 3
+                    })
+                }else{
+                    // 4、没有选中的图例，直接返回currentFloorSeatList
+                    return currentFloorSeatList
+                }
+            }),
             // 当前选中的座位
             current:0,
             // 当前选中的区域
