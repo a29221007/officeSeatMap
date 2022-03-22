@@ -16,8 +16,9 @@
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs, inject } from 'vue'
 import { useStore } from 'vuex'
+import initMap from '../../hook/InitMap'
 export default {
     name:'BottomBoxInit',
     emits:['setSearchLegendContant'],
@@ -28,7 +29,7 @@ export default {
             // 点击搜索的盒子，向父组件发布一个事件，并传递参数
             emit('setSearchLegendContant','search')
         }
-
+        let switchLenged = inject('switchLenged')
         // 图例相关的数据和逻辑
         let legendData = reactive({
             // 图例的数据集合
@@ -41,6 +42,9 @@ export default {
             // 点击某一个图例触发的函数
             handleClickLegend(type){
                 store.commit('setCurrentLegend',type)
+                // 切换图例，重置座位高亮和区域高亮，以及终止地图位置，缩放
+                switchLenged()
+                initMap()
             }
         })
 

@@ -260,18 +260,19 @@ export default {
             // 10、得到了视图应该移动的距离
             let valueX = mapContainer_X - (MapContainerBox.offsetWidth / 2)
             let valueY = mapContainer_Y - (MapContainerBoxOffsetHeight.value / 2)
-            // 11、调用 inject 传递过来的函数，设置盒子的高亮状态
-            upDataCurrentAreaCode({
-                code,
-                scaleX,
-                scaleY
-            })
             // 12、设置MapBoxRef盒子的位置
             mapBox.style.left = (mapBox.offsetLeft - valueX) + 'px'
             mapBox.style.top = (mapBox.offsetTop - valueY) + 'px'
             // 13、设置缩放的中心点，放大地图
             mapBox.style.transformOrigin = `${minLeft + (currentAreaWidth / 2)}px ${minTop + (currentAreaHeight / 2)}px`
             mapBox.style.transform = `scale(${scaleX},${scaleY})`
+
+            // 11、调用 inject 传递过来的函数，设置盒子的高亮状态
+            upDataCurrentAreaCode({
+                code,
+                scaleX,
+                scaleY
+            })
 
             nextTick(() => {
                 // 关于元素滚动的逻辑
@@ -332,7 +333,8 @@ export default {
         return {
             ...toRefs(searchInput),
             ...toRefs(querySearch),
-            inputRef
+            inputRef,
+            searchArea
         }
     }
 }

@@ -55,17 +55,37 @@
 </template>
 
 <script>
-import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick} from 'vue'
+import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, inject} from 'vue'
 import { useStore } from 'vuex'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
 import BottomBox from './compontent/bottomBox.vue'
+// 导入获取座位信息的接口
+import { getSeatList } from '@/api/getSeatList'
 export default {
     name:'M-Home',
     components:{
         BottomBox
     },
-    setup(){
+    // props:{
+    //     seatListOfthree:{
+    //         type:Array,
+    //     }
+    // },
+    setup(prop){
+        let bbb = ref([])
+        // 获取数据
+        getSeat_Area_List()
+        async function getSeat_Area_List(){
+            const {data:data1} = await getSeatList(3)
+            bbb.value = data1
+            console.log('bbb.value',bbb.value);
+            // try{
+            //     console.log(bbb.value)
+            // }catch(error){
+            //     errorMessage(error)
+            // }
+        }
         // 获取vuex实例
         const store = useStore()
         // 获取 MapBoxRef DOM 对象
@@ -86,10 +106,11 @@ export default {
         let a = true
 
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
-        let BodyContainer
-        let MapBox
+        let BodyContainer = null
+        let MapBox = null
         // 在mounted函数中对地图盒子注册监听事件
         onMounted(() => {
+            console.log('bbb',bbb.value)
             // 1、将地图铺满整个屏幕
             // 1.1计算出高度的缩放比例 = 屏幕的高度 / 盒子的高度
             const scale = BodyContainerRef.value.offsetHeight / MapBoxRef.value.offsetHeight
@@ -109,6 +130,50 @@ export default {
             BodyContainer.on('pressMove', MapBoxPressMoveFn)
             // 2.7 监听 MapBox 盒子的 touchEnd 事件
             BodyContainer.on('touchEnd', MapBoxTouchEndFn)
+
+            // 3、根据 url 中的参数跳转到对应区域
+            // 3.1 获取url中的参数
+            // let requestSearch = window.location.search
+            // // 3.2 判断是否有参数
+            // if(!requestSearch) return // 没有参数说明不是扫码进的项目,则不执行后续的逻辑
+            // let requestSearchArray = requestSearch.slice(1).split('&')
+            let requestSearchObj = {
+                floor:3,
+                type:2,
+                seat_id:'QY0101030031'
+            }
+            // requestSearchArray.forEach(item => {
+            //     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
+            // })
+            // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
+            const floor = requestSearchObj.floor === 3 ? 'three' : 'four'
+            store.commit('setCurrentFloor',floor)
+            // 3.4 找出当前扫码查找的项，并向 vuex 设置
+            let value = requestSearchObj.type === 1 ? 'seat_id' : 'code' // 匹配的字段
+            // 3.5 找出当前项
+            let FindArray = []
+            if(requestSearchObj.floor === 3 && requestSearchObj.type === 1){
+                // 3层的座位
+                FindArray = store.state.seatListOfthree
+            }else if(requestSearchObj.floor === 3 && requestSearchObj.type === 2){
+                // 3层的区域
+                FindArray = store.state.areaListOfThree
+            }else if(requestSearchObj.floor === 4 && requestSearchObj.type === 1){
+                // 4层的座位
+                FindArray = store.state.seatListOfFour
+            }else if(requestSearchObj.floor === 4 && requestSearchObj.type === 2){
+                // 4层的区域
+                FindArray = store.state.areaListOfFour
+            }
+            let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
+            // 3.6 将当前项设置到 vuex 中
+            store.commit('setActiveInfo',item)
+            // 3.7 调用子组件的方法，将seaech组件显示出来
+            BottomBoxRef.value.setSearchLegendContant('search')
+            nextTick(() => {
+                BottomBoxRef.value.setSearchLegendContant('information')
+                BottomBoxRef.value.componentRef.searchArea(requestSearchObj.seat_id)
+            })
         })
         // MapBox 盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
@@ -233,9 +298,10 @@ export default {
             mapList: computed(() => store.getters.FilterSeatListByLegend ? store.getters.FilterSeatListByLegend : []),
             // 当前选中的座位
             current:0,
-            // 子组件发布的事件，切换路层后，将当前的选中座位重置
+            // 子组件发布的事件，切换路层后，将当前的选中座位和区域的高亮重置
             switchFloor(){
                 seatData.current = 0
+                seatData.currentAreaCode = ''
             },
             // 当前选中的区域
             currentAreaCode:'',
@@ -244,6 +310,8 @@ export default {
                 seatData.currentAreaCode = code
                 scale_init_x = scaleX
                 scale_init_y = scaleY
+                // 搜索区域时，将座位的高亮取消
+                seatData.current = 0
             },
             // 设置每一个座位的样式
             seatItemStyle(seatItem) {
@@ -257,9 +325,11 @@ export default {
             handleClickSeat(seatItem,$event){
                 // 阻止冒泡
                 $event.stopPropagation()
+                // 点击座位，将区域的高亮色，取消
+                seatData.currentAreaCode = ''
                 // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
                 if(seatItem.seat_id === seatData.current){
-                    seatData.current = 0
+                    return seatData.current = 0
                 }else{
                     seatData.current = seatItem.seat_id
                 }
@@ -342,6 +412,8 @@ export default {
                 })
             }
         })
+        // 向子组件传递 switchFloor 事件，在切换图例时，也要触发改事件，将高亮的座位和区域重置
+        provide('switchLenged',seatData.switchFloor)
         // 储存做动画元素，将来要清除元素上的定时器
         let obj = []
         // 这个是延时器的id

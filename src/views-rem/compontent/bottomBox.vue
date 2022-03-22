@@ -2,7 +2,7 @@
     <!-- 上面滑动区域 -->
     <div ref="SearchLegendRef" class="search-legend">
         <!-- 里面切换子组件 -->
-        <component v-on:setSearchLegendContant="setSearchLegendContant" :is="SearchLegendContant"></component>
+        <component ref="componentRef" v-on:setSearchLegendContant="setSearchLegendContant" :is="SearchLegendContant"></component>
     </div>
     <!-- 下面切换楼层区域 -->
     <div ref="FloorSwitchRef" class="floor-switch" v-if="SearchLegendContant === 'init'">
@@ -17,6 +17,7 @@ import { useStore } from 'vuex'
 import Init from './bottomBox-init'
 import Search from './bottomBox-search'
 import Information from './bottomBox-Information'
+import initMap from '../hook/InitMap'
 // 导入
 export default {
     name:'bottomBox',
@@ -35,10 +36,12 @@ export default {
         ]
         // 触摸切换楼层（或地区）触发的函数
         function handleClickFloor(floor) {
+            if(floor === store.state.currentFloor) return
             // 设置当前选中的楼层（或地区）
             store.commit('setCurrentFloor',floor)
             // 切换楼层（或地区）时，向父组件发布一个事件
             emit('switchFloor')
+            initMap()
         }
 
         // 获取 SearchLegendRef、FloorSwitchRef 两个盒子的DOM对象
@@ -218,13 +221,15 @@ export default {
             // 3、移除 touchend 事件
             SearchLegendRef.value.removeEventListener('touchend', SearchLegendTouchendFn)
         })
+        const componentRef = ref(null)
         return {
             AllArea,
             handleClickFloor,
             SearchLegendRef,
             FloorSwitchRef,
             SearchLegendContant,
-            setSearchLegendContant
+            setSearchLegendContant,
+            componentRef
         }
     }
 }
