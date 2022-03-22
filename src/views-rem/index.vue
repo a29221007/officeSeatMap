@@ -51,7 +51,7 @@
         </div>
     </div>
     <!-- 底部搜索相关组件 -->
-    <BottomBox ref="BottomBoxRef"></BottomBox>
+    <BottomBox ref="BottomBoxRef" v-on:switchFloor="switchFloor"></BottomBox>
 </template>
 
 <script>
@@ -228,13 +228,15 @@ export default {
         provide('upDataHeight',setHeight)
         // 获取 BottomBoxRef 实例
         const BottomBoxRef = ref(null)
-        // 是否为搜索时触发的座位点击事件
-        let is_srearch = false
         let seatData = reactive({
             // 人员信息座位集合
             mapList: computed(() => store.getters.FilterSeatListByLegend ? store.getters.FilterSeatListByLegend : []),
             // 当前选中的座位
             current:0,
+            // 子组件发布的事件，切换路层后，将当前的选中座位重置
+            switchFloor(){
+                seatData.current = 0
+            },
             // 当前选中的区域
             currentAreaCode:'',
             // 设置当前选中的区域
@@ -284,6 +286,7 @@ export default {
                 store.commit('setActiveInfo',seatItem)
                 // 8、修改之前的bug，（之前在 bottomBox-Information 信息展示组件中的 onMounted 钩子中，判断数据是否超过父盒子，如果超过，则做往复动画），现在将逻辑放到点击事件中，修复一些bug
                 nextTick(() => {
+                    // 关于元素滚动的逻辑
                     clearTimer()
                     obj = []
                     timer123 = null
@@ -301,7 +304,6 @@ export default {
                                 let target = Math.floor(value)
                                 let leader = 0
                                 item.timer = setInterval(() => {
-                                    console.log(123)
                                     let step = 1
                                     if(Math.abs(leader - target) >= Math.abs(step)){
                                         step = leader > target ? -step : step
@@ -318,6 +320,25 @@ export default {
                             item.style.left = 0
                         }
                     })
+                    el = null
+                    // 元素做展开、收回
+                    el = document.querySelector('.over')
+                    if(!el) return
+                    if(el.scrollWidth > el.offsetWidth){
+                        // 如果内容的宽度比盒子的宽度大，则向最后添加一个展开按钮
+                        let span = document.createElement('span')
+                        span.innerHTML = '展开'
+                        span.style.float = 'right'
+                        span.style.marginTop = '2px'
+                        span.style.backgroundColor = '#f8f9fa'
+                        span.style.color = '#1b1b1d'
+                        span.style.borderRadius = '2px'
+                        span.style.padding = '0.0538rem'
+                        el.appendChild(span)
+                        span.addEventListener('click',show)
+                    }else{
+                        el.style.overflow = 'hidden'
+                    }
                 })
             }
         })
@@ -325,12 +346,30 @@ export default {
         let obj = []
         // 这个是延时器的id
         let timer123 = null
+        // 储存做展开、收起的元素
+        let el = null
+        // 展开、收起的函数
+        function show(e){
+            let value = e.target.innerHTML
+            if(value === '展开'){
+                el.style.whiteSpace = 'unset'
+                e.target.innerHTML = '收起'
+                el.style.overflow = 'auto'
+            }else{
+                el.style.whiteSpace = 'nowrap'
+                e.target.innerHTML = '展开'
+                el.style.overflow = 'hidden'
+            }
+        }
         // 定义一个清除定时器的函数，并通过 provide 传递给子组件，将来信息展示组件的销毁阶段要清除定时器，防止内存泄漏
         function clearTimer(){
             obj.forEach(item => {
                 clearInterval(item.timer)
             })
             clearTimeout(timer123)
+            if(el){
+                el.querySelector('span') && el.querySelector('span').remove()
+            }
         }
         // 向子组件传递清除定时器的方法
         provide('clear',clearTimer)

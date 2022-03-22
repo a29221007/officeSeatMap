@@ -1,9 +1,30 @@
 <template>
-    <el-form label-width="auto">
-        <el-form-item label="区域名称：">{{$store.state.activeInfo.name + $store.state.activeInfo.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")}}</el-form-item>
-        <el-form-item label="区域编号：">{{$store.state.activeInfo.code}}</el-form-item>
-        <el-form-item label="区域背景色：">{{$store.state.activeInfo.backgroundcolor}}</el-form-item>
-    </el-form>
+    <div class="container">
+        <!-- 第一行 -->
+        <div class="line">
+            <!-- 第一列 -->
+            <div class="col">
+                <div class="title">区域名称：</div>
+                <div class="content"><span class="scroll">{{$store.state.activeInfo.name + $store.state.activeInfo.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")}}</span></div>
+            </div>
+        </div>
+        <!-- 第一行 -->
+        <div class="line">
+            <!-- 第一列 -->
+            <div class="col">
+                <div class="title">区域编号：</div>
+                <div class="content"><span class="scroll">{{$store.state.activeInfo.code}}</span></div>
+            </div>
+        </div>
+        <!-- 第一行 -->
+        <div class="line">
+            <!-- 第一列 -->
+            <div class="col">
+                <div class="title">区域背景色：</div>
+                <div class="content"><span class="scroll">{{$store.state.activeInfo.backgroundcolor}}</span></div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -13,23 +34,36 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.el-form{
+.container{
     width: 100%;
-    .el-form-item{
-        --font-size: unset;
-        margin-bottom: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .line{
+        display: flex;
         height: .8602rem;
-        /deep/.el-form-item__label-wrap{
-            align-items: center;
-            .el-form-item__label{
+        align-items: center;
+        justify-content: space-between;
+        .col{
+            flex: 1;
+            white-space:nowrap;
+            overflow: hidden;
+            display: flex;
+            align-items: baseline;
+            .title{
+                flex: 1;
                 font-size: .3763rem;
                 color: #f8f9fa;
-                padding: 0;
-                line-height: unset;
+                text-align: end;
             }
-        }
-        /deep/.el-form-item__content{
-            line-height: unset;
+            .content{
+                flex: 3;
+                overflow: hidden;
+                span{
+                    position: relative;
+                }
+            }
         }
     }
 }

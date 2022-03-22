@@ -41,6 +41,8 @@
 import { reactive, toRefs, nextTick, inject, ref, onBeforeUnmount} from 'vue'
 import { useStore } from 'vuex'
 import { Dialog, Toast } from 'vant'
+// 导入事件中心
+import emitter from '@/views/eventbus.js'
 export default {
     name:'BottomBoxSearch',
     emits:['setSearchLegendContant'],
@@ -270,8 +272,59 @@ export default {
             // 13、设置缩放的中心点，放大地图
             mapBox.style.transformOrigin = `${minLeft + (currentAreaWidth / 2)}px ${minTop + (currentAreaHeight / 2)}px`
             mapBox.style.transform = `scale(${scaleX},${scaleY})`
-        }
 
+            nextTick(() => {
+                // 关于元素滚动的逻辑
+                clearTimer()
+                obj = []
+                timer123 = null
+                let content = document.querySelectorAll('.scroll')
+                content.forEach((item) => {
+                    // 当前节点的宽度
+                    let currentNodeWidth = item.offsetWidth
+                    // 当前节点父元素的宽度
+                    let curentParentNdoeWidth = item.parentNode.offsetWidth
+                    // 子元素和父元素的差值
+                    let value = curentParentNdoeWidth - currentNodeWidth
+                    if(value < 0){
+                        timer123 = setTimeout(() => {
+                            clearInterval(item.timer)
+                            let target = Math.floor(value)
+                            let leader = 0
+                            item.timer = setInterval(() => {
+                                console.log(123)
+                                let step = 1
+                                if(Math.abs(leader - target) >= Math.abs(step)){
+                                    step = leader > target ? -step : step
+                                    leader = leader + step
+                                    item.style.left = leader + 'px'
+                                }else{
+                                    item.style.left = target + 'px'
+                                    target = leader === 0 ? value : 0
+                                }
+                            },200)
+                            obj.push(item)
+                        },1000)
+                    }else{
+                        item.style.left = 0
+                    }
+                })
+            })
+        }
+        // 储存做动画元素，将来要清除元素上的定时器
+        let obj = []
+        // 这个是延时器的id
+        let timer123 = null
+        emitter.on('clearAreaTimer',() => {
+            clearTimer()
+        })
+        // 定义一个清除定时器的函数，并通过 provide 传递给子组件，将来信息展示组件的销毁阶段要清除定时器，防止内存泄漏
+        function clearTimer(){
+            obj.forEach(item => {
+                clearInterval(item.timer)
+            })
+            clearTimeout(timer123)
+        }
         // 卸载阶段
         onBeforeUnmount(() => {
             clearTimeout(searchInput.searchTimer)

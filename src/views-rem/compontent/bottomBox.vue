@@ -23,7 +23,8 @@ export default {
     components:{
         Init, Search, Information
     },
-    setup() {
+    emits:['switchFloor'],
+    setup(prop,{ emit }) {
         // 创建 store 实例
         const store = useStore()
 
@@ -36,6 +37,8 @@ export default {
         function handleClickFloor(floor) {
             // 设置当前选中的楼层（或地区）
             store.commit('setCurrentFloor',floor)
+            // 切换楼层（或地区）时，向父组件发布一个事件
+            emit('switchFloor')
         }
 
         // 获取 SearchLegendRef、FloorSwitchRef 两个盒子的DOM对象

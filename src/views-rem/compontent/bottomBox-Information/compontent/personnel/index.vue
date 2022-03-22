@@ -27,38 +27,8 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
 export default {
-    name:'personnel',
-    setup() {
-        let el = null
-        onMounted(() => {
-            el = document.querySelector('.over')
-            if(el.scrollWidth > el.offsetWidth){
-                // 如果内容的宽度比盒子的宽度大，则向最后添加一个展开按钮
-                let span = document.createElement('span')
-                span.innerHTML = '展开'
-                span.style.float = 'right'
-                span.style.marginTop = '2px'
-                span.style.backgroundColor = '#f8f9fa'
-                span.style.color = '#1b1b1d'
-                span.style.borderRadius = '2px'
-                el.appendChild(span)
-                span.addEventListener('click',show)
-            }
-        })
-        function show(e){
-            el.style.transition = 'all 0.5s'
-            let value = e.target.innerHTML
-            if(value === '展开'){
-                el.style.whiteSpace = 'unset'
-                e.target.innerHTML = '收起'
-            }else{
-                el.style.whiteSpace = 'nowrap'
-                e.target.innerHTML = '展开'
-            }
-        }
-    }
+    name:'personnel'
 }
 </script>
 
@@ -107,10 +77,11 @@ export default {
             white-space:nowrap
         }
         .content{
+            max-height: 1.3441rem;
             position: relative;
             flex: 7;
             white-space:nowrap;
-            overflow: auto;
+            overflow: hidden;
             text-overflow:ellipsis;
         }
     }

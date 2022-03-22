@@ -23,6 +23,9 @@ import { useStore } from 'vuex'
 import Area from './compontent/area'
 import Personnel from './compontent/personnel'
 import TakeUp from './compontent/Take-up'
+
+// 导入事件中心
+import emitter from '@/views/eventbus.js'
 export default {
     name:'BottomBoxInformation',
     components:{
@@ -74,6 +77,7 @@ export default {
         // 组件卸载阶段
         onBeforeUnmount(() => {
             cleartime()
+            emitter.emit('clearAreaTimer')
         })
         return {
             activeInfo,
