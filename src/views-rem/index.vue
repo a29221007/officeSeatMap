@@ -87,7 +87,7 @@ export default {
 
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
         let BodyContainer = null
-        let MapBox = null
+        let MapBox = null 
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
                 // 3、根据 url 中的参数跳转到对应区域
