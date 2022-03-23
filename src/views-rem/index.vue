@@ -96,31 +96,28 @@ export default {
                 // 3.2 判断是否有参数
                 if(!requestSearch) return // 没有参数说明不是扫码进的项目,则不执行后续的逻辑
                 let requestSearchArray = requestSearch.slice(1).split('&')
-                let requestSearchObj = {
-                    floor:3,
-                    type:2,
-                    seat_id:'QY0101030004'
-                }
-                // requestSearchArray.forEach(item => {
-                //     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
-                // })
+                let requestSearchObj = {}
+                requestSearchArray.forEach(item => {
+                    requestSearchObj[item.split('=')[0]] = item.split('=')[1]
+                })
                 // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
-                const floor = requestSearchObj.floor === 3 ? 'three' : 'four'
+                const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
+                console.log('requestSearchObj',requestSearchObj)
                 store.commit('setCurrentFloor',floor)
                 // 3.4 找出当前扫码查找的项，并向 vuex 设置
-                let value = requestSearchObj.type === 1 ? 'seat_id' : 'code' // 匹配的字段
+                let value = requestSearchObj.type == 1 ? 'seat_id' : 'code' // 匹配的字段
                 // 3.5 找出当前项
                 let FindArray = []
-                if(requestSearchObj.floor === 3 && requestSearchObj.type === 1){
+                if(requestSearchObj.floor == 3 && requestSearchObj.type == 1){
                     // 3层的座位
                     FindArray = store.state.seatListOfthree
-                }else if(requestSearchObj.floor === 3 && requestSearchObj.type === 2){
+                }else if(requestSearchObj.floor == 3 && requestSearchObj.type == 2){
                     // 3层的区域
                     FindArray = store.state.areaListOfThree
-                }else if(requestSearchObj.floor === 4 && requestSearchObj.type === 1){
+                }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 1){
                     // 4层的座位
                     FindArray = store.state.seatListOfFour
-                }else if(requestSearchObj.floor === 4 && requestSearchObj.type === 2){
+                }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 2){
                     // 4层的区域
                     FindArray = store.state.areaListOfFour
                 }
