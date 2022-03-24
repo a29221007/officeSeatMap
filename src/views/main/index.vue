@@ -195,9 +195,9 @@ export default {
             // 监听鼠标的弹起事件，移除对鼠标移动事件的监听
             document.addEventListener('mouseup', mouseUp)
             // chrome and ie
-            MapBoxRef.value.addEventListener('mousewheel',handleScale)
+            MapBoxRef.value.addEventListener('mousewheel',handleScale_chrome_ie)
             // firefox
-            MapBoxRef.value.addEventListener("DOMMouseScroll",handleScale)
+            MapBoxRef.value.addEventListener("DOMMouseScroll",handleScale_firefox)
             // 手动设置MapBoxRef盒子的缩放比例，根据父盒子的大小（1200 ，845）
             // scalex: MapContainerRef盒子实际的宽度 / MapContainerRef原来的盒子宽度
             // scaley: MapContainerRef盒子的实际高度 / MapContainerRef运来盒子的高度
@@ -233,16 +233,27 @@ export default {
         function mouseUp() {
             document.removeEventListener('mousemove',mouseMove)
         }
-        // 监听鼠标滚轮滚动的事件
-        function handleScale(e){
+        // 监听鼠标滚轮滚动的事件-谷歌IE浏览器
+        function handleScale_chrome_ie(e){
             // 阻止默认行为
             e.preventDefault()
-            // 鼠标滚轮的参数
-            let value = e.wheelDelta ? e.wheelDelta : e.detail
-            if(value === 120 || value === -3){
+            if (e.wheelDelta > 0) {
                 // 执行放大的逻辑
                 MapBoxAmplification(0.3)
-            }else{
+            } else {
+                // 指向缩小的逻辑
+                MapBoxReduce(0.25)
+            }
+        }
+        // 监听鼠标滚轮滚动的事件-火狐浏览器
+        function handleScale_firefox(e){
+            // 阻止默认行为
+            e.preventDefault()
+            //上下滚轮动作判断
+            if (e.detail < 0) {
+                // 执行放大的逻辑
+                MapBoxAmplification(0.3)
+            } else {
                 // 指向缩小的逻辑
                 MapBoxReduce(0.25)
             }
@@ -275,8 +286,8 @@ export default {
         onBeforeUnmount(() => {
             MapBoxRef.value.removeEventListener('mousedown', mouseDown)
             document.removeEventListener('mouseup', mouseUp)
-            MapBoxRef.value.removeEventListener('mousewheel',handleScale)
-            MapBoxRef.value.removeEventListener("DOMMouseScroll",handleScale)
+            MapBoxRef.value.removeEventListener('mousewheel',handleScale_chrome_ie)
+            MapBoxRef.value.removeEventListener("DOMMouseScroll",handleScale_firefox)
         })
         return {
             ...toRefs(seatData),
