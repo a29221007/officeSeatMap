@@ -63,6 +63,9 @@ import emitter from '../eventbus'
 // 导入初始化地图的方法
 import initMap from '@/utils/initMap.js'
 import { Search } from '@element-plus/icons-vue'
+
+// 导入座位放大的逻辑
+import scaleSeat from '@/utils/scaleSeat.js'
 export default {
     name:'Header',
     setup(){
@@ -160,7 +163,8 @@ export default {
                         // 如果相同
                         // 1、获取座位id号对应的元素DOM
                         let el = document.getElementById(item.seat_id)
-                        el.click()
+                        emitter.emit('SearchSeat',item.seat_id)
+                        scaleSeat(el)
                         drawerData.is_show = true
                         drawerData.currentSeatInfo.depart = depart
                         drawerData.currentSeatInfo.seat_id = seat_id
@@ -185,7 +189,8 @@ export default {
                             drawerData.currentSeatInfo.name = name
                             nextTick(() => {
                                 let el = document.getElementById(item.seat_id)
-                                el.click()
+                                emitter.emit('SearchSeat',item.seat_id)
+                                scaleSeat(el)
                                 successMessage('切换成功')
                             })
                         }).catch(() => {

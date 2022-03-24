@@ -5,6 +5,7 @@
         <!-- 放大缩小按钮 -->
         <div class="scale-btn">
             <i v-on:click="MapBoxAmplification(0.7)" class="iconfont oamap-jiahao"></i>
+            <i v-on:click="initMap('huifu')" class="iconfont oamap-huifu"></i>
             <i v-on:click="MapBoxReduce(0.7)" class="iconfont oamap-jianhao"></i>
         </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
@@ -68,15 +69,30 @@ import { useStore } from 'vuex'
 import getMouseX_Y from '@/utils/getmouseX_Y.js'
 // 导入事件中心
 import emitter from '../eventbus.js'
+// 导入初始化地图的方法
+import initMap from '@/utils/initMap.js'
+
+// 导入座位放大的逻辑
+import scaleSeat from '@/utils/scaleSeat.js'
 export default {
     name:'Main',
     setup(){
+        // 监听搜索区域高亮事件
         emitter.on('activeArea',({code, scaleX, scaleY}) => {
             // 触发了区域高亮事件时，将座位的动画停止
             seatData.current = 0
             seatData.currentAreaCode = code
             sacleX = scaleX || store.state.scale[0]
             sacleY = scaleY || store.state.scale[1]
+        })
+        // 监听搜索座位高亮事件
+        emitter.on('SearchSeat', (seat_id) => {
+            seatData.current = seat_id
+            // 将区域的高亮取消
+            seatData.currentAreaCode = ''
+            // 同步搜索变量
+            sacleX = 3
+            sacleY = 3
         })
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
@@ -146,8 +162,6 @@ export default {
         function handleClickSeat(seatItem,$event){
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
-            // 设置过度属性，以及过渡时间
-            MapBoxRef.value.style.transition = 'all 1s'
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
             if(seatItem.seat_id === seatData.current){
                 seatData.current = 0
@@ -157,22 +171,8 @@ export default {
                 seatData.current = seatItem.seat_id
                 emitter.emit('form',seatItem)
             }
-            // 1、首先计算点击时鼠标距离MapContainerRef盒子的距离
-            let MapContainerRef_x = $event.target.offsetLeft + MapBoxRef.value.offsetLeft
-            let MapContainerRef_y = $event.target.offsetTop + MapBoxRef.value.offsetTop
-            // 2、得到MapContainerRef盒子的宽、高 / 2 (得到一半的值)
-            MapContainerRef.value.offsetWidth / 2
-            MapContainerRef.value.offsetHeight / 2
-            // 3、得到了视图应该移动的距离
-            let valueX = MapContainerRef_x - (MapContainerRef.value.offsetWidth / 2)
-            let valueY = MapContainerRef_y - (MapContainerRef.value.offsetHeight / 2)
-            // 4、设置MapBoxRef盒子的位置
-            MapBoxRef.value.style.left = (MapBoxRef.value.offsetLeft - valueX) + 'px'
-            MapBoxRef.value.style.top = (MapBoxRef.value.offsetTop - valueY) + 'px'
-            // 5、设置缩放的中心点，放大地图
-            MapBoxRef.value.style.transformOrigin = `${$event.target.offsetLeft}px ${$event.target.offsetTop}px`
-            MapBoxRef.value.style.transform = `scale(3)`
-            // 6、将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
+            scaleSeat($event.target)
+            // 将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacleX = 3
             sacleY = 3
         }
@@ -299,7 +299,8 @@ export default {
             tooltipText,
             tooltipRef,
             MapBoxAmplification,
-            MapBoxReduce
+            MapBoxReduce,
+            initMap
         }
     }
 }
@@ -328,13 +329,14 @@ export default {
         top: 20px;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         background-color: #ffffff;
-        padding: 10px;
+        padding: 5px;
         i{
             font-size: 25px;
             cursor: pointer;
-            &:first-child{
-                margin-bottom: 10px;
+            &:nth-child(2){
+                margin:5px 0;
             }
         }
     }
