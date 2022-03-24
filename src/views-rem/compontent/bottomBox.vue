@@ -1,6 +1,8 @@
 <template>
     <!-- 上面滑动区域 -->
     <div ref="SearchLegendRef" class="search-legend">
+        <div class="arrow arrow-left"></div>
+        <div class="arrow arrow-right"></div>
         <!-- 里面切换子组件 -->
         <component ref="componentRef" v-on:setSearchLegendContant="setSearchLegendContant" :is="SearchLegendContant"></component>
     </div>
@@ -117,7 +119,7 @@ export default {
         let c = true // 管下
         // SearchLegend 盒子 touchmove 事件的处理函数
         function SearchLegendTouchmoveFn(e) {
-            if(SearchLegendContant.value === 'information') return
+            // if(SearchLegendContant.value === 'information') return
             SearchLegendRef.value.style.transition = `none`
             if(e.changedTouches.length === 1){
                 // 滑动的变量
@@ -149,15 +151,17 @@ export default {
         }
         // SearchLegend 盒子 touchend 事件的处理函数
         function SearchLegendTouchendFn() {
-            if(SearchLegendContant.value === 'information') return
             // 给 SearchLegendRef 盒子添加过渡效果
             SearchLegendRef.value.style.transition = `all 0.5s`
-            // 判断是否超过临界值，如果超过了，则就return，并等于临界值
-            if(SearchLegendRef.value.offsetTop >= SearchLegendMaxTop) return SearchLegendRef.value.style.top = SearchLegendMaxTop + 'px'
-            if(SearchLegendRef.value.offsetTop <= SearchLegendMinTop) return SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
+            // // 判断是否超过临界值，如果超过了，则就return，并等于临界值
+            // if(SearchLegendRef.value.offsetTop >= SearchLegendMaxTop) return SearchLegendRef.value.style.top = SearchLegendMaxTop + 'px'
+            // if(SearchLegendRef.value.offsetTop <= SearchLegendMinTop) return SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
             // 触摸结束时的盒子高度（目的是将判断语句中抽离出来，简化if判断语句的条件）
             let top = SearchLegendRef.value.offsetTop
             if(SearchLegendContant.value === 'init') {
+                // 判断是否超过临界值，如果超过了，则就return，并等于临界值
+                if(SearchLegendRef.value.offsetTop >= SearchLegendMaxTop) return SearchLegendRef.value.style.top = SearchLegendMaxTop + 'px'
+                if(SearchLegendRef.value.offsetTop <= SearchLegendMinTop) return SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
                 if(flag === 'up'){
                     // 执行向上的逻辑
                     if(top < SearchLegendTop + SearchLegendTop * 0.1 && top > SearchLegendTop * 0.85){
@@ -176,13 +180,26 @@ export default {
                     SearchLegendRef.value.style.top = SearchLegendNowTop + 'px'
                 }
             }else if(SearchLegendContant.value === 'search'){
+                // 判断是否超过临界值，如果超过了，则就return，并等于临界值
+                if(SearchLegendRef.value.offsetTop >= SearchLegendMaxTop) return SearchLegendRef.value.style.top = SearchLegendMaxTop + 'px'
+                if(SearchLegendRef.value.offsetTop <= SearchLegendMinTop) return SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
                 if(flag === 'down'){
                     // 向下滑动
                     SearchLegendContant.value = 'init'
-                }else{
+                }else if(flag === 'up'){
                     // 向上滑动
                     SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
                 }
+            }else if(SearchLegendContant.value === 'information'){
+                if(flag === 'down'){
+                    // 向下滑动
+                    SearchLegendContant.value = 'init'
+                }else if(flag === 'up'){
+                    // 向上滑动
+                    SearchLegendContant.value = 'search'
+                }
+                b = true
+                c = true
             }
         }
 
@@ -248,6 +265,23 @@ export default {
     height: 2.7957rem;
     border-radius: 10px 10px 0 0;
     padding: .3226rem;
+    .arrow{
+        position: absolute;
+        top: .1rem;
+        left: 50%;
+        width: .625rem;
+        height: .075rem;
+        background-color: #fff;
+        overflow: hidden;
+    }
+    .arrow-left{
+        transform: translateX(-99%);
+        border-radius: .125rem 0 0 .125rem;
+    }
+    .arrow-right{
+        transform: translateX(-1%);
+        border-radius: 0 .125rem .125rem 0;
+    }
 }
 .floor-switch{
     bottom: 0;

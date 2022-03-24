@@ -4,7 +4,7 @@
         <!-- 头部区域 -->
         <div class="header">
             <div class='title'>{{title}}</div>
-            <i v-on:click="handleClickBackSearch" class="iconfont oamap-dongtaijiantoucopy"></i>
+            <!-- <i v-on:click="handleClickBackSearch" class="iconfont oamap-dongtaijiantoucopy"></i> -->
             <div class="buttons">
                 <div v-on:click="handleClickEdit"><i class="iconfont oamap-xiugai"></i> 编辑</div>
             </div>
