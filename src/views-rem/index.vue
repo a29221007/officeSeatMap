@@ -179,7 +179,7 @@ export default {
                     MapBoxDoubleTapFn()
                 }
                 times = 0
-            }, 150)
+            }, 250)
         }
         // MapBox盒子 touchStart 事件的处理函数
         function MapBoxTouchStartFn(e) {
