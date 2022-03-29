@@ -102,44 +102,41 @@ export default {
                 requestSearchArray.forEach(item => {
                     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
                 })
-                // 3.3 继续判断 requestSearchObj 这个对象中是否有 code 字段
-                if(!requestSearchObj.code) return // 如果没有，则不执行后续的操作
                 sendCode(requestSearchObj.code).then((res) => {
                     console.log('res',res)
                 })
-                // // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
-                // const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
-                // console.log('requestSearchObj',requestSearchObj)
-                // store.commit('setCurrentFloor',floor)
-                // // 3.4 找出当前扫码查找的项，并向 vuex 设置
-                // let value = requestSearchObj.type == 1 ? 'seat_id' : 'code' // 匹配的字段
-                // // 3.5 找出当前项
-                // let FindArray = []
-                // if(requestSearchObj.floor == 3 && requestSearchObj.type == 1){
-                //     // 3层的座位
-                //     FindArray = store.state.seatListOfthree
-                // }else if(requestSearchObj.floor == 3 && requestSearchObj.type == 2){
-                //     // 3层的区域
-                //     FindArray = store.state.areaListOfThree
-                // }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 1){
-                //     // 4层的座位
-                //     FindArray = store.state.seatListOfFour
-                // }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 2){
-                //     // 4层的区域
-                //     FindArray = store.state.areaListOfFour
-                // }
-                // let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
-                // // 3.6 将当前项设置到 vuex 中
-                // store.commit('setActiveInfo',item)
-                // let searchLegend = document.querySelector('.search-legend')
-                // searchLegend.style.display = 'none'
-                // // 3.7 调用子组件的方法，将seaech组件显示出来
-                // BottomBoxRef.value.setSearchLegendContant('search')
-                // nextTick(() => {
-                //     BottomBoxRef.value.setSearchLegendContant('information')
-                //     BottomBoxRef.value.componentRef.searchArea(requestSearchObj.seat_id)
-                //     searchLegend.style.display = 'block'
-                // })
+                // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
+                const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
+                store.commit('setCurrentFloor',floor)
+                // 3.4 找出当前扫码查找的项，并向 vuex 设置
+                let value = requestSearchObj.type == 1 ? 'seat_id' : 'code' // 匹配的字段
+                // 3.5 找出当前项
+                let FindArray = []
+                if(requestSearchObj.floor == 3 && requestSearchObj.type == 1){
+                    // 3层的座位
+                    FindArray = store.state.seatListOfthree
+                }else if(requestSearchObj.floor == 3 && requestSearchObj.type == 2){
+                    // 3层的区域
+                    FindArray = store.state.areaListOfThree
+                }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 1){
+                    // 4层的座位
+                    FindArray = store.state.seatListOfFour
+                }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 2){
+                    // 4层的区域
+                    FindArray = store.state.areaListOfFour
+                }
+                let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
+                // 3.6 将当前项设置到 vuex 中
+                store.commit('setActiveInfo',item)
+                let searchLegend = document.querySelector('.search-legend')
+                searchLegend.style.display = 'none'
+                // 3.7 调用子组件的方法，将seaech组件显示出来
+                BottomBoxRef.value.setSearchLegendContant('search')
+                nextTick(() => {
+                    BottomBoxRef.value.setSearchLegendContant('information')
+                    BottomBoxRef.value.componentRef.searchArea(requestSearchObj.seat_id)
+                    searchLegend.style.display = 'block'
+                })
             }
         })
         // 在mounted函数中对地图盒子注册监听事件
