@@ -191,13 +191,13 @@ export default {
             MapContainerRef.value.style.width = obj.width * 0.625 + 'px'
             MapContainerRef.value.style.height = obj.height * 0.872 + 'px'
             // 监听鼠标在MapBoxRef盒子内的按压事件
-            MapBoxRef.value.addEventListener('mousedown', mouseDown)
+            MapContainerRef.value.addEventListener('mousedown', mouseDown)
             // 监听鼠标的弹起事件，移除对鼠标移动事件的监听
             document.addEventListener('mouseup', mouseUp)
             // chrome and ie
-            MapBoxRef.value.addEventListener('mousewheel',handleScale_chrome_ie)
+            MapContainerRef.value.addEventListener('mousewheel',handleScale_chrome_ie)
             // firefox
-            MapBoxRef.value.addEventListener("DOMMouseScroll",handleScale_firefox)
+            MapContainerRef.value.addEventListener("DOMMouseScroll",handleScale_firefox)
             // 手动设置MapBoxRef盒子的缩放比例，根据父盒子的大小（1200 ，845）
             // scalex: MapContainerRef盒子实际的宽度 / MapContainerRef原来的盒子宽度
             // scaley: MapContainerRef盒子的实际高度 / MapContainerRef运来盒子的高度
@@ -284,10 +284,10 @@ export default {
         }
         // 在组件卸载时移除一些事件的监听
         onBeforeUnmount(() => {
-            MapBoxRef.value.removeEventListener('mousedown', mouseDown)
+            MapContainerRef.value.removeEventListener('mousedown', mouseDown)
             document.removeEventListener('mouseup', mouseUp)
-            MapBoxRef.value.removeEventListener('mousewheel',handleScale_chrome_ie)
-            MapBoxRef.value.removeEventListener("DOMMouseScroll",handleScale_firefox)
+            MapContainerRef.value.removeEventListener('mousewheel',handleScale_chrome_ie)
+            MapContainerRef.value.removeEventListener("DOMMouseScroll",handleScale_firefox)
         })
         return {
             ...toRefs(seatData),

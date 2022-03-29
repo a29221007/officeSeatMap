@@ -87,7 +87,6 @@ export default {
 
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
         let BodyContainer = null
-        let MapBox = null 
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
                 // 3、根据 url 中的参数跳转到对应区域
@@ -95,44 +94,44 @@ export default {
                 let requestSearch = window.location.search
                 // 3.2 判断是否有参数
                 if(!requestSearch) return // 没有参数说明不是扫码进的项目,则不执行后续的逻辑
-                let requestSearchArray = requestSearch.slice(1).split('&')
-                let requestSearchObj = {}
-                requestSearchArray.forEach(item => {
-                    requestSearchObj[item.split('=')[0]] = item.split('=')[1]
-                })
-                // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
-                const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
-                console.log('requestSearchObj',requestSearchObj)
-                store.commit('setCurrentFloor',floor)
-                // 3.4 找出当前扫码查找的项，并向 vuex 设置
-                let value = requestSearchObj.type == 1 ? 'seat_id' : 'code' // 匹配的字段
-                // 3.5 找出当前项
-                let FindArray = []
-                if(requestSearchObj.floor == 3 && requestSearchObj.type == 1){
-                    // 3层的座位
-                    FindArray = store.state.seatListOfthree
-                }else if(requestSearchObj.floor == 3 && requestSearchObj.type == 2){
-                    // 3层的区域
-                    FindArray = store.state.areaListOfThree
-                }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 1){
-                    // 4层的座位
-                    FindArray = store.state.seatListOfFour
-                }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 2){
-                    // 4层的区域
-                    FindArray = store.state.areaListOfFour
-                }
-                let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
-                // 3.6 将当前项设置到 vuex 中
-                store.commit('setActiveInfo',item)
-                let searchLegend = document.querySelector('.search-legend')
-                searchLegend.style.display = 'none'
-                // 3.7 调用子组件的方法，将seaech组件显示出来
-                BottomBoxRef.value.setSearchLegendContant('search')
-                nextTick(() => {
-                    BottomBoxRef.value.setSearchLegendContant('information')
-                    BottomBoxRef.value.componentRef.searchArea(requestSearchObj.seat_id)
-                    searchLegend.style.display = 'block'
-                })
+                // let requestSearchArray = requestSearch.slice(1).split('&')
+                // let requestSearchObj = {}
+                // requestSearchArray.forEach(item => {
+                //     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
+                // })
+                // // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
+                // const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
+                // console.log('requestSearchObj',requestSearchObj)
+                // store.commit('setCurrentFloor',floor)
+                // // 3.4 找出当前扫码查找的项，并向 vuex 设置
+                // let value = requestSearchObj.type == 1 ? 'seat_id' : 'code' // 匹配的字段
+                // // 3.5 找出当前项
+                // let FindArray = []
+                // if(requestSearchObj.floor == 3 && requestSearchObj.type == 1){
+                //     // 3层的座位
+                //     FindArray = store.state.seatListOfthree
+                // }else if(requestSearchObj.floor == 3 && requestSearchObj.type == 2){
+                //     // 3层的区域
+                //     FindArray = store.state.areaListOfThree
+                // }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 1){
+                //     // 4层的座位
+                //     FindArray = store.state.seatListOfFour
+                // }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 2){
+                //     // 4层的区域
+                //     FindArray = store.state.areaListOfFour
+                // }
+                // let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
+                // // 3.6 将当前项设置到 vuex 中
+                // store.commit('setActiveInfo',item)
+                // let searchLegend = document.querySelector('.search-legend')
+                // searchLegend.style.display = 'none'
+                // // 3.7 调用子组件的方法，将seaech组件显示出来
+                // BottomBoxRef.value.setSearchLegendContant('search')
+                // nextTick(() => {
+                //     BottomBoxRef.value.setSearchLegendContant('information')
+                //     BottomBoxRef.value.componentRef.searchArea(requestSearchObj.seat_id)
+                //     searchLegend.style.display = 'block'
+                // })
             }
         })
         // 在mounted函数中对地图盒子注册监听事件
@@ -147,11 +146,10 @@ export default {
             // 2.1 实例化 AlloyFinger 这个构造函数，并将地图盒子的DOM元素传递进去
             // 将地图盒子的移动扩大到整个屏幕，不在是之前的手指放到地图上才能移动
             BodyContainer = new AlloyFinger(BodyContainerRef.value,{}) 
-            MapBox = new AlloyFinger(MapBoxRef.value,{})
             // 2.2 监听 MapBox 盒子的 tap 事件
             BodyContainer.on('touchStart', MapBoxTouchStartFn)
             // 2.5 监听 MapBox 盒子的 pinch 事件
-            MapBox.on('pinch', MapBoxPinchFn)
+            BodyContainer.on('pinch', MapBoxPinchFn)
             // 2.6 监听 MapBox 盒子的 pressMove 事件
             BodyContainer.on('pressMove', MapBoxPressMoveFn)
             // 2.7 监听 MapBox 盒子的 touchEnd 事件
@@ -453,7 +451,7 @@ export default {
             // 1 卸载 MapBox 盒子的 tap 事件
             BodyContainer.off('touchStart', MapBoxTouchStartFn)
             // 2 卸载 MapBox 盒子的 pinch 事件
-            MapBox.off('pinch', MapBoxPinchFn)
+            BodyContainer.off('pinch', MapBoxPinchFn)
             // 3 卸载 MapBox 盒子的 pressMove 事件
             BodyContainer.off('pressMove', MapBoxPressMoveFn)
             // 4 卸载 MapBox 盒子的 touchEnd 事件
