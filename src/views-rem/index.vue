@@ -102,6 +102,7 @@ export default {
                 requestSearchArray.forEach(item => {
                     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
                 })
+                console.log('requestSearchObj',requestSearchObj)
                 sendCode(requestSearchObj.code).then((res) => {
                     console.log('res',res)
                 })
@@ -126,6 +127,7 @@ export default {
                     FindArray = store.state.areaListOfFour
                 }
                 let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
+                console.log('当前项',item)
                 // 3.6 将当前项设置到 vuex 中
                 store.commit('setActiveInfo',item)
                 let searchLegend = document.querySelector('.search-legend')
@@ -134,7 +136,9 @@ export default {
                 BottomBoxRef.value.setSearchLegendContant('search')
                 nextTick(() => {
                     BottomBoxRef.value.setSearchLegendContant('information')
-                    BottomBoxRef.value.componentRef.searchArea(requestSearchObj.seat_id)
+                    // BottomBoxRef.value.componentRef.searchArea(requestSearchObj.seat_id)
+                    // console.log('BottomBoxRef.value.componentRef',BottomBoxRef.value.componentRef)
+                    BottomBoxRef.value.componentRef.handleClickQuerySearchItem(item)
                     searchLegend.style.display = 'block'
                 })
             }
