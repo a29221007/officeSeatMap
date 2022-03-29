@@ -154,79 +154,84 @@ export default {
             // 点击搜索建议下拉框某一项的处理程序
             handleSelect(item) {
                 if(!searchData.is_none_sugges) return
-                // 判断搜索的类型，是座位还是区域
-                if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
-                    // 如果搜索的是座位，则执行下面的逻辑
-                    const { depart, name, seat_id } = item
-                    // 选中某一项，首先判断该员工的座位，是否在当前楼层
-                    if(item.floor == store.getters.floor){
-                        // 如果相同
-                        // 1、获取座位id号对应的元素DOM
-                        let el = document.getElementById(item.seat_id)
-                        emitter.emit('SearchSeat',item.seat_id)
-                        scaleSeat(el)
-                        drawerData.is_show = true
-                        drawerData.currentSeatInfo.depart = depart
-                        drawerData.currentSeatInfo.seat_id = seat_id
-                        drawerData.currentSeatInfo.name = name
-                    }else{
-                        // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
-                        ElMessageBox.confirm(
-                            `查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
-                            '提示',
-                            {
-                                cancelButtonText: '取消',
-                                confirmButtonText: '跳转',
-                                type: 'info',
-                            }
-                        ).then(() => {
-                            // 将要切换的楼层
-                            let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
-                            handleClickFloor(pushFloor)
+                // 如果是触发某一项搜索，首先要把当前的图例复原，全部的dom渲染出来
+                store.commit('setCurrentLegend','')
+                // 要使用 nextTick 函数获取更新后的dom元素
+                nextTick(() => {
+                    // 判断搜索的类型，是座位还是区域
+                    if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
+                        // 如果搜索的是座位，则执行下面的逻辑
+                        const { depart, name, seat_id } = item
+                        // 选中某一项，首先判断该员工的座位，是否在当前楼层
+                        if(item.floor == store.getters.floor){
+                            // 如果相同
+                            // 1、获取座位id号对应的元素DOM
+                            let el = document.getElementById(item.seat_id)
+                            emitter.emit('SearchSeat',item.seat_id)
+                            scaleSeat(el)
                             drawerData.is_show = true
                             drawerData.currentSeatInfo.depart = depart
                             drawerData.currentSeatInfo.seat_id = seat_id
                             drawerData.currentSeatInfo.name = name
-                            nextTick(() => {
-                                let el = document.getElementById(item.seat_id)
-                                emitter.emit('SearchSeat',item.seat_id)
-                                scaleSeat(el)
-                                successMessage('切换成功')
+                        }else{
+                            // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
+                            ElMessageBox.confirm(
+                                `查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
+                                '提示',
+                                {
+                                    cancelButtonText: '取消',
+                                    confirmButtonText: '跳转',
+                                    type: 'info',
+                                }
+                            ).then(() => {
+                                // 将要切换的楼层
+                                let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                                handleClickFloor(pushFloor)
+                                drawerData.is_show = true
+                                drawerData.currentSeatInfo.depart = depart
+                                drawerData.currentSeatInfo.seat_id = seat_id
+                                drawerData.currentSeatInfo.name = name
+                                nextTick(() => {
+                                    let el = document.getElementById(item.seat_id)
+                                    emitter.emit('SearchSeat',item.seat_id)
+                                    scaleSeat(el)
+                                    successMessage('切换成功')
+                                })
+                            }).catch(() => {
+                                infoMessage(`您可以手动切换到${item.floor}楼查找`)
                             })
-                        }).catch(() => {
-                            infoMessage(`您可以手动切换到${item.floor}楼查找`)
-                        })
-                    }
-                }else{
-                    // 判断搜索的项是否在当前楼层
-                    if(item.floor == store.getters.floor){
-                        // 如果相同
-                        // 1、获取座位id号对应的元素DOM
-                        searchData.searchArea(item.code)
+                        }
                     }else{
-                        // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
-                        ElMessageBox.confirm(
-                            `查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
-                            '提示',
-                            {
-                                cancelButtonText: '取消',
-                                confirmButtonText: '跳转',
-                                type: 'info',
-                            }
-                        ).then(() => {
-                            // 将要切换的楼层
-                            let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
-                            handleClickFloor(pushFloor)
-                            nextTick(() => {
-                                searchData.searchArea(item.code)
-                                successMessage('切换成功')
+                        // 判断搜索的项是否在当前楼层
+                        if(item.floor == store.getters.floor){
+                            // 如果相同
+                            // 1、获取座位id号对应的元素DOM
+                            searchData.searchArea(item.code)
+                        }else{
+                            // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
+                            ElMessageBox.confirm(
+                                `查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
+                                '提示',
+                                {
+                                    cancelButtonText: '取消',
+                                    confirmButtonText: '跳转',
+                                    type: 'info',
+                                }
+                            ).then(() => {
+                                // 将要切换的楼层
+                                let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                                handleClickFloor(pushFloor)
+                                nextTick(() => {
+                                    searchData.searchArea(item.code)
+                                    successMessage('切换成功')
+                                })
+                            }).catch(() => {
+                                infoMessage(`您可以手动切换到${item.floor}楼查找`)
                             })
-                        }).catch(() => {
-                            infoMessage(`您可以手动切换到${item.floor}楼查找`)
-                        })
+                        }
+                        searchData.searchState = item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")
                     }
-                    searchData.searchState = item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")
-                }
+                })
             },
             // 区域搜索公共的方法
             searchArea(code){

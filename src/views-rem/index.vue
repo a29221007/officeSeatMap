@@ -330,6 +330,11 @@ export default {
                 }else{
                     seatData.current = seatItem.seat_id
                 }
+                // 点击座位要将底部盒子升上来
+                scaling = false
+                // 设置完变量后，调用收缩盒子的函数
+                MapBoxTapFn()
+
                 // 1、首先计算出触摸时当前盒子距离 BodyContainerRef 盒子的距离
                 let MapContainerRef_x = $event.target.offsetLeft + MapBoxRef.value.offsetLeft
                 let MapContainerRef_y = $event.target.offsetTop + MapBoxRef.value.offsetTop

@@ -115,69 +115,74 @@ export default {
             // 点击搜索建议中的某一项，触发的函数
             handleClickQuerySearchItem(item) {
                 if(!searchInput.is_none_sugges) return
-                // 判断搜索的类型，是座位还是区域
-                if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
-                    // 如果搜索的是座位
-                    const { depart, name, seat_id } = item
-                    // 选中某一项，首先判断该员工的座位，是否在当前楼层
-                    if(item.floor == store.getters.floor){
-                        // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
-                        emit('setSearchLegendContant','information')
-                        // 将 SearchLegendRef 盒子的bottom值设置为0，置底
-                        let el = document.getElementById(seat_id)
-                        el.click()
-                        store.commit('setActiveInfo',item)
-                    }else{
-                        // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
-                        Dialog.confirm({
-                            title: '提示',
-                            message:`查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
-                        }).then(() => {
-                            // 用户如果确认跳转
-                            store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
+                // 如果是触发某一项搜索，首先要把当前的图例复原，全部的dom渲染出来
+                store.commit('setCurrentLegend','')
+                // 要使用 nextTick 函数获取更新后的dom元素
+                nextTick(() => {
+                    // 判断搜索的类型，是座位还是区域
+                    if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
+                        // 如果搜索的是座位
+                        const { depart, name, seat_id } = item
+                        // 选中某一项，首先判断该员工的座位，是否在当前楼层
+                        if(item.floor == store.getters.floor){
                             // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                             emit('setSearchLegendContant','information')
-                            nextTick(() => {
-                                // 将 SearchLegendRef 盒子的bottom值设置为0，置底
-                                let el = document.getElementById(seat_id)
-                                el.click()
-                                store.commit('setActiveInfo',item)
-                                Toast.success('切换成功')
+                            // 将 SearchLegendRef 盒子的bottom值设置为0，置底
+                            let el = document.getElementById(seat_id)
+                            el.click()
+                            store.commit('setActiveInfo',item)
+                        }else{
+                            // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
+                            Dialog.confirm({
+                                title: '提示',
+                                message:`查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
+                            }).then(() => {
+                                // 用户如果确认跳转
+                                store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
+                                // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
+                                emit('setSearchLegendContant','information')
+                                nextTick(() => {
+                                    // 将 SearchLegendRef 盒子的bottom值设置为0，置底
+                                    let el = document.getElementById(seat_id)
+                                    el.click()
+                                    store.commit('setActiveInfo',item)
+                                    Toast.success('切换成功')
+                                })
+                            }).catch(() => {
+                                // 用户如果取消跳转
+                                Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
                             })
-                        }).catch(() => {
-                            // 用户如果取消跳转
-                            Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
-                        })
-                    }
-                }else{
-                    // 如果是区域
-                    if(item.floor == store.getters.floor){
-                        // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
-                        emit('setSearchLegendContant','information')
-                        // 如果搜索的区域在当前楼层将其高亮
-                        searchArea(item.code)
-                        store.commit('setActiveInfo',item)
+                        }
                     }else{
-                        // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
-                        Dialog.confirm({
-                            title: '提示',
-                            message:`查找的区域信息不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
-                        }).then(() => {
-                            // 用户如果确认跳转
-                            store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
+                        // 如果是区域
+                        if(item.floor == store.getters.floor){
                             // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                             emit('setSearchLegendContant','information')
-                            nextTick(() => {
-                                searchArea(item.code)
-                                Toast.success('切换成功')
-                                store.commit('setActiveInfo',item)
+                            // 如果搜索的区域在当前楼层将其高亮
+                            searchArea(item.code)
+                            store.commit('setActiveInfo',item)
+                        }else{
+                            // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
+                            Dialog.confirm({
+                                title: '提示',
+                                message:`查找的区域信息不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
+                            }).then(() => {
+                                // 用户如果确认跳转
+                                store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
+                                // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
+                                emit('setSearchLegendContant','information')
+                                nextTick(() => {
+                                    searchArea(item.code)
+                                    Toast.success('切换成功')
+                                    store.commit('setActiveInfo',item)
+                                })
+                            }).catch(() => {
+                                // 用户如果取消跳转
+                                Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
                             })
-                        }).catch(() => {
-                            // 用户如果取消跳转
-                            Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
-                        })
+                        }
                     }
-                }
+                })
             },
             // 给搜索建议列表绑定一个 touchmove 事件，并阻止冒泡行为
             querySearchMove(e){
