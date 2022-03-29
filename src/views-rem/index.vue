@@ -60,6 +60,9 @@ import { useStore } from 'vuex'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
 import BottomBox from './compontent/bottomBox.vue'
+
+// 导入发送code的接口
+import { sendCode } from '@/api/mobile.js'
 export default {
     name:'M-Home',
     components:{
@@ -94,11 +97,16 @@ export default {
                 let requestSearch = window.location.search
                 // 3.2 判断是否有参数
                 if(!requestSearch) return // 没有参数说明不是扫码进的项目,则不执行后续的逻辑
-                // let requestSearchArray = requestSearch.slice(1).split('&')
-                // let requestSearchObj = {}
-                // requestSearchArray.forEach(item => {
-                //     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
-                // })
+                let requestSearchArray = requestSearch.slice(1).split('&')
+                let requestSearchObj = {}
+                requestSearchArray.forEach(item => {
+                    requestSearchObj[item.split('=')[0]] = item.split('=')[1]
+                })
+                // 3.3 继续判断 requestSearchObj 这个对象中是否有 code 字段
+                if(!requestSearchObj.code) return // 如果没有，则不执行后续的操作
+                sendCode(requestSearchObj.code).then((res) => {
+                    console.log('res',res)
+                })
                 // // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
                 // const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
                 // console.log('requestSearchObj',requestSearchObj)

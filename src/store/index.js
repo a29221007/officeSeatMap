@@ -24,7 +24,11 @@ export default createStore({
         areaListOfThree: getItem('areaListOfThree') || [],
         // 4层的区域信息
         areaListOfFour: getItem('areaListOfFour') || [],
+        
 
+
+
+        
         // 移动端中的数据，当前选中的项
         activeInfo: getItem('activeInfo')
     },
