@@ -356,7 +356,9 @@ export default {
                 MapBoxRef.value.style.transformOrigin = `${$event.target.offsetLeft}px ${$event.target.offsetTop}px`
                 scale_init_x = 4
                 scale_init_y = 4
-                MapBoxScaleFn(0.5)
+                setTimeout(() => {
+                    MapBoxScaleFn(0.5)
+                },30)
                 // 6、调用子组件的方法，设置子组件的状态变量
                 BottomBoxRef.value.setSearchLegendContant('information')
                 // 7、设置选中项的数据
@@ -1045,9 +1047,8 @@ export default {
     // 定义动画
     @keyframes scaleAnimation {
         to {
-            transform:scale(3);
+            -webkit-transform:scale(3);
         }
     }
-    // transform: translateY();
 }
 </style>
