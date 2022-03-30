@@ -24,13 +24,17 @@ export default createStore({
         areaListOfThree: getItem('areaListOfThree') || [],
         // 4层的区域信息
         areaListOfFour: getItem('areaListOfFour') || [],
-        
-
-
-
-        
+        // ---------------------------------------------
         // 移动端中的数据，当前选中的项
-        activeInfo: getItem('activeInfo')
+        activeInfo: getItem('activeInfo'),
+        // 移动端需要清理的定时器id集合
+        timerArray: [],
+        // 这个是延时器的id
+        timer: null,
+        // span 元素变量
+        spanElement: null,
+        // 移动端可视区的高度
+        ClentHeight: 0
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -74,6 +78,23 @@ export default createStore({
         setActiveInfo(state,data) {
             state.activeInfo = data
             setItem('activeInfo',state.activeInfo)
+        },
+
+        // 设置定时器的id集合
+        setTimerArray(state,data) {
+            state.timerArray = data
+        },
+        // 设置延时器的id
+        setTimer(state,data) {
+            state.timer = data
+        },
+        // 设置span元素变量
+        setSpanElement(state,data) {
+            state.spanElement = data
+        },
+        // 设置浏览器可视区高度
+        setClentHeight(state,data) {
+            state.ClentHeight = data
         }
     },
     actions: {

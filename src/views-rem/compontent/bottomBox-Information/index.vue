@@ -4,7 +4,6 @@
         <!-- 头部区域 -->
         <div class="header">
             <div class='title'>{{title}}</div>
-            <!-- <i v-on:click="handleClickBackSearch" class="iconfont oamap-dongtaijiantoucopy"></i> -->
             <div class="buttons">
                 <div v-on:click="handleClickEdit"><i class="iconfont oamap-xiugai"></i> 编辑</div>
             </div>
@@ -17,7 +16,7 @@
 </template>
 
 <script>
-import { computed,inject,onBeforeUnmount,onMounted } from 'vue'
+import { computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 
 import Area from './compontent/area'
@@ -26,6 +25,7 @@ import TakeUp from './compontent/Take-up'
 
 // 导入事件中心
 import emitter from '@/views/eventbus.js'
+import clearTimer from '@/views-rem/hook/clearTimer.js'
 export default {
     name:'BottomBoxInformation',
     components:{
@@ -68,15 +68,9 @@ export default {
             }
             return title
         })
-        // 点击上箭头，返回到搜索页
-        function handleClickBackSearch(){
-            // 点击搜索的盒子，向父组件发布一个事件，并传递参数
-            emit('setSearchLegendContant','search')
-        }
-        let cleartime = inject('clear')
         // 组件卸载阶段
         onBeforeUnmount(() => {
-            cleartime()
+            clearTimer()
             emitter.emit('clearAreaTimer')
         })
         return {
@@ -84,7 +78,6 @@ export default {
             handleClickEdit,
             compontentType,
             title,
-            handleClickBackSearch
         }
     }
 }

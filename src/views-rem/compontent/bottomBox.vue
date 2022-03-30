@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, provide, inject, onBeforeUnmount } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 // 导入子组件
 import Init from './bottomBox-init'
@@ -66,11 +66,7 @@ export default {
         let SearchLegendMinTop = 0
         // 最大的 top 值 （也是最底端的）
         let SearchLegendMaxTop = 0
-        // 传递给子组件使用的变量
-        let MapContainerBoxHeight = ref(0)
-        provide('MapContainerBoxHeight',MapContainerBoxHeight)
-        // 父组件获取屏幕可用区域的高度的依赖注入函数
-        let upDataHeight = inject('upDataHeight')
+
         // 在 mounted 中给 SearchLegendRef 注册手势事件
         onMounted(() => {
             // 1、注册 touchstart 事件
@@ -98,9 +94,7 @@ export default {
             // 3、计算最小的top值
             SearchLegendMinTop = clientHeight * 0.05
 
-            MapContainerBoxHeight.value = SearchLegendTop
-            // 调用父组件的依赖注入函数，将屏幕可视区域的高度，传递给父组件
-            upDataHeight(SearchLegendTop)
+            store.commit('setClentHeight',SearchLegendTop)
         })
         // SearchLegend 盒子 touchstart 事件的处理函数
         function SearchLegendTouchstartFn(e) {
@@ -149,6 +143,7 @@ export default {
                 touchstartPageY = e.changedTouches[0].pageY
             }
         }
+
         // SearchLegend 盒子 touchend 事件的处理函数
         function SearchLegendTouchendFn() {
             // 给 SearchLegendRef 盒子添加过渡效果
@@ -200,6 +195,9 @@ export default {
                 }
                 b = true
                 c = true
+
+                // 如果不处于详情页了，那么将当前的高亮状态取消掉（正好发布这个事件，父组件监听这个事件的处理程序，就是充值座位高亮或区域高亮的）
+                emit('switchFloor')
             }
         }
 

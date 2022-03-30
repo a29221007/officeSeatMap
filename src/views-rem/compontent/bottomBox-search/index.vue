@@ -43,6 +43,8 @@ import { useStore } from 'vuex'
 import { Dialog, Toast } from 'vant'
 // 导入事件中心
 import emitter from '@/views/eventbus.js'
+// 座位设置高亮的公共方法
+import searchSeat from '@/views-rem/hook/searchSeat.js'
 export default {
     name:'BottomBoxSearch',
     emits:['setSearchLegendContant'],
@@ -127,10 +129,11 @@ export default {
                         if(item.floor == store.getters.floor){
                             // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                             emit('setSearchLegendContant','information')
+                            // store.commit('setActiveInfo',item)
                             // 将 SearchLegendRef 盒子的bottom值设置为0，置底
                             let el = document.getElementById(seat_id)
-                            el.click()
-                            store.commit('setActiveInfo',item)
+                            upDataCurrentSeat_id(seat_id)
+                            searchSeat(el,null,item)
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             Dialog.confirm({
@@ -144,8 +147,8 @@ export default {
                                 nextTick(() => {
                                     // 将 SearchLegendRef 盒子的bottom值设置为0，置底
                                     let el = document.getElementById(seat_id)
-                                    el.click()
-                                    store.commit('setActiveInfo',item)
+                                    upDataCurrentSeat_id(seat_id)
+                                    searchSeat(el,null,item)
                                     Toast.success('切换成功')
                                 })
                             }).catch(() => {
@@ -191,8 +194,10 @@ export default {
                 inputRef.value.blur()
             }
         })
+        // 接受祖先组件传递来的设置选中区域编号的函数
         let upDataCurrentAreaCode = inject('upCurrentAreaCode')
-        let MapContainerBoxOffsetHeight = inject('MapContainerBoxHeight')
+        // 接受祖先组件传递来的设置选中座位id的函数
+        let upDataCurrentSeat_id = inject('upCurrentSeat_id')
         // 区域搜索公共的方法
         function searchArea(code){
             // 1、获取code的所有区域
@@ -264,7 +269,7 @@ export default {
             MapContainerBox.offsetHeight / 2
             // 10、得到了视图应该移动的距离
             let valueX = mapContainer_X - (MapContainerBox.offsetWidth / 2)
-            let valueY = mapContainer_Y - (MapContainerBoxOffsetHeight.value / 2)
+            let valueY = mapContainer_Y - (store.state.ClentHeight / 2)
             // 12、设置MapBoxRef盒子的位置
             mapBox.style.left = (mapBox.offsetLeft - valueX) + 'px'
             mapBox.style.top = (mapBox.offsetTop - valueY) + 'px'
@@ -298,7 +303,6 @@ export default {
                             let target = Math.floor(value)
                             let leader = 0
                             item.timer = setInterval(() => {
-                                console.log(123)
                                 let step = 1
                                 if(Math.abs(leader - target) >= Math.abs(step)){
                                     step = leader > target ? -step : step

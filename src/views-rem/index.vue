@@ -63,7 +63,7 @@ import BottomBox from './compontent/bottomBox.vue'
 
 // 导入发送code的接口
 import { sendCode } from '@/api/mobile.js'
-
+// 座位设置高亮的公共方法
 import searchSeat from './hook/searchSeat'
 export default {
     name:'M-Home',
@@ -90,8 +90,6 @@ export default {
         // 互锁变量
         let a = true
 
-        // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
-        let BodyContainer = null
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
                 // 3、根据 url 中的参数跳转到对应区域
@@ -141,6 +139,9 @@ export default {
                 })
             }
         })
+
+        // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
+        let BodyContainer = null
         // 在mounted函数中对地图盒子注册监听事件
         onMounted(() => {
             // 1、将地图铺满整个屏幕
@@ -272,12 +273,6 @@ export default {
             MapBoxRef.value.style.transition = `all ${timer}s`
             MapBoxRef.value.style.transform = `scale(${scale_init_x},${scale_init_y})`
         }
-        // 储存可见区域的高度
-        let ClentHeight = ref(0)
-        function setHeight(value) {
-            ClentHeight.value = value
-        }
-        provide('upDataHeight',setHeight)
         // 获取 BottomBoxRef 实例
         const BottomBoxRef = ref(null)
         let seatData = reactive({
@@ -302,6 +297,12 @@ export default {
             }),
             // 当前选中的座位
             current:0,
+            // 设置当前选中座位的id
+            setCurrentSeat_id(value){
+                seatData.current = value
+                scale_init_x = 4
+                scale_init_y = 4
+            },
             // 子组件发布的事件，切换路层后，将当前的选中座位和区域的高亮重置
             switchFloor(){
                 seatData.current = 0
@@ -333,134 +334,31 @@ export default {
                 seatData.currentAreaCode = ''
                 // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
                 if(seatItem.seat_id === seatData.current){
+                    // 取消选中，盒子拉下去
+                    scaling = true
                     seatData.current = 0
-                }else{
-                    seatData.current = seatItem.seat_id
+                    // 设置完变量后，调用收缩盒子的函数
+                    BottomBoxRef.value.setSearchLegendContant('init')
+                    nextTick(() => {
+                        MapBoxTapFn()
+                    })
+                    return
                 }
                 // 点击座位要将底部盒子升上来
                 scaling = false
-                // 设置完变量后，调用收缩盒子的函数
+                seatData.setCurrentSeat_id(seatItem.seat_id)
                 MapBoxTapFn()
                 // 调用座位高亮的函数
-                searchSeat($event.target, ClentHeight.value, BottomBoxRef.value)
-                // // 1、首先计算出触摸时当前盒子距离 BodyContainerRef 盒子的距离
-                // let MapContainerRef_x = $event.target.offsetLeft + MapBoxRef.value.offsetLeft
-                // let MapContainerRef_y = $event.target.offsetTop + MapBoxRef.value.offsetTop
-                // // 2、得到MapContainerRef盒子的宽、高 / 2 (得到一半的值)
-                // BodyContainerRef.value.offsetWidth / 2
-                // BodyContainerRef.value.offsetHeight / 2
-                // // 3、得到了视图应该移动的距离
-                // let valueX = MapContainerRef_x - (BodyContainerRef.value.offsetWidth / 2)
-                // let valueY = MapContainerRef_y - (ClentHeight.value / 2)
-                // // 4、设置MapBoxRef盒子的位置
-                // MapBoxRef.value.style.left = (MapBoxRef.value.offsetLeft - valueX) + 'px'
-                // MapBoxRef.value.style.top = (MapBoxRef.value.offsetTop - valueY) + 'px'
-                // // 5、设置缩放的中心点，放大地图
-                // MapBoxRef.value.style.transformOrigin = `${$event.target.offsetLeft}px ${$event.target.offsetTop}px`
-                // scale_init_x = 4
-                // scale_init_y = 4
-                // setTimeout(() => {
-                //     MapBoxScaleFn(0.5)
-                // },30)
-                // // 6、调用子组件的方法，设置子组件的状态变量
-                // BottomBoxRef.value.setSearchLegendContant('information')
-                // // 7、设置选中项的数据
-                // store.commit('setActiveInfo',seatItem)
-                // // 8、修改之前的bug，（之前在 bottomBox-Information 信息展示组件中的 onMounted 钩子中，判断数据是否超过父盒子，如果超过，则做往复动画），现在将逻辑放到点击事件中，修复一些bug
-                // nextTick(() => {
-                //     // 关于元素滚动的逻辑
-                //     clearTimer()
-                //     obj = []
-                //     timer123 = null
-                //     let content = document.querySelectorAll('.scroll')
-                //     content.forEach((item) => {
-                //         // 当前节点的宽度
-                //         let currentNodeWidth = item.offsetWidth
-                //         // 当前节点父元素的宽度
-                //         let curentParentNdoeWidth = item.parentNode.offsetWidth
-                //         // 子元素和父元素的差值
-                //         let value = curentParentNdoeWidth - currentNodeWidth
-                //         if(value < 0){
-                //             timer123 = setTimeout(() => {
-                //                 clearInterval(item.timer)
-                //                 let target = Math.floor(value)
-                //                 let leader = 0
-                //                 item.timer = setInterval(() => {
-                //                     let step = 1
-                //                     if(Math.abs(leader - target) >= Math.abs(step)){
-                //                         step = leader > target ? -step : step
-                //                         leader = leader + step
-                //                         item.style.left = leader + 'px'
-                //                     }else{
-                //                         item.style.left = target + 'px'
-                //                         target = leader === 0 ? value : 0
-                //                     }
-                //                 },200)
-                //                 obj.push(item)
-                //             },1000)
-                //         }else{
-                //             item.style.left = 0
-                //         }
-                //     })
-                //     el = null
-                //     // 元素做展开、收回
-                //     el = document.querySelector('.over')
-                //     if(!el) return
-                //     if(el.scrollWidth > el.offsetWidth){
-                //         // 如果内容的宽度比盒子的宽度大，则向最后添加一个展开按钮
-                //         let span = document.createElement('span')
-                //         span.innerHTML = '展开'
-                //         span.style.float = 'right'
-                //         span.style.marginTop = '2px'
-                //         span.style.backgroundColor = '#f8f9fa'
-                //         span.style.color = '#1b1b1d'
-                //         span.style.borderRadius = '2px'
-                //         span.style.padding = '0.0538rem'
-                //         el.appendChild(span)
-                //         span.addEventListener('click',show)
-                //     }else{
-                //         el.style.overflow = 'hidden'
-                //     }
-                // })
+                searchSeat($event.target, BottomBoxRef.value, seatItem)
             }
         })
         // 向子组件传递 switchFloor 事件，在切换图例时，也要触发该事件，将高亮的座位和区域重置
         provide('switchLenged',seatData.switchFloor)
-        // 储存做动画元素，将来要清除元素上的定时器
-        let obj = []
-        // 这个是延时器的id
-        let timer123 = null
-        // 储存做展开、收起的元素
-        let el = null
-        // 展开、收起的函数
-        function show(e){
-            let value = e.target.innerHTML
-            if(value === '展开'){
-                el.style.whiteSpace = 'unset'
-                e.target.innerHTML = '收起'
-                el.style.overflow = 'auto'
-            }else{
-                el.style.whiteSpace = 'nowrap'
-                e.target.innerHTML = '展开'
-                el.style.overflow = 'hidden'
-            }
-        }
-        // 定义一个清除定时器的函数，并通过 provide 传递给子组件，将来信息展示组件的销毁阶段要清除定时器，防止内存泄漏
-        function clearTimer(){
-            obj.forEach(item => {
-                clearInterval(item.timer)
-            })
-            clearTimeout(timer123)
-            if(el){
-                el.querySelector('span') && el.querySelector('span').remove()
-            }
-        }
-        // 向子组件传递清除定时器的方法
-        provide('clear',clearTimer)
 
         // 向子组件传递设置区域高亮的方法
         provide('upCurrentAreaCode',seatData.setCurrentAreaCode)
-
+        // 向子组件传递设置高亮的方法
+        provide('upCurrentSeat_id',seatData.setCurrentSeat_id)
         // 卸载阶段，事件解绑
         onBeforeUnmount(() => {
             // 1 卸载 MapBox 盒子的 tap 事件
