@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, nextTick, inject, ref, onBeforeUnmount} from 'vue'
+import { reactive, toRefs, nextTick, inject, ref, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { Dialog, Toast } from 'vant'
 // 导入事件中心
