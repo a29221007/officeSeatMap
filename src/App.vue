@@ -34,11 +34,11 @@ export default {
         // 判断是pc端还是移动端的变量
         const is_PC = ref('MLayOut')
         let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
-        // if(flag){
-        //     is_PC.value = 'MLayOut'
-        // }else{
-        //     is_PC.value = 'PCLayOut'
-        // }
+        if(flag){
+            is_PC.value = 'MLayOut'
+        }else{
+            is_PC.value = 'PCLayOut'
+        }
         return {
             is_PC
         }
