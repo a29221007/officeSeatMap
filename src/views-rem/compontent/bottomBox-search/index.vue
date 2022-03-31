@@ -3,7 +3,7 @@
     <div class="search">
         <div class="search-input">
             <i v-on:click="handleClickBack" class="iconfont oamap-zuojiantou"></i>
-            <input ref="inputRef" v-model="inputValue" type="text" autofocus placeholder=" 搜索" v-on:input="handleInputSearch">
+            <input ref="inputRef" class="ipt" v-model="inputValue" type="text" placeholder=" 搜索" v-on:input="handleInputSearch">
             <i v-if="inputValue" v-on:click="handleClickClear" class="iconfont oamap-qingchu"></i>
         </div>
         <div class="querySearch" ref="querySearchRef" v-on:touchmove="querySearchMove">

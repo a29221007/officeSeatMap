@@ -222,13 +222,13 @@ export default {
             // 确定伸缩量
             let value1 = scaling ? searchLegendHeight + floorSwitchHeight : 0
             let value2 = scaling ? floorSwitchHeight : 0
-            searchLegend.style.transition = `all 0.5s`
+            searchLegend.style['-webkit-transition'] = `all 0.5s`
             if(floorSwitchHeight){
-                floorSwitch.style.transition = `all 0.5s`
+                floorSwitch.style['-webkit-transition'] = `all 0.5s`
             }
-            searchLegend.style.transform = `translate(-50%,${value1 + 'px'})`
+            searchLegend.style['-webkit-transform'] = `translate(-50%,${value1 + 'px'})`
             if(floorSwitchHeight){
-                floorSwitch.style.transform = `translate(-50%,${value2 + 'px'})`
+                floorSwitch.style['-webkit-transform'] = `translate(-50%,${value2 + 'px'})`
             }
             scaling = scaling ? false : true
         }
@@ -249,7 +249,7 @@ export default {
             if(pinchCount === 1){
                 firstZoomValue = e.zoom
             }else{
-                scale_init_x += (e.zoom - firstZoomValue) * 2 
+                scale_init_x += (e.zoom - firstZoomValue) * 2
                 scale_init_y += (e.zoom - firstZoomValue) * 2
                 firstZoomValue = e.zoom
                 MapBoxScaleFn(0.5)
@@ -284,8 +284,8 @@ export default {
                 scale_init_x = 8
                 scale_init_y = 8
             }
-            MapBoxRef.value.style.transition = `all ${timer}s`
-            MapBoxRef.value.style.transform = `scale(${scale_init_x},${scale_init_y})`
+            MapBoxRef.value.style['-webkit-transition'] = `all ${timer}s`
+            MapBoxRef.value.style['-webkit-transform'] = `scale(${scale_init_x},${scale_init_y})`
         }
         // 获取 BottomBoxRef 实例
         const BottomBoxRef = ref(null)

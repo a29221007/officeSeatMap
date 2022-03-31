@@ -113,7 +113,8 @@ export default {
         let c = true // 管下
         // SearchLegend 盒子 touchmove 事件的处理函数
         function SearchLegendTouchmoveFn(e) {
-            // if(SearchLegendContant.value === 'information') return
+            // 阻止浏览器的默认行为，为了解决苹果浏览器的页面可以整体滚动的bug
+            e.preventDefault()
             SearchLegendRef.value.style.transition = `none`
             if(e.changedTouches.length === 1){
                 // 滑动的变量
@@ -208,6 +209,8 @@ export default {
             // 接受子组件的传值
             SearchLegendContant.value = value
         }
+        // 输入框获得焦点时的一个延时器id
+        let inputTimer = null
         // 监听 SearchLegendContant 值得变化
         watch(SearchLegendContant,(newValue) => {
             // 给 SearchLegendRef 盒子添加过渡效果
@@ -221,6 +224,11 @@ export default {
                 SearchLegendRef.value.style.bottom = 0
                 // 将 SearchLegendRef 盒子的高度设置为最大值
                 SearchLegendRef.value.style.top = SearchLegendMinTop + 'px'
+                // 将输入框的获得焦点行为放到一个延时器中，这样安卓机和苹果机就都可以兼容了，主要是兼容苹果浏览器
+                inputTimer = setTimeout(() => {
+                    let search = document.querySelector('.ipt')
+                    search && search.focus()
+                },300)
             }else if(newValue === 'information'){
                 SearchLegendRef.value.style.bottom = 0
                 SearchLegendRef.value.style.top = SearchLegendTop + 'px'
@@ -235,6 +243,8 @@ export default {
             SearchLegendRef.value.removeEventListener('touchmove', SearchLegendTouchmoveFn)
             // 3、移除 touchend 事件
             SearchLegendRef.value.removeEventListener('touchend', SearchLegendTouchendFn)
+            // 4、清除输入框的延时器id
+            clearTimeout(inputTimer)
         })
         const componentRef = ref(null)
         return {
