@@ -5,7 +5,7 @@
         <div class="header">
             <div class='title'>{{title}}</div>
             <div class="buttons">
-                <div v-on:click="handleClickEdit"><i class="iconfont oamap-xiugai"></i> 编辑</div>
+                <div v-if="$store.state.is_have_editor" v-on:click="handleClickEdit"><i class="iconfont oamap-xiugai"></i> 编辑</div>
             </div>
         </div>
         <!-- 内容区域 -->

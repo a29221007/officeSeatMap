@@ -132,9 +132,10 @@ export default {
                 }
                 
                 // 判断当前用户的操作权限
-                // sendCode(requestSearchObj.code).then((res) => {
-                //     console.log('res',res)
-                // })
+                sendCode(requestSearchObj.code).then((res) => {
+                    if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
+                    store.commit('setIs_have_editor',res.data.u)
+                })
 
                 // 3.6 将当前项设置到 vuex 中
                 store.commit('setActiveInfo',item)
@@ -421,7 +422,7 @@ export default {
         background-repeat: no-repeat;
         transition: all 0.5s;
         .area{
-            font-size: .129rem;
+            font-size: 8px;
         }
         .seat{
             position: absolute;
@@ -451,10 +452,10 @@ export default {
                 white-space:nowrap;
             }
             .name{
-                transform: scale(0.85,0.9);
+                transform: scale(0.55,0.55);
             }
             .subtitle{
-                transform: scale(0.65,0.65);
+                transform: scale(0.38,0.38);
             }
         }
         // 单独的样式覆盖掉之前的公共样式（3层）
@@ -471,14 +472,15 @@ export default {
         #QY010103005268{
             .title{
                 top: unset;
-                bottom: -0.0968rem;
+                bottom: -0.2151rem;
+                left: .4301rem;
             }
         }
         // 法务部&公共关系与政府事务部
         #QY010103005066{
             .title{
                 top: unset;
-                bottom: -0.0968rem;
+                bottom: -0.1613rem;
                 left: .7742rem;
             }
         }
@@ -501,7 +503,7 @@ export default {
                     white-space:unset;
                 }
                 .name{
-                    margin-left: .086rem;
+                    margin-left: .0591rem;
                 }
             }
         }
@@ -547,14 +549,14 @@ export default {
         #QY010103003434,#QY010103003333{
             .title{
                 top: unset;
-                bottom: -0.0968rem;
+                bottom: -0.1613rem;
             }
         }
         // 行政小仓库
         #QY010103002727{
             .title{
                 .name{
-                    transform: scale(0.6, 0.7);
+                    transform: scale(0.3, 0.55);
                 }
             }
         }
@@ -562,7 +564,7 @@ export default {
         #QY010103002828{
             .title{
                 top: -0.0753rem;
-                left: -0.086rem;
+                left: -0.3763rem;
                 transform: unset;
             }
         }
@@ -570,7 +572,7 @@ export default {
         #QY010103002323{
             .title{
                 .name{
-                    transform: scale(0.75,0.8);
+                    transform: scale(0.45,0.55);
                 }
             }
         }
@@ -578,7 +580,7 @@ export default {
         #QY010103002424{
             .title{
                 top: unset;
-                bottom: -0.0968rem;
+                bottom: -0.1613rem;
             }
         }
         // 引擎平台部
@@ -586,21 +588,21 @@ export default {
             .title{
                 left: 79%;
                 top: unset;
-                bottom: -0.129rem;
+                bottom: -0.2151rem;
             }
         }
         // 采购部&商务支持部
         #QY010103002141{
             .title{
                 left: 0;
-                top: -0.3871rem;
+                top: -0.5376rem;
                 transform: unset;
                 span{
                     width: .0215rem;
                     white-space:unset;
                 }
                 .name{
-                    transform: scale(0.85, 0.5);
+                    transform: scale(0.55, 0.5);
                 }
             }
         }
@@ -635,7 +637,7 @@ export default {
                 span{
                     width: .0215rem;
                     white-space:unset;
-                    transform: scale(0.85, 0.7);
+                    transform: scale(0.55, 0.45);
                 }
             }
         }
@@ -648,7 +650,7 @@ export default {
                 span{
                     width: .0215rem;
                     white-space:unset;
-                    transform: scale(0.85, 0.7);
+                    transform: scale(0.55, 0.45);
                 }
             }
         }
@@ -656,7 +658,7 @@ export default {
         #QY010103004558{
             .title{
                 top: unset;
-                bottom: -0.0645rem;
+                bottom: -0.1613rem;
             }
         }
         // 陨星工作室-2
@@ -668,7 +670,7 @@ export default {
                 span{
                     width: .0215rem;
                     white-space:unset;
-                    transform: scale(0.85, 0.7);
+                    transform: scale(0.55, 0.45);
                 }
             }
         }
@@ -681,7 +683,7 @@ export default {
                 span{
                     width: .0215rem;
                     white-space:unset;
-                    transform: scale(0.85, 0.7);
+                    transform: scale(0.55, 0.45);
                 }
             }
         }
@@ -689,7 +691,7 @@ export default {
         #QY010103005580{
             .title{
                 left: unset;
-                right: -0.4731rem;
+                right: -0.5914rem;
             }
         }
         // 楼梯样式-1
@@ -740,22 +742,11 @@ export default {
                 bottom: 0;
             }
         }
-        // 微传播（会议室-顶部）
-        #QY010104000371{
+        // 奥尔坦西亚
+        #QY010104000472{
             .title{
                 .name{
-                    transform: scale(0.7,0.9);
-                }
-                .subtitle{
-                    transform: scale(0.5,0.65);
-                }
-            }
-        }
-        // 奥尔坦西亚、金银岛
-        #QY010104000472,#QY01010400050{
-            .title{
-                .name{
-                    transform: scale(0.45,0.9);
+                    transform: scale(0.3,0.55);
                 }
             }
         }
@@ -763,7 +754,7 @@ export default {
         #QY010104000787{
             .title{
                 .name{
-                    transform: scale(0.7,0.9);
+                    transform: scale(0.4,0.55);
                 }
             }
         }
@@ -806,23 +797,23 @@ export default {
         #QY0101040037123{
             .title{
                 top: unset;
-                bottom: -0.0215rem;
+                bottom: -0.1075rem;
             }
         }
         // 北斗工作室、发行技术部
         #QY0101040039125,#QY0101040040126{
             .title{
                 top: unset;
-                bottom: -0.0968rem;
+                bottom: -0.2151rem;
             }
         }
         // 龙图游戏（客服部）
         #QY0101040038124{
             .title{
                 top: unset;
-                bottom: -0.2151rem;
+                bottom: -0.3226rem;
                 .name{
-                    transform:translate(0px,5px) scale(0.85, 0.9)
+                    transform:translate(0px,5px) scale(0.55, 0.55)
                 }
             }
         }
@@ -830,29 +821,35 @@ export default {
         #QY0101040036122{
             .title{
                 top: unset;
-                bottom: -0.0538rem;
+                bottom: -0.1075rem;
             }
         }
         // 创新中心（动画组）
         #QY0101040035121{
             .title{
                 top: unset;
-                bottom: -0.1935rem;
+                bottom: -0.3387rem;
                 .name{
-                    transform:translate(0px,5px) scale(0.85, 0.9)
+                    transform:translate(0px,5px) scale(0.55, 0.55)
                 }
             }
         }
         // 格尔威森林
         #QY010104001696{
             .name{
-                transform:scale(0.65, 0.9)
+                transform:scale(0.4, 0.55)
             }
         }
-        // 儒博库房、监控室
-        #QY0101040047143,#QY0101040048144{
+        // 监控室
+        #QY0101040048144{
             .name{
-                transform:scale(0.5, 0.9)
+                transform:scale(0.4, 0.55)
+            }
+        }
+        // 儒博库房
+        #QY0101040047143{
+            .name{
+                transform:scale(0.3, 0.55)
             }
         }
         // 未知部门-5
@@ -873,10 +870,16 @@ export default {
                 left: .1935rem;
             }
         }
+        // 直播间1、3、5
+        #QY01010400510,#QY0101040056154,#QY0101040057155{
+            .name{
+                transform:scale(0.5, 0.55)
+            }
+        }
         // 直播间2、4、6、7、9、10
         #QY01010400521,#QY0101040058156,#QY01010400530,#QY01010400540,#QY0101040059157,#QY0101040060158{
             .name{
-                transform:scale(0.5, 0.9)
+                transform:scale(0.35, 0.55)
             }
         }
         // 直播间8
@@ -929,9 +932,9 @@ export default {
         // 前台
         #QY0101040065165{
             .title{
-                top: 60%;
+                top: 70%;
                 left: unset;
-                right: -0.3226rem;
+                right: -0.4301rem;
             }
         }
         // 鬼武

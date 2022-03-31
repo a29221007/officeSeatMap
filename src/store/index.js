@@ -34,7 +34,9 @@ export default createStore({
         // span 元素变量
         spanElement: null,
         // 移动端可视区的高度
-        ClentHeight: 0
+        ClentHeight: 0,
+        // 当前用户是否有编辑的权限
+        is_have_editor:false // 默认是false，没有编辑权限
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -95,6 +97,10 @@ export default createStore({
         // 设置浏览器可视区高度
         setClentHeight(state,data) {
             state.ClentHeight = data
+        },
+        // 设置当前用户是否有编辑的权限
+        setIs_have_editor(state,data){
+            state.is_have_editor = data == 1 ? true : false
         }
     },
     actions: {
