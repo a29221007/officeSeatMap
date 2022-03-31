@@ -25,8 +25,8 @@ function searchSeat($event, BottomBoxRef, seatItem){
     MapBoxRef.style.top = (MapBoxRef.offsetTop - valueY) + 'px'
     // 5、设置缩放的中心点，放大地图
     MapBoxRef.style.transformOrigin = `${$event.offsetLeft}px ${$event.offsetTop}px`
+    MapBoxRef.style.transition = `all 0.5s`
     setTimeout(() => {
-        MapBoxRef.style.transition = `all 0.5s`
         MapBoxRef.style.transform = `scale(4,4)`
     },30)
     // 6、调用子组件的方法，设置子组件的状态变量

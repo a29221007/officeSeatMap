@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, watch} from 'vue'
+import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, watch, onBeforeMount} from 'vue'
 import { useStore } from 'vuex'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
@@ -65,6 +65,7 @@ import BottomBox from './compontent/bottomBox.vue'
 import { sendCode } from '@/api/mobile.js'
 // 座位设置高亮的公共方法
 import searchSeat from './hook/searchSeat'
+import { beginToast, endToast } from '@/views-rem/hook/toast.js'
 export default {
     name:'M-Home',
     components:{
@@ -96,14 +97,11 @@ export default {
                 // 3.1 获取url中的参数
                 let requestSearch = window.location.search
                 // 3.2 判断是否有参数
-                if(!requestSearch) return // 没有参数说明不是扫码进的项目,则不执行后续的逻辑
+                if(!requestSearch) return endToast() // 没有参数说明不是扫码进的项目,则不执行后续的逻辑,并关闭加载提示框
                 let requestSearchArray = requestSearch.slice(1).split('&')
                 let requestSearchObj = {}
                 requestSearchArray.forEach(item => {
                     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
-                })
-                sendCode(requestSearchObj.code).then((res) => {
-                    console.log('res',res)
                 })
                 // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
                 const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
@@ -126,6 +124,18 @@ export default {
                     FindArray = store.state.areaListOfFour
                 }
                 let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
+                // 判断是否找到
+                if(!item){
+                    // 如果没找到，则先关闭加载的提示，然后再弹框提示没有找到对应座位或区域
+                    endToast()
+                    return beginToast('fail','没有找到相关的座位或区域',2000)
+                }
+                
+                // 判断当前用户的操作权限
+                // sendCode(requestSearchObj.code).then((res) => {
+                //     console.log('res',res)
+                // })
+
                 // 3.6 将当前项设置到 vuex 中
                 store.commit('setActiveInfo',item)
                 let searchLegend = document.querySelector('.search-legend')
@@ -139,7 +149,10 @@ export default {
                 })
             }
         })
-
+        // onBeforeMount 中开启加载提示
+        onBeforeMount(() => {
+            beginToast('loading','加载中',0)
+        })
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
         let BodyContainer = null
         // 在mounted函数中对地图盒子注册监听事件

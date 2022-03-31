@@ -40,11 +40,13 @@
 <script>
 import { reactive, toRefs, nextTick, inject, ref, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
-import { Dialog, Toast } from 'vant'
-// 导入事件中心
-import emitter from '@/views/eventbus.js'
+import { Dialog } from 'vant'
+import { beginToast, endToast } from '@/views-rem/hook/toast.js'
 // 座位设置高亮的公共方法
 import searchSeat from '@/views-rem/hook/searchSeat.js'
+
+// 导入元素做滚动的公共方法
+import roll from '@/views-rem/hook/roll.js'
 export default {
     name:'BottomBoxSearch',
     emits:['setSearchLegendContant'],
@@ -117,6 +119,7 @@ export default {
             // 点击搜索建议中的某一项，触发的函数
             handleClickQuerySearchItem(item) {
                 if(!searchInput.is_none_sugges) return
+                beginToast('loading','加载中',0)
                 // 如果是触发某一项搜索，首先要把当前的图例复原，全部的dom渲染出来
                 store.commit('setCurrentLegend','')
                 // 要使用 nextTick 函数获取更新后的dom元素
@@ -149,11 +152,11 @@ export default {
                                     let el = document.getElementById(seat_id)
                                     upDataCurrentSeat_id(seat_id)
                                     searchSeat(el,null,item)
-                                    Toast.success('切换成功')
+                                    beginToast('success','切换成功',2000)
                                 })
                             }).catch(() => {
                                 // 用户如果取消跳转
-                                Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
+                                beginToast('fail',`您可以手动切换到${item.floor}楼后再查找`,2000)
                             })
                         }
                     }else{
@@ -176,15 +179,18 @@ export default {
                                 emit('setSearchLegendContant','information')
                                 nextTick(() => {
                                     searchArea(item.code)
-                                    Toast.success('切换成功')
+                                    beginToast('success','切换成功',2000)
                                     store.commit('setActiveInfo',item)
                                 })
                             }).catch(() => {
                                 // 用户如果取消跳转
-                                Toast.fail(`您可以手动切换到${item.floor}楼后再查找`)
+                                beginToast('fail',`您可以手动切换到${item.floor}楼后再查找`,2000)
                             })
                         }
                     }
+
+                    // 如果是扫码跳转进来的最后要关闭提示框
+                    endToast()
                 })
             },
             // 给搜索建议列表绑定一个 touchmove 事件，并阻止冒泡行为
@@ -283,57 +289,7 @@ export default {
                 scaleX,
                 scaleY
             })
-
-            nextTick(() => {
-                // 关于元素滚动的逻辑
-                clearTimer()
-                obj = []
-                timer123 = null
-                let content = document.querySelectorAll('.scroll')
-                content.forEach((item) => {
-                    // 当前节点的宽度
-                    let currentNodeWidth = item.offsetWidth
-                    // 当前节点父元素的宽度
-                    let curentParentNdoeWidth = item.parentNode.offsetWidth
-                    // 子元素和父元素的差值
-                    let value = curentParentNdoeWidth - currentNodeWidth
-                    if(value < 0){
-                        timer123 = setTimeout(() => {
-                            clearInterval(item.timer)
-                            let target = Math.floor(value)
-                            let leader = 0
-                            item.timer = setInterval(() => {
-                                let step = 1
-                                if(Math.abs(leader - target) >= Math.abs(step)){
-                                    step = leader > target ? -step : step
-                                    leader = leader + step
-                                    item.style.left = leader + 'px'
-                                }else{
-                                    item.style.left = target + 'px'
-                                    target = leader === 0 ? value : 0
-                                }
-                            },200)
-                            obj.push(item)
-                        },1000)
-                    }else{
-                        item.style.left = 0
-                    }
-                })
-            })
-        }
-        // 储存做动画元素，将来要清除元素上的定时器
-        let obj = []
-        // 这个是延时器的id
-        let timer123 = null
-        emitter.on('clearAreaTimer',() => {
-            clearTimer()
-        })
-        // 定义一个清除定时器的函数，并通过 provide 传递给子组件，将来信息展示组件的销毁阶段要清除定时器，防止内存泄漏
-        function clearTimer(){
-            obj.forEach(item => {
-                clearInterval(item.timer)
-            })
-            clearTimeout(timer123)
+            roll()
         }
         // 卸载阶段
         onBeforeUnmount(() => {

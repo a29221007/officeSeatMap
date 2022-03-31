@@ -24,14 +24,14 @@ import Personnel from './compontent/personnel'
 import TakeUp from './compontent/Take-up'
 
 // 导入事件中心
-import emitter from '@/views/eventbus.js'
+// import emitter from '@/views/eventbus.js'
 import clearTimer from '@/views-rem/hook/clearTimer.js'
 export default {
     name:'BottomBoxInformation',
     components:{
         Area, Personnel, TakeUp
     },
-    setup(prop,{ emit }) {
+    setup() {
         const store = useStore()
         // 选中项的信息
         const activeInfo = computed(() => {
@@ -71,7 +71,7 @@ export default {
         // 组件卸载阶段
         onBeforeUnmount(() => {
             clearTimer()
-            emitter.emit('clearAreaTimer')
+            // emitter.emit('clearAreaTimer')
         })
         return {
             activeInfo,
