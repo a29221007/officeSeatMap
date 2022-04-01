@@ -44,7 +44,7 @@
                 </template>
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                     <!-- 座位 -->
-                    <div class="seat" :class="{'active':current === item.seat_id}" v-on:click="handleClickSeat(item,$event)" :id="item.seat_id" :style="seatItemStyle(item)">
+                    <div class="seat" v-on:click="handleClickSeat(item,$event)" :id="item.seat_id" :style="seatItemStyle(item)">
                     </div>
                 </template>
             </template>
@@ -321,6 +321,24 @@ export default {
         }
         // 获取 BottomBoxRef 实例
         const BottomBoxRef = ref(null)
+
+        // 记录选中的座位id
+        let currentSeat_id = 0
+        // 存储上一个元素，用来清除上一个元素的定时器
+        let beforeSeatAnimateElement = null
+
+        // 清除当前元素的动画定时器函数
+        function clearCurrentElementInterval(){
+            // 1、获取当前的元素实例 DOM
+            let curentElement = document.getElementById(currentSeat_id)
+            if(curentElement){
+                // 2、如果有 curentElement 这个DOM实例，则清除定时器
+                clearInterval(curentElement.timer)
+                curentElement.style.transform = `scale(1)`
+                currentSeat_id = 0
+            }
+        }
+
         let seatData = reactive({
             mapList: computed(() => {
                 // 3层的座位人员信息和区域会议室信息集合
@@ -341,17 +359,16 @@ export default {
                     return currentFloorSeatList
                 }
             }),
-            // 当前选中的座位
-            current:0,
             // 设置当前选中座位的id
             setCurrentSeat_id(value){
-                seatData.current = value
+                currentSeat_id = value
+                beforeSeatAnimateElement = document.getElementById(value)
                 scale_init_x = 4
                 scale_init_y = 4
             },
             // 子组件发布的事件，切换路层后，将当前的选中座位和区域的高亮重置
             switchFloor(){
-                seatData.current = 0
+                clearCurrentElementInterval()
                 seatData.currentAreaCode = ''
             },
             // 当前选中的区域
@@ -362,7 +379,7 @@ export default {
                 scale_init_x = scaleX
                 scale_init_y = scaleY
                 // 搜索区域时，将座位的高亮取消
-                seatData.current = 0
+                clearCurrentElementInterval()
             },
             // 设置每一个座位的样式
             seatItemStyle(seatItem) {
@@ -379,18 +396,22 @@ export default {
                 // 点击座位，将区域的高亮色，取消
                 seatData.currentAreaCode = ''
                 // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
-                if(seatItem.seat_id === seatData.current){
-                    // 取消座位盒子高亮
-                    seatData.current = 0
+                if(seatItem.seat_id === currentSeat_id){
+                    clearCurrentElementInterval()
                     // 将底部盒子设置为初始状态
                     BottomBoxRef.value.setSearchLegendContant('init')
                     // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
                     if(!scaling) MapBoxTapFn()
                     return
                 }
+
+                beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
+                beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
+                beforeSeatAnimateElement = $event.target
                 // 点击座位要将底部盒子升上来
                 scaling = false
-                seatData.setCurrentSeat_id(seatItem.seat_id)
+                currentSeat_id = seatItem.seat_id
+                // seatData.setCurrentSeat_id(seatItem.seat_id)
                 MapBoxTapFn()
                 // 调用座位高亮的函数
                 searchSeat($event.target, BottomBoxRef.value, seatItem)
@@ -461,19 +482,6 @@ export default {
             height: .086rem;
             background-size:100%;
             background-repeat: no-repeat;
-            // 座位选中的高亮样式
-            &.active{
-
-                // transform:scale(3);
-                // 使用动画
-                -webkit-animation: scaleAnimation 1s infinite alternate;
-            }
-        }
-        // 定义动画
-        @keyframes scaleAnimation {
-            to {
-                -webkit-transform:scale(3);
-            }
         }
         // 区域选中的高亮样式
         .active-area{

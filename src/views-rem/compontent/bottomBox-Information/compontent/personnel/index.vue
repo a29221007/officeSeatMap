@@ -21,7 +21,7 @@
         <!-- 第二行 -->
         <div class="towline">
             <div class="title">部门：</div>
-            <div class="content over" v-on:touchstart="handleCroll" v-on:touchmove="handleCroll" v-on:touchend="handleCroll">{{$store.state.activeInfo.depart}}平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部平台技术部</div>
+            <div class="content over" v-on:touchstart="handleCroll" v-on:touchmove="handleCroll" v-on:touchend="handleCroll">{{$store.state.activeInfo.depart}}</div>
         </div>
     </div>
 </template>

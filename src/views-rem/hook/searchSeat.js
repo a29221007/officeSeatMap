@@ -7,7 +7,13 @@
 */
 import store from '@/store'
 import roll from './roll.js'
+// 导入地图盒子元素做动画的方法
+import Animate from './bottomBoxTranstion'
+
+// 导入座位盒子元素做缩放动画的方法
+import seatZoom from './seatAnimate'
 function searchSeat($event, BottomBoxRef, seatItem){
+    seatZoom($event)
     // 获取地图以及地图容器的DOM元素
     let MapBoxRef = document.querySelector('.map-box')
     let BodyContainerRef = document.querySelector('.body-container')
@@ -21,11 +27,13 @@ function searchSeat($event, BottomBoxRef, seatItem){
     let valueX = MapContainerRef_x - (BodyContainerRef.offsetWidth / 2)
     let valueY = MapContainerRef_y - (store.state.ClentHeight / 2)
     // 4、设置MapBoxRef盒子的位置
-    MapBoxRef.style.left = (MapBoxRef.offsetLeft - valueX) + 'px'
-    MapBoxRef.style.top = (MapBoxRef.offsetTop - valueY) + 'px'
+    Animate(MapBoxRef,{
+        left:Math.ceil(MapBoxRef.offsetLeft - valueX),
+        top:Math.ceil(MapBoxRef.offsetTop - valueY)
+    })
     // 5、设置缩放的中心点，放大地图
     MapBoxRef.style.transformOrigin = `${$event.offsetLeft}px ${$event.offsetTop}px`
-    MapBoxRef.style.transition = `all 0.5s`
+    MapBoxRef.style.transition = `transform 0.5s`
     setTimeout(() => {
         MapBoxRef.style.transform = `scale(4,4)`
     },30)

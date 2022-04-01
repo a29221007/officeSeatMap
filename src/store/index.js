@@ -36,7 +36,7 @@ export default createStore({
         // 移动端可视区的高度
         ClentHeight: 0,
         // 当前用户是否有编辑的权限
-        is_have_editor:false // 默认是false，没有编辑权限
+        is_have_editor:false, // 默认是false，没有编辑权限
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
