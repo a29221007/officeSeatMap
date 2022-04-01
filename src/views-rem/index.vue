@@ -66,6 +66,8 @@ import { sendCode } from '@/api/mobile.js'
 // 座位设置高亮的公共方法
 import searchSeat from './hook/searchSeat'
 import { beginToast, endToast } from '@/views-rem/hook/toast.js'
+
+import transtionFn from '@/views-rem/hook/bottomBoxTranstion.js'
 export default {
     name:'M-Home',
     components:{
@@ -176,6 +178,13 @@ export default {
             BodyContainer.on('pressMove', MapBoxPressMoveFn)
             // 2.7 监听 MapBox 盒子的 touchEnd 事件
             BodyContainer.on('touchEnd', MapBoxTouchEndFn)
+
+            // ------------------------------------------------------------
+            // 获取 searchLegend 、 floorSwitch 两个盒子的初始top值
+            let searchLegend = document.querySelector('.search-legend')
+            searchLegendTop = searchLegend.offsetTop
+            let floorSwitch = document.querySelector('.floor-switch')
+            floorSwitchTop = floorSwitch.offsetTop
         })
         // MapBox 盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
@@ -212,25 +221,48 @@ export default {
         }
         // 控制盒子伸缩的变量
         let scaling = true
+        // searchLegend 盒子的初始 top 值
+        let searchLegendTop = 0
+        // floorSwitch 盒子的初始 top 值
+        let floorSwitchTop = 0
         // MapBox盒子点击事件的处理函数
         function MapBoxTapFn() {
+            // 实时获取这两个 DOM 元素
             let searchLegend = document.querySelector('.search-legend')
             let floorSwitch = document.querySelector('.floor-switch')
-
-            let searchLegendHeight = searchLegend.offsetHeight
-            let floorSwitchHeight = floorSwitch ? floorSwitch.offsetHeight : 0
-            // 确定伸缩量
-            let value1 = scaling ? searchLegendHeight + floorSwitchHeight : 0
-            let value2 = scaling ? floorSwitchHeight : 0
-            searchLegend.style['-webkit-transition'] = `all 0.5s`
-            if(floorSwitchHeight){
-                floorSwitch.style['-webkit-transition'] = `all 0.5s`
+            // 这一步还是要清除一下过渡
+            searchLegend.style.transition = 'unset'
+            if(floorSwitch) floorSwitch.style.transition = 'unset'
+            // 定义动画数据
+            let obj1 = {}
+            let obj2 = {}
+            if(scaling){
+                // 如果为true, 则是向下运动
+                obj1 = {
+                    top:document.documentElement.clientHeight + 30,
+                    bottom: 0 
+                }
+                obj2 = {
+                    top:document.documentElement.clientHeight + 30,
+                    bottom: 0
+                }
+                transtionFn
+            }else{
+                // 否则为向上运动
+                obj1 = {
+                    top:searchLegendTop,
+                    bottom:0
+                }
+                obj2 = {
+                    top:floorSwitchTop,
+                    bottom: 0
+                }
             }
-            searchLegend.style['-webkit-transform'] = `translate(-50%,${value1 + 'px'})`
-            if(floorSwitchHeight){
-                floorSwitch.style['-webkit-transform'] = `translate(-50%,${value2 + 'px'})`
-            }
-            scaling = scaling ? false : true
+            // 调用动画函数
+            transtionFn(searchLegend,obj1)
+            if(floorSwitch) transtionFn(floorSwitch,obj2)
+            // 将控制上升下降的变量取反
+            scaling = !scaling
         }
         // MapBox盒子双击事件的处理函数
         function MapBoxDoubleTapFn() {
@@ -348,14 +380,12 @@ export default {
                 seatData.currentAreaCode = ''
                 // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
                 if(seatItem.seat_id === seatData.current){
-                    // 取消选中，盒子拉下去
-                    scaling = true
+                    // 取消座位盒子高亮
                     seatData.current = 0
-                    // 设置完变量后，调用收缩盒子的函数
+                    // 将底部盒子设置为初始状态
                     BottomBoxRef.value.setSearchLegendContant('init')
-                    nextTick(() => {
-                        MapBoxTapFn()
-                    })
+                    // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
+                    if(!scaling) MapBoxTapFn()
                     return
                 }
                 // 点击座位要将底部盒子升上来
@@ -433,8 +463,16 @@ export default {
             background-repeat: no-repeat;
             // 座位选中的高亮样式
             &.active{
+
+                // transform:scale(3);
                 // 使用动画
-                animation: scaleAnimation 1s infinite alternate;
+                -webkit-animation: scaleAnimation 1s infinite alternate;
+            }
+        }
+        // 定义动画
+        @keyframes scaleAnimation {
+            to {
+                -webkit-transform:scale(3);
             }
         }
         // 区域选中的高亮样式
@@ -959,12 +997,6 @@ export default {
         // 微传播（会议室）1/4半圆
         #QY01010400030{
             border-radius:.1505rem 0 0 0;
-        }
-    }
-    // 定义动画
-    @keyframes scaleAnimation {
-        to {
-            -webkit-transform:scale(3);
         }
     }
 }

@@ -7,7 +7,7 @@
         <component ref="componentRef" v-on:setSearchLegendContant="setSearchLegendContant" :is="SearchLegendContant"></component>
     </div>
     <!-- 下面切换楼层区域 -->
-    <div ref="FloorSwitchRef" class="floor-switch" v-if="SearchLegendContant === 'init'">
+    <div ref="FloorSwitchRef" class="floor-switch" v-show="SearchLegendContant === 'init'">
         <div :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key='item.id' v-on:click="handleClickFloor(item.lable)">{{item.name}}</div>
     </div>
 </template>
@@ -67,6 +67,8 @@ export default {
         // 最大的 top 值 （也是最底端的）
         let SearchLegendMaxTop = 0
 
+        // 记录初始化时 FloorSwitchRef 距离顶部的距离
+        let FloorSwitchTop = 0
         // 在 mounted 中给 SearchLegendRef 注册手势事件
         onMounted(() => {
             // 1、注册 touchstart 事件
@@ -77,7 +79,7 @@ export default {
             SearchLegendRef.value.addEventListener('touchend', SearchLegendTouchendFn)
 
             // ---- 变量的计算
-            // 1、计算初始 top 值,并将盒子的高度取消，设置为top值
+            // 1、计算初始 top 值,并将 SearchLegendRef 盒子的高度取消，设置为top值
             SearchLegendTop = SearchLegendRef.value.offsetTop
             SearchLegendRef.value.style.height = 'unset'
             SearchLegendRef.value.style.top = SearchLegendTop + 'px'
@@ -95,6 +97,12 @@ export default {
             SearchLegendMinTop = clientHeight * 0.05
 
             store.commit('setClentHeight',SearchLegendTop)
+
+            // 设置切换楼层（或者地区）盒子的样式 -----------------------
+            // 获取 FloorSwitchRef 这个盒子距离顶部的距离
+            FloorSwitchTop = FloorSwitchRef.value.offsetTop
+            FloorSwitchRef.value.style.height = 'unset'
+            FloorSwitchRef.value.style.top = FloorSwitchTop + 'px'
         })
         // SearchLegend 盒子 touchstart 事件的处理函数
         function SearchLegendTouchstartFn(e) {
@@ -213,8 +221,6 @@ export default {
         let inputTimer = null
         // 监听 SearchLegendContant 值得变化
         watch(SearchLegendContant,(newValue) => {
-            // 给 SearchLegendRef 盒子添加过渡效果
-            SearchLegendRef.value.style.transition = `all 0.5s`
             if(newValue === 'init'){
                 SearchLegendRef.value.style.height = 'unset'
                 SearchLegendRef.value.style.top = SearchLegendTop + 'px'
