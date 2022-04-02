@@ -557,8 +557,8 @@ export default {
                 }
             }
         }
-        // 冰柠工作室（EOS项目组）、（余烬风暴项目组）、平台技术部
-        #QY010103003939,#QY010103004040,#QY010103003131{
+        // 冰柠工作室（EOS项目组）、（余烬风暴项目组）、平台技术部（it信息部）、平台技术部（QA部）
+        #QY010103003939,#QY010103004040,#QY010103003131,#QY010103003030{
             .title{
                 display: flex;
                 align-items: center;
@@ -572,21 +572,13 @@ export default {
                 }
             }
         }
-        // QA部
-        #QY010103003030{
-            .title{
-                left: .043rem;
-                top: 43%;
-                span{
-                    width: .0215rem;
-                    white-space:unset;
-                }
-            }
-        }
-        // 平台技术部，it信息部
-        #QY010103003131{
+        // 平台技术部(it信息部）、平台信息部(QA部)
+        #QY010103003131,#QY010103003030{
             .title{
                 left: .0215rem;
+                .name{
+                    transform: scale(0.55,0.48);
+                }
             }
         }
         // 财务部
@@ -784,11 +776,11 @@ export default {
                 }
             }
         }
-        // 移动端的 英雄擂
-        #QY01010300150{
+        // 移动端的 英雄擂、平台技术部（it支持部）
+        #QY01010300150,#QY010103004762{
             .title{
                 .subtitle{
-                    transform: translateY(-0.1613rem) scale(0.38, 0.38);
+                    transform: translateY(-0.1452rem) scale(0.38, 0.38);
                 }
             }
         }
