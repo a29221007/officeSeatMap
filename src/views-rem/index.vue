@@ -139,6 +139,10 @@ export default {
                     store.commit('setIs_have_editor',res.data.u)
                 })
 
+                // 获取个人固资的信息
+
+                // 获取会议室预定记录的信息
+
                 // 3.6 将当前项设置到 vuex 中
                 store.commit('setActiveInfo',item)
                 let searchLegend = document.querySelector('.search-legend')
@@ -626,7 +630,7 @@ export default {
         #QY010103002424{
             .title{
                 top: unset;
-                bottom: -0.1613rem;
+                bottom: -0.1828rem;
             }
         }
         // 引擎平台部
@@ -634,7 +638,7 @@ export default {
             .title{
                 left: 79%;
                 top: unset;
-                bottom: -0.2151rem;
+                bottom: -0.2903rem;
             }
         }
         // 采购部&商务支持部
@@ -668,7 +672,7 @@ export default {
         #QY010103004352,#QY010103005376{
             .title{
                 top: unset;
-                bottom: -0.086rem;
+                bottom: -0.2151rem;
             }
         }
         // Frebird工作室(大)
@@ -737,7 +741,7 @@ export default {
         #QY010103005580{
             .title{
                 left: unset;
-                right: -0.5914rem;
+                right: -0.6452rem;
             }
         }
         // 楼梯样式-1
@@ -777,6 +781,22 @@ export default {
                 span{
                     width: .0215rem;
                     white-space:unset;
+                }
+            }
+        }
+        // 移动端的 英雄擂
+        #QY01010300150{
+            .title{
+                .subtitle{
+                    transform: translateY(-0.1613rem) scale(0.38, 0.38);
+                }
+            }
+        }
+        // 热血江湖
+        #QY01010300099{
+            .title{
+                .name{
+                    transform: scale(0.45, 0.55);
                 }
             }
         }

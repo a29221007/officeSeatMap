@@ -8,7 +8,6 @@ function seatZoom(seat){
     let b = true
     clearInterval(seat.timer)
     seat.timer = setInterval(() => {
-        console.log(scaleNum)
         if(scaleNum > 3){
             scaleNum = 3
             b = false

@@ -7,6 +7,8 @@ import { getSeatList } from '@/api/getSeatList'
 import { getAreaList } from '@/api/getArea.js'
 // 导入消息提示框组件
 import { errorMessage } from '@/utils/message.js'
+
+import { endToast } from '@/views-rem/hook/toast.js'
 export default createStore({
     state: {
         // 当前选中的楼层（或地区）
@@ -110,6 +112,7 @@ export default createStore({
                 const {data} = await getSeatList(3)
                 context.commit('setSeatListOfthree',data)
             }catch(error){
+                endToast()
                 errorMessage(error)
             }
         },
@@ -119,6 +122,7 @@ export default createStore({
                 const {data} = await getSeatList(4)
                 context.commit('setSeatListOfFour',data)
             }catch(error){
+                endToast()
                 errorMessage(error)
             }
         },
@@ -128,6 +132,7 @@ export default createStore({
                 const {data} = await getAreaList(3)
                 context.commit('setAreaListOfThree',data)
             }catch(error){
+                endToast()
                 errorMessage(error)
             }
         },
@@ -137,6 +142,7 @@ export default createStore({
                 const {data} = await getAreaList(4)
                 context.commit('setAreaListOfFour',data)
             }catch(error){
+                endToast()
                 errorMessage(error)
             }
         }
