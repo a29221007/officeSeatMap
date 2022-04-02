@@ -15,7 +15,7 @@
                             height: (item.coordinate.height / 1612 * 843) / 93 + 'rem',
                             backgroundColor: item.backgroundcolor,
                             color:'#646464'
-                        }">
+                        }" v-on:click="handleClickMeetingRoom(item,$event)">
                             <div class="title">
                                 <span class="name">{{item.name}}</span>
                                 <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
@@ -33,7 +33,7 @@
                                 height: (item2.height / 1612 * 843) / 93 + 'rem',
                                 backgroundColor: item.backgroundcolor,
                                 color:'#646464'
-                            }">
+                            }" v-on:click="handleClickMeetingRoom(item,$event)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
                                     <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
@@ -250,7 +250,6 @@ export default {
                     top:document.documentElement.clientHeight + 30,
                     bottom: 0
                 }
-                transtionFn
             }else{
                 // 否则为向上运动
                 obj1 = {
@@ -408,17 +407,50 @@ export default {
                     if(!scaling) MapBoxTapFn()
                     return
                 }
-
                 beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
                 beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
                 beforeSeatAnimateElement = $event.target
                 // 点击座位要将底部盒子升上来
                 scaling = false
                 currentSeat_id = seatItem.seat_id
-                // seatData.setCurrentSeat_id(seatItem.seat_id)
                 MapBoxTapFn()
                 // 调用座位高亮的函数
                 searchSeat($event.target, BottomBoxRef.value, seatItem)
+            },
+            // 点击每一个会议室
+            handleClickMeetingRoom(item,$event){
+                // 将当前项的字段结构出来
+                const {type,code} = item
+                // 排出掉除会议室以外的点击
+                if(type !== 1) return
+                // 阻止点击会议室事件的冒泡行为
+                $event.stopPropagation()
+                // 判断点击的会议室是否与当前选中的会议室code相同
+                if(code === seatData.currentAreaCode){
+                    // 如果相同,则取消高亮，以及恢复底部盒子到主页（init）
+                    seatData.currentAreaCode = ''
+                    // 将底部操作盒子设置为初始状态
+                    BottomBoxRef.value.setSearchLegendContant('init')
+                    // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
+                    if(!scaling) MapBoxTapFn()
+                    return
+                }
+                // 设置选中项高亮
+                // seatData.currentAreaCode = code
+                // 将底部操作盒子设置为 'information' 状态
+                // BottomBoxRef.value.setSearchLegendContant('information')
+                // 设置当前选中的会议室信息
+                store.commit('setActiveInfo',item)
+                // console.log('BottomBoxRef',BottomBoxRef)
+                let searchLegend = document.querySelector('.search-legend')
+                searchLegend.style.display = 'none'
+                // 3.7 调用子组件的方法，将seaech组件显示出来
+                BottomBoxRef.value.setSearchLegendContant('search')
+                nextTick(() => {
+                    BottomBoxRef.value.setSearchLegendContant('information')
+                    BottomBoxRef.value.componentRef.handleClickQuerySearchItem(item)
+                    searchLegend.style.display = 'block'
+                })
             }
         })
         // 向子组件传递 switchFloor 事件，在切换图例时，也要触发该事件，将高亮的座位和区域重置
