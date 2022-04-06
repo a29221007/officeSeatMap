@@ -57,13 +57,13 @@ body {
   height: unset!important;
   right: unset!important;
   border-radius: 7px;
-  padding: 20px;
+  padding: 5px;
 }
 .drawer .el-drawer__body {
   padding: unset;
 }
 .drawer-mask {
-  z-index: -10 !important;
+  position: unset!important;
 }
 input {
   outline: none;

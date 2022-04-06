@@ -44,9 +44,8 @@ import { Dialog } from 'vant'
 import { beginToast, endToast } from '@/views-rem/hook/toast.js'
 // 座位设置高亮的公共方法
 import searchSeat from '@/views-rem/hook/searchSeat.js'
-
-// 导入元素做滚动的公共方法
-import roll from '@/views-rem/hook/roll.js'
+// 区域设置高亮的公共方法
+import searchArea from '@/views-rem/hook/searchArea.js'
 export default {
     name:'BottomBoxSearch',
     emits:['setSearchLegendContant'],
@@ -132,11 +131,9 @@ export default {
                         if(item.floor == store.getters.floor){
                             // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                             emit('setSearchLegendContant','information')
-                            // store.commit('setActiveInfo',item)
-                            // 将 SearchLegendRef 盒子的bottom值设置为0，置底
-                            let el = document.getElementById(seat_id)
+                            store.commit('setActiveInfo',item)
                             upDataCurrentSeat_id(seat_id)
-                            searchSeat(el,null,item)
+                            searchSeat(seat_id)
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             Dialog.confirm({
@@ -147,11 +144,10 @@ export default {
                                 store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
                                 // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                 emit('setSearchLegendContant','information')
+                                store.commit('setActiveInfo',item)
                                 nextTick(() => {
-                                    // 将 SearchLegendRef 盒子的bottom值设置为0，置底
-                                    let el = document.getElementById(seat_id)
                                     upDataCurrentSeat_id(seat_id)
-                                    searchSeat(el,null,item)
+                                    searchSeat(seat_id)
                                     beginToast('success','切换成功',2000)
                                 })
                             }).catch(() => {
@@ -165,7 +161,7 @@ export default {
                             // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                             emit('setSearchLegendContant','information')
                             // 如果搜索的区域在当前楼层将其高亮
-                            searchArea(item.code)
+                            searchArea(item.code,upDataCurrentAreaCode)
                             store.commit('setActiveInfo',item)
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
@@ -178,7 +174,7 @@ export default {
                                 // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                 emit('setSearchLegendContant','information')
                                 nextTick(() => {
-                                    searchArea(item.code)
+                                    searchArea(item.code,upDataCurrentAreaCode)
                                     beginToast('success','切换成功',2000)
                                     store.commit('setActiveInfo',item)
                                 })
@@ -188,7 +184,6 @@ export default {
                             })
                         }
                     }
-
                     // 如果是扫码跳转进来的最后要关闭提示框
                     endToast()
                 })
@@ -206,93 +201,6 @@ export default {
         let upDataCurrentAreaCode = inject('upCurrentAreaCode')
         // 接受祖先组件传递来的设置选中座位id的函数
         let upDataCurrentSeat_id = inject('upCurrentSeat_id')
-        // 区域搜索公共的方法
-        function searchArea(code){
-            // 1、获取code的所有区域
-            let elList = [...document.querySelectorAll(`.${code}`)]
-            // 2、找出同一个code区域的所有宽、高、以及位置信息
-            let code_Array = elList.reduce((result,item) => {
-                return result.concat({
-                    left:item.offsetLeft,
-                    top:item.offsetTop,
-                    width:item.offsetWidth,
-                    height:item.offsetHeight
-                })
-            },[])
-            // 3、确定code编码区域的整体大小以及整体区域的位置
-            // 获取code_Array中最大left、最小left、最大top、最小top的值，以及最大left项的width、最大top的height
-            let maxLeft = 0 // 最大left
-            let minLeft = 0 // 最小left
-            let maxTop = 0 // 最大top
-            let minTop = 0 // 最小top
-            code_Array.forEach((item,index) => {
-                const {left, top} = item
-                if(index === 0){
-                    maxLeft = left
-                    minLeft = left
-                    maxTop = top
-                    minTop = top
-                }else{
-                    if(left > maxLeft) maxLeft = left
-                    if(left < minLeft) minLeft = left
-                    if(top > maxTop) maxTop = top
-                    if(top < minTop) minTop = top
-                }    
-            })
-            let maxLeftWidth = code_Array.find(item => item.left === maxLeft).width // 最大left项的width
-            let maxLeftHeight = code_Array.find(item => item.top === maxTop).height // 最大top的height
-
-            /**
-             * 4、计算
-             * 整体区域大小的宽度 = 大left - 小left + 大left的width
-             * 整体区域大小的高度 = 大top - 小top + 大top的height
-             * 整体区域的位置 top = 小top
-             * 整体区域的位置 left = 小left
-             * 整体区域的缩放比例
-             * mapBox的宽度 / 整体区域的宽度 （值不能大于3）
-             * mapBox的高度 / 整体区域的高度 （值不能大于3）
-            */
-            let currentAreaWidth = maxLeft - minLeft + maxLeftWidth // 整体区域大小的宽度
-            let currentAreaHeight = maxTop - minTop + maxLeftHeight // 整体区域大小的高度
-            // 5、获取mapBox元素
-            let mapBox = document.querySelector('.map-box')
-            // 6、设置过度属性，以及过渡时间
-            mapBox.style.transition = 'all 1s'
-            // 7、计算缩放比例
-            let scaleX = ((mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth > 3 ? 3 : (mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth) - 0.1
-            let scaleY = ((mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight > 3 ? 3 : (mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight) - 0.1
-            // 7.1、判断两个缩放比例差值绝对值是否大于1
-            if(Math.abs(scaleX - scaleY) > 1){
-                // 如果大于1，则将将两个缩放的比例取最小的那一个
-                const minScale = scaleX > scaleY ? scaleY : scaleX
-                scaleX = minScale
-                scaleY = minScale
-            }
-            // 8、计算被搜索的区域在map-container中的距离
-            let mapContainer_X = minLeft + (currentAreaWidth / 2) + mapBox.offsetLeft
-            let mapContainer_Y = minTop + (currentAreaHeight / 2) + mapBox.offsetTop
-            // 9、得到MapContainerRef盒子的宽、高 / 2 (得到一半的值)
-            let MapContainerBox = document.querySelector('.body-container')
-            MapContainerBox.offsetWidth / 2
-            MapContainerBox.offsetHeight / 2
-            // 10、得到了视图应该移动的距离
-            let valueX = mapContainer_X - (MapContainerBox.offsetWidth / 2)
-            let valueY = mapContainer_Y - (store.state.ClentHeight / 2)
-            // 12、设置MapBoxRef盒子的位置
-            mapBox.style.left = (mapBox.offsetLeft - valueX) + 'px'
-            mapBox.style.top = (mapBox.offsetTop - valueY) + 'px'
-            // 13、设置缩放的中心点，放大地图
-            mapBox.style.transformOrigin = `${minLeft + (currentAreaWidth / 2)}px ${minTop + (currentAreaHeight / 2)}px`
-            mapBox.style.transform = `scale(${scaleX},${scaleY})`
-
-            // 11、调用 inject 传递过来的函数，设置盒子的高亮状态
-            upDataCurrentAreaCode({
-                code,
-                scaleX,
-                scaleY
-            })
-            roll()
-        }
         // 卸载阶段
         onBeforeUnmount(() => {
             clearTimeout(searchInput.searchTimer)

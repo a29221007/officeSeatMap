@@ -1,9 +1,7 @@
 // 搜索座位的公共逻辑
 
 /**
- * 参数一 $event ：点击或搜索选中的目标盒子
- * 参数二 ClentHeight：屏幕可视区的高度（应该是经过计算过后去除掉底栏部分的）
- * 参数三 seatItem：当前选中项的详细信息
+ * 参数一 seat_id ：选中座位的id
 */
 import store from '@/store'
 import roll from './roll.js'
@@ -12,7 +10,8 @@ import Animate from './bottomBoxTranstion'
 
 // 导入座位盒子元素做缩放动画的方法
 import seatZoom from './seatAnimate'
-function searchSeat($event, BottomBoxRef, seatItem){
+function searchSeat(seat_id){
+    let $event = document.getElementById(seat_id)
     seatZoom($event)
     // 获取地图以及地图容器的DOM元素
     let MapBoxRef = document.querySelector('.map-box')
@@ -37,10 +36,6 @@ function searchSeat($event, BottomBoxRef, seatItem){
     setTimeout(() => {
         MapBoxRef.style.transform = `scale(4,4)`
     },30)
-    // 6、调用子组件的方法，设置子组件的状态变量
-    BottomBoxRef && BottomBoxRef.setSearchLegendContant('information')
-    // 7、设置选中项的数据
-    store.commit('setActiveInfo', seatItem)
     roll()
 }
 

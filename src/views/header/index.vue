@@ -44,11 +44,28 @@
     </div>
     <!-- 抽屉式弹框 -->
     <el-drawer custom-class='drawer' modal-class='drawer-mask' v-model="is_show" :with-header="false" direction='ltr' :modal='false' size='15%'>
-        <el-form label-width="auto">
-            <el-form-item label="姓名：">{{currentSeatInfo.name || '暂无数据'}}</el-form-item>
-            <el-form-item label="座位号：">{{currentSeatInfo.seat_id}}</el-form-item>
-            <el-form-item label="部门：">{{currentSeatInfo.depart || '暂无数据'}}</el-form-item>
+        <!-- 选中员工座位 -->
+        <el-form label-width="auto" v-if="currentInfo.type === '0'">
+            <el-form-item label="姓名：">{{currentInfo.name || '暂无数据'}}</el-form-item>
+            <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
+            <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
+            <el-form-item label="个人固定资产信息："><el-button type="text" v-on:click="handleClickAssetsMessage(currentInfo.id)">查看</el-button></el-form-item>
         </el-form>
+        <!-- 选中资产座位 -->
+        <el-form label-width="auto" v-if="currentInfo.type === '0-2'">
+            <el-form-item label="资产名称：">{{currentInfo.name || '暂无数据'}}</el-form-item>
+            <el-form-item label="状态：">{{currentInfo.equipment_status}}</el-form-item>
+            <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
+            <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
+        </el-form>
+        <!-- 选中会议室 -->
+        <el-form label-width="auto" v-if="currentInfo.type === 1">
+            <el-form-item label="姓名：">3会议室{{currentInfo.name || '暂无数据'}}</el-form-item>
+            <!-- <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
+            <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item> -->
+        </el-form>
+        <!-- 选中空位 -->
+        <!-- 选中其他区域 -->
     </el-drawer>
 </template>
 
@@ -64,8 +81,12 @@ import emitter from '../eventbus'
 import initMap from '@/utils/initMap.js'
 import { Search } from '@element-plus/icons-vue'
 
-// 导入座位放大的逻辑
+// 导入座位高亮的逻辑
 import scaleSeat from '@/utils/scaleSeat.js'
+// 导入区域高亮的逻辑
+import searchArea from '@/utils/searchArea.js'
+// 导入获取当前员工的固资信息
+import { getFixedAssets } from '@/api/getFixedassets.js'
 export default {
     name:'Header',
     setup(){
@@ -84,15 +105,10 @@ export default {
         // 监听兄弟组件Main发布的自定义事件from，将弹框显示
         emitter.on('form', data => {
             if(data){
-                const { depart, name, seat_id } = data
-                drawerData.currentSeatInfo.depart = depart
-                drawerData.currentSeatInfo.seat_id = seat_id
-                drawerData.currentSeatInfo.name = name
+                drawerData.currentInfo = data
                 drawerData.is_show = true
             }else{
-                drawerData.currentSeatInfo.depart = ''
-                drawerData.currentSeatInfo.seat_id = ''
-                drawerData.currentSeatInfo.name = ''
+                drawerData.currentInfo = {}
                 drawerData.is_show = false
             }
         })
@@ -161,7 +177,6 @@ export default {
                     // 判断搜索的类型，是座位还是区域
                     if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                         // 如果搜索的是座位，则执行下面的逻辑
-                        const { depart, name, seat_id } = item
                         // 选中某一项，首先判断该员工的座位，是否在当前楼层
                         if(item.floor == store.getters.floor){
                             // 如果相同
@@ -170,9 +185,7 @@ export default {
                             emitter.emit('SearchSeat',item.seat_id)
                             scaleSeat(el)
                             drawerData.is_show = true
-                            drawerData.currentSeatInfo.depart = depart
-                            drawerData.currentSeatInfo.seat_id = seat_id
-                            drawerData.currentSeatInfo.name = name
+                            drawerData.currentInfo = item
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             ElMessageBox.confirm(
@@ -188,9 +201,7 @@ export default {
                                 let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
                                 handleClickFloor(pushFloor)
                                 drawerData.is_show = true
-                                drawerData.currentSeatInfo.depart = depart
-                                drawerData.currentSeatInfo.seat_id = seat_id
-                                drawerData.currentSeatInfo.name = name
+                                drawerData.currentInfo = item
                                 nextTick(() => {
                                     let el = document.getElementById(item.seat_id)
                                     emitter.emit('SearchSeat',item.seat_id)
@@ -206,7 +217,10 @@ export default {
                         if(item.floor == store.getters.floor){
                             // 如果相同
                             // 1、获取座位id号对应的元素DOM
-                            searchData.searchArea(item.code)
+                            const obj = searchArea(item.code)
+                            emitter.emit('activeArea',obj)
+                            drawerData.is_show = true
+                            drawerData.currentInfo = item
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             ElMessageBox.confirm(
@@ -222,7 +236,10 @@ export default {
                                 let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
                                 handleClickFloor(pushFloor)
                                 nextTick(() => {
-                                    searchData.searchArea(item.code)
+                                    const obj = searchArea(item.code)
+                                    emitter.emit('activeArea',obj)
+                                    drawerData.is_show = true
+                                    drawerData.currentInfo = item
                                     successMessage('切换成功')
                                 })
                             }).catch(() => {
@@ -232,96 +249,6 @@ export default {
                         searchData.searchState = item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")
                     }
                 })
-            },
-            // 区域搜索公共的方法
-            searchArea(code){
-                // 0、搜索区域时，将座位的提示框关闭
-                drawerData.currentSeatInfo.depart = ''
-                drawerData.currentSeatInfo.seat_id = ''
-                drawerData.currentSeatInfo.name = ''
-                drawerData.is_show = false
-                // 1、获取code的所有区域
-                let elList = [...document.querySelectorAll(`.${code}`)]
-                // 2、找出同一个code区域的所有宽、高、以及位置信息
-                let code_Array = elList.reduce((result,item) => {
-                    return result.concat({
-                        left:item.offsetLeft,
-                        top:item.offsetTop,
-                        width:item.offsetWidth,
-                        height:item.offsetHeight
-                    })
-                },[])
-                // 3、确定code编码区域的整体大小以及整体区域的位置
-                // 获取code_Array中最大left、最小left、最大top、最小top的值，以及最大left项的width、最大top的height
-                let maxLeft = 0 // 最大left
-                let minLeft = 0 // 最小left
-                let maxTop = 0 // 最大top
-                let minTop = 0 // 最小top
-                code_Array.forEach((item,index) => {
-                    const {left, top} = item
-                    if(index === 0){
-                        maxLeft = left
-                        minLeft = left
-                        maxTop = top
-                        minTop = top
-                    }else{
-                        if(left > maxLeft) maxLeft = left
-                        if(left < minLeft) minLeft = left
-                        if(top > maxTop) maxTop = top
-                        if(top < minTop) minTop = top
-                    }    
-                })
-                let maxLeftWidth = code_Array.find(item => item.left === maxLeft).width // 最大left项的width
-                let maxLeftHeight = code_Array.find(item => item.top === maxTop).height // 最大top的height
-
-                /**
-                 * 4、计算
-                 * 整体区域大小的宽度 = 大left - 小left + 大left的width
-                 * 整体区域大小的高度 = 大top - 小top + 大top的height
-                 * 整体区域的位置 top = 小top
-                 * 整体区域的位置 left = 小left
-                 * 整体区域的缩放比例
-                 * mapBox的宽度 / 整体区域的宽度 （值不能大于3）
-                 * mapBox的高度 / 整体区域的高度 （值不能大于3）
-                */
-                let currentAreaWidth = maxLeft - minLeft + maxLeftWidth // 整体区域大小的宽度
-                let currentAreaHeight = maxTop - minTop + maxLeftHeight // 整体区域大小的高度
-                // 5、获取mapBox元素
-                let mapBox = document.querySelector('.map-box')
-                // 6、设置过度属性，以及过渡时间
-                mapBox.style.transition = 'all 1s'
-                // 7、计算缩放比例
-                let scaleX = ((mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth > 3 ? 3 : (mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth) - 0.1
-                let scaleY = ((mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight > 3 ? 3 : (mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight) - 0.1
-                // 7.1、判断两个缩放比例差值绝对值是否大于1
-                if(Math.abs(scaleX - scaleY) > 1){
-                    // 如果大于1，则将将两个缩放的比例取最小的那一个
-                    const minScale = scaleX > scaleY ? scaleY : scaleX
-                    scaleX = minScale
-                    scaleY = minScale
-                }
-                // 8、计算被搜索的区域在map-container中的距离
-                let mapContainer_X = minLeft + (currentAreaWidth / 2) + mapBox.offsetLeft
-                let mapContainer_Y = minTop + (currentAreaHeight / 2) + mapBox.offsetTop
-                // 9、得到MapContainerRef盒子的宽、高 / 2 (得到一半的值)
-                let MapContainerBox = document.querySelector('.map-container')
-                MapContainerBox.offsetWidth / 2
-                MapContainerBox.offsetHeight / 2
-                // 10、得到了视图应该移动的距离
-                let valueX = mapContainer_X - (MapContainerBox.offsetWidth / 2)
-                let valueY = mapContainer_Y - (MapContainerBox.offsetHeight / 2)
-                // 11、向兄弟组件发布事件，设置盒子的高亮状态
-                emitter.emit('activeArea',{
-                    code,
-                    scaleX,
-                    scaleY
-                })
-                // 12、设置MapBoxRef盒子的位置
-                mapBox.style.left = (mapBox.offsetLeft - valueX) + 'px'
-                mapBox.style.top = (mapBox.offsetTop - valueY) + 'px'
-                // 13、设置缩放的中心点，放大地图
-                mapBox.style.transformOrigin = `${minLeft + (currentAreaWidth / 2)}px ${minTop + (currentAreaHeight / 2)}px`
-                mapBox.style.transform = `scale(${scaleX},${scaleY})`
             },
             // 点击搜索框中清除图标的处理程序
             handleClearInput() {
@@ -353,12 +280,16 @@ export default {
             // 控制弹框的显示隐藏
             is_show:false,
             // 当前座位人员的信息集合
-            currentSeatInfo:{
-                name:'',
-                seat_id:'',
-                depart:''
+            currentInfo:{},
+            // 点击查看固资信息
+            handleClickAssetsMessage(userCode){
+                getFixedAssets(userCode).then((res) => {
+                    console.log(res)
+                })
             }
         })
+        // 固资信息集合
+        let FixedAssetsList = ref([])
         return {
             AllArea,
             ...toRefs(searchData),

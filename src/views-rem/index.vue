@@ -65,6 +65,8 @@ import BottomBox from './compontent/bottomBox.vue'
 import { sendCode } from '@/api/mobile.js'
 // 座位设置高亮的公共方法
 import searchSeat from './hook/searchSeat'
+// 区域设置高亮的公共方法
+import searchArea from '@/views-rem/hook/searchArea.js'
 import { beginToast, endToast } from '@/views-rem/hook/toast.js'
 
 import transtionFn from '@/views-rem/hook/bottomBoxTranstion.js'
@@ -145,15 +147,17 @@ export default {
 
                 // 3.6 将当前项设置到 vuex 中
                 store.commit('setActiveInfo',item)
-                let searchLegend = document.querySelector('.search-legend')
-                searchLegend.style.display = 'none'
-                // 3.7 调用子组件的方法，将seaech组件显示出来
-                BottomBoxRef.value.setSearchLegendContant('search')
-                nextTick(() => {
-                    BottomBoxRef.value.setSearchLegendContant('information')
-                    BottomBoxRef.value.componentRef.handleClickQuerySearchItem(item)
-                    searchLegend.style.display = 'block'
-                })
+                BottomBoxRef.value.setSearchLegendContant('information')
+                // 3.7 根据当前的类型，调用不同的高亮函数
+                if(requestSearchObj.type == 1){
+                    // 如果为座位
+                    seatData.setCurrentSeat_id(item.seat_id)
+                    // 调用座位高亮的函数
+                    searchSeat(item.seat_id)
+                }else if(requestSearchObj.type == 2){
+                    // 如果为区域
+                    searchArea(item.code,seatData.setCurrentAreaCode)
+                }
             }
         })
         // onBeforeMount 中开启加载提示
@@ -396,6 +400,8 @@ export default {
             handleClickSeat(seatItem,$event){
                 // 阻止冒泡
                 $event.stopPropagation()
+                // 判断当前选中的座位是否有seat_id这个字段，以及值不为null
+                if(!seatItem.seat_id) return
                 // 点击座位，将区域的高亮色，取消
                 seatData.currentAreaCode = ''
                 // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
@@ -412,10 +418,13 @@ export default {
                 beforeSeatAnimateElement = $event.target
                 // 点击座位要将底部盒子升上来
                 scaling = false
-                currentSeat_id = seatItem.seat_id
                 MapBoxTapFn()
+                // 设置座位的高亮状态
+                seatData.setCurrentSeat_id(seatItem.seat_id)
+                store.commit('setActiveInfo', seatItem)
+                BottomBoxRef.value.setSearchLegendContant('information')
                 // 调用座位高亮的函数
-                searchSeat($event.target, BottomBoxRef.value, seatItem)
+                searchSeat(seatItem.seat_id)
             },
             // 点击每一个会议室
             handleClickMeetingRoom(item,$event){
@@ -435,22 +444,11 @@ export default {
                     if(!scaling) MapBoxTapFn()
                     return
                 }
-                // 设置选中项高亮
-                // seatData.currentAreaCode = code
                 // 将底部操作盒子设置为 'information' 状态
-                // BottomBoxRef.value.setSearchLegendContant('information')
+                BottomBoxRef.value.setSearchLegendContant('information')
                 // 设置当前选中的会议室信息
                 store.commit('setActiveInfo',item)
-                // console.log('BottomBoxRef',BottomBoxRef)
-                let searchLegend = document.querySelector('.search-legend')
-                searchLegend.style.display = 'none'
-                // 3.7 调用子组件的方法，将seaech组件显示出来
-                BottomBoxRef.value.setSearchLegendContant('search')
-                nextTick(() => {
-                    BottomBoxRef.value.setSearchLegendContant('information')
-                    BottomBoxRef.value.componentRef.handleClickQuerySearchItem(item)
-                    searchLegend.style.display = 'block'
-                })
+                searchArea(item.code,seatData.setCurrentAreaCode)
             }
         })
         // 向子组件传递 switchFloor 事件，在切换图例时，也要触发该事件，将高亮的座位和区域重置

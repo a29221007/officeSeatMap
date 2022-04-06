@@ -22,7 +22,7 @@
                             backgroundColor: item.backgroundcolor,
                             color:'#646464',
                             fontSize:'12px'
-                        }">
+                        }" v-on:click="handleClickMeetingRoom(item)">
                             <div class="title">
                                 <span class="name">{{item.name}}</span>
                                 <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
@@ -41,7 +41,7 @@
                                 backgroundColor: item.backgroundcolor,
                                 color:'#646464',
                                 fontSize:'12px'
-                            }">
+                            }" v-on:click="handleClickMeetingRoom(item)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
                                     <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
@@ -72,8 +72,11 @@ import emitter from '../eventbus.js'
 // 导入初始化地图的方法
 import initMap from '@/utils/initMap.js'
 
-// 导入座位放大的逻辑
+// 导入座位高亮的逻辑
 import scaleSeat from '@/utils/scaleSeat.js'
+
+// 导入区域高亮的逻辑
+import searchArea from '@/utils/searchArea.js'
 export default {
     name:'Main',
     setup(){
@@ -139,7 +142,7 @@ export default {
             },
             // 鼠标进入每一个座位的处理程序
             seatMouseenter(seatItem,$event) {
-                tooltipRef.value.style.top = $event.target.offsetTop - 38 + 'px'
+                tooltipRef.value.style.top = $event.target.offsetTop - 34 + 'px'
                 tooltipRef.value.style.left = $event.target.offsetLeft - 14 + 'px'
                 is_show_tooltip.value = true
                 tooltipText.value = seatItem.seat_id
@@ -160,6 +163,7 @@ export default {
         })
         // 鼠标点击每一个座位的事件处理函数
         function handleClickSeat(seatItem,$event){
+            console.log('seatItem',seatItem)
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
@@ -175,6 +179,28 @@ export default {
             // 将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacleX = 3
             sacleY = 3
+        }
+        // 鼠标点击会议室的事件处理程序
+        function handleClickMeetingRoom(item){
+            // 将当前项的字段结构出来
+            const {type,code} = item
+            // 排出掉除会议室以外的点击
+            if(type !== 1) return
+            // 先将座位的高亮取消掉
+            seatData.current = 0
+            // 判断当前点击的和已经选中的值，是否相同
+            if(seatData.currentAreaCode === code){
+                // 如果点前点击的和选中的一致，则取消高亮状态
+                seatData.currentAreaCode = ''
+                // 向兄弟组件发布事件，将弹框关闭
+                return emitter.emit('form','')
+            }
+            seatData.currentAreaCode = code
+            emitter.emit('form',item)
+            // 调用区域高亮的方法
+            const { scaleX, scaleY } = searchArea(code)
+            sacleX = scaleX
+            sacleY = scaleY
         }
         // 创建地图容器的实例对象
         const MapBoxRef = ref(null)
@@ -300,7 +326,8 @@ export default {
             tooltipRef,
             MapBoxAmplification,
             MapBoxReduce,
-            initMap
+            initMap,
+            handleClickMeetingRoom
         }
     }
 }
@@ -407,10 +434,16 @@ export default {
                 left: 72px;
             }
         }
-        // it支持部、冰柠工作室
-        #QY010103004762,#QY010103003838{
+        // 冰柠工作室
+        #QY010103003838{
             .title{
                 top: 7px;
+            }
+        }
+        // 平台技术部(it支持部)
+        #QY010103004762{
+            .title{
+                top: -2px;
             }
         }
         // 冰柠（AX项目组）
@@ -430,8 +463,8 @@ export default {
                 }
             }
         }
-        // 冰柠工作室（EOS项目组）、（余烬风暴项目组）、平台技术部
-        #QY010103003939,#QY010103004040,#QY010103003131{
+        // 冰柠工作室（EOS项目组）、（余烬风暴项目组）、平台技术部(it信息部)、平台技术部(QA部)
+        #QY010103003939,#QY010103004040,#QY010103003131,#QY010103003030{
             .title{
                 display: flex;
                 align-items: center;
@@ -445,19 +478,8 @@ export default {
                 }
             }
         }
-        // QA部
-        #QY010103003030{
-            .title{
-                left: 4px;
-                top: 43%;
-                span{
-                    width: 2px;
-                    white-space:unset;
-                }
-            }
-        }
-        // 平台技术部，it信息部
-        #QY010103003131{
+        // 平台技术部(it信息部)、平台技术部(QA部)
+        #QY010103003131,#QY010103003030{
             .title{
                 left: 2px;
             }
