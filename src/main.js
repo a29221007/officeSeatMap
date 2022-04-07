@@ -5,7 +5,8 @@ import store from './store'
 import './style/index.less'
 import './style/iconfont.css'
 import ElementPlus from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
 import './utils/flexible.js'
 import { Col, Row } from 'vant'
-createApp(App).use(router).use(store).use(ElementPlus).use(Col).use(Row).mount('#app')
+createApp(App).use(router).use(store).use(ElementPlus,{ locale: zhCn }).use(Col).use(Row).mount('#app')

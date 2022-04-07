@@ -42,7 +42,7 @@
             </div>
         </div>
     </div>
-    <!-- 抽屉式弹框 -->
+    <!-- 抽屉式弹框、展示选中信息 -->
     <el-drawer custom-class='drawer' modal-class='drawer-mask' v-model="is_show" :with-header="false" direction='ltr' :modal='false' size='15%'>
         <!-- 选中员工座位 -->
         <el-form label-width="auto" v-if="currentInfo.type === '0'">
@@ -60,13 +60,26 @@
         </el-form>
         <!-- 选中会议室 -->
         <el-form label-width="auto" v-if="currentInfo.type === 1">
-            <el-form-item label="姓名：">3会议室{{currentInfo.name || '暂无数据'}}</el-form-item>
-            <!-- <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
-            <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item> -->
+            <el-form-item label="会议室名称：">{{ currentInfo.name || '暂无数据' }}</el-form-item>
+            <el-form-item label="编号：">{{ currentInfo.code }}</el-form-item>
+            <el-form-item label="会议室设备：">{{ currentInfo.setting }}</el-form-item>
+            <el-form-item class="reserve" label="预定信息："></el-form-item>
+            <el-form-item class="reserve" label="当前预定:">{{is_curentMeeting_active ? currentInfo.current.USERNAME : '无'}}</el-form-item>
+            <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.Date + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
+            <el-form-item label="预定记录："><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
+            <div class="make-btn"><el-button type="danger" round :disabled='is_curentMeeting_active'>预约</el-button></div>
         </el-form>
         <!-- 选中空位 -->
-        <!-- 选中其他区域 -->
+        <el-form label-width="auto" v-if="currentInfo.type === '0-1'">
+            <el-form-item>空座</el-form-item>
+            <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
+            <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
+        </el-form>
     </el-drawer>
+    <!-- 展示员工固定资产信息 -->
+    <FixedAssets ref="FixedAssetsRef" :FixedAssetsUserName='FixedAssetsUserName' :FixedAssetsList='FixedAssetsList'></FixedAssets>
+    <!-- 展示会议室预约记录 -->
+    <MeetingRoom></MeetingRoom>
 </template>
 
 <script>
@@ -74,7 +87,7 @@ import {ref, reactive, toRefs, nextTick, onMounted, inject} from 'vue'
 import { useStore } from 'vuex'
 import { ElMessageBox } from 'element-plus'
 // 导入消息提示框组件
-import { successMessage, infoMessage } from '@/utils/message.js'
+import { successMessage, infoMessage, errorMessage } from '@/utils/message.js'
 // 导入事件中心
 import emitter from '../eventbus'
 // 导入初始化地图的方法
@@ -85,10 +98,19 @@ import { Search } from '@element-plus/icons-vue'
 import scaleSeat from '@/utils/scaleSeat.js'
 // 导入区域高亮的逻辑
 import searchArea from '@/utils/searchArea.js'
-// 导入获取当前员工的固资信息
+// 导入获取当前员工的固资信息的api
 import { getFixedAssets } from '@/api/getFixedassets.js'
+// 导入获取会议室相关信息的api
+import { getMeeting } from '@/api/getMeeting.js'
+// 导入固资信息的子组件
+import FixedAssets from '../compontent/FixedAssets'
+// 导入会议室预定记录的子组件
+import MeetingRoom from '../compontent/meetingRoom'
 export default {
     name:'Header',
+    components:{
+        FixedAssets,MeetingRoom
+    },
     setup(){
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
@@ -105,8 +127,15 @@ export default {
         // 监听兄弟组件Main发布的自定义事件from，将弹框显示
         emitter.on('form', data => {
             if(data){
-                drawerData.currentInfo = data
-                drawerData.is_show = true
+                // 需要判断传递过来的类型
+                if(data.type === 1){
+                    // 1为会议室，需要调接口，来获取会议室信息
+                    getMeetingInfo(data.code)
+                }else{
+                    // 其他的类型直接赋值即可
+                    drawerData.currentInfo = data
+                    drawerData.is_show = true
+                }
             }else{
                 drawerData.currentInfo = {}
                 drawerData.is_show = false
@@ -216,11 +245,13 @@ export default {
                         // 判断搜索的项是否在当前楼层
                         if(item.floor == store.getters.floor){
                             // 如果相同
-                            // 1、获取座位id号对应的元素DOM
                             const obj = searchArea(item.code)
                             emitter.emit('activeArea',obj)
-                            drawerData.is_show = true
-                            drawerData.currentInfo = item
+                            // 如果搜索的不是会议室，则不需要将弹框显示出来
+                            if(item.type !== 1) return
+                            getMeetingInfo(item.code) // 调接口获取会议室相关信息
+                            // drawerData.is_show = true
+                            // drawerData.currentInfo = item
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             ElMessageBox.confirm(
@@ -238,9 +269,12 @@ export default {
                                 nextTick(() => {
                                     const obj = searchArea(item.code)
                                     emitter.emit('activeArea',obj)
-                                    drawerData.is_show = true
-                                    drawerData.currentInfo = item
                                     successMessage('切换成功')
+                                    // 如果搜索的不是会议室，则不需要将弹框显示出来
+                                    if(item.type !== 1) return
+                                    getMeetingInfo(item.code) // 调接口获取会议室相关信息
+                                    // drawerData.is_show = true
+                                    // drawerData.currentInfo = item
                                 })
                             }).catch(() => {
                                 infoMessage(`您可以手动切换到${item.floor}楼查找`)
@@ -284,12 +318,83 @@ export default {
             // 点击查看固资信息
             handleClickAssetsMessage(userCode){
                 getFixedAssets(userCode).then((res) => {
-                    console.log(res)
+                    if(res.code !== 0) return errorMessage(res.message)
+                    // 赋值姓名
+                    FixedAssetsUserName.value = res.data.UserName
+                    // 赋值固资列表
+                    FixedAssetsList.value = res.data.FixedChildList
+                    // 将弹框显示出来
+                    FixedAssetsRef.value.setFixedAssets_dialog(true)
+                }).catch((error) => {
+                    errorMessage(error)
                 })
+            },
+            // 点击查看会议室预约记录
+            handleClickMeetingMessage(){
+
             }
         })
+        // 当前固资信息的员工名称
+        let FixedAssetsUserName = ref('')
         // 固资信息集合
         let FixedAssetsList = ref([])
+        // 获取固资信息组件的实例
+        const FixedAssetsRef = ref(null)
+
+        
+        // 定义一个变量，判断当前会议室是否有预约记录
+        let is_curentMeeting_active = ref(true) // 默认是有预约记录的
+        // 获取会议室的名称、设备、当前预约、历史预约记录
+        function getMeetingInfo(code){
+            getMeeting(code).then(res => {
+                if(res.code !== 0) return errorMessage(res.message)
+                // 将 res.data 结构出来
+                const { name, setting, current, HistoryList } = res.data
+                console.log('会议室',res)
+                // 选中会议室的相关信息赋值
+                drawerData.currentInfo = {
+                    // 类型为1
+                    type:1,
+                    // 会议室名称
+                    name,
+                    // 会议室编号
+                    code,
+                    // 会议室设备
+                    setting,
+                    // 当前预约记录
+                    current,
+                    // 预定记录
+                    HistoryList
+                }
+                // 判断当前会议室有没有人预定
+                // 要判断 current 这个字段值类型
+                if(typeof current === 'string' && current === ''){
+                    // 如果 current 值类型为字符串并且值为空
+                    is_curentMeeting_active.value = false
+                }else if(Object.prototype.toString.call(current) === '[object Object]'){
+                    // 如果为对象，则继续判断是否为空数组
+                    if(Object.getOwnPropertyNames(current).length === 0){
+                        // 如果长度为0，则当前没有人预定会议室
+                        is_curentMeeting_active.value = false
+                    }else{
+                        is_curentMeeting_active.value = true
+                    }
+                }else if(Object.prototype.toString.call(current) === '[object Array]'){
+                    // 如果为数组，则判断是否为空数组
+                    if(current.length === 0){
+                        // 如果长度为0，则当前没有人预定会议室
+                        is_curentMeeting_active.value = false
+                    }else{
+                        is_curentMeeting_active.value = true
+                    }
+                }else{
+                    is_curentMeeting_active.value = true
+                }
+                drawerData.is_show = true
+            }).catch(error => {
+                errorMessage(error)
+            })
+        }
         return {
             AllArea,
             ...toRefs(searchData),
@@ -297,7 +402,11 @@ export default {
             ...toRefs(drawerData),
             handleClickFloor,
             headerContainerRef,
-            Search
+            Search,
+            FixedAssetsRef,
+            FixedAssetsUserName,
+            FixedAssetsList,
+            is_curentMeeting_active
         }
     }
 }

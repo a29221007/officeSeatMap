@@ -62,9 +62,47 @@ body {
 .drawer .el-drawer__body {
   padding: unset;
 }
+.drawer .el-drawer__body .reserve {
+  margin-bottom: 0px;
+}
+.drawer .el-drawer__body .make-btn {
+  text-align: center;
+}
 .drawer-mask {
   position: unset!important;
 }
 input {
   outline: none;
+}
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper {
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper .el-scrollbar__bar.is-horizontal {
+  height: unset;
+  left: unset;
+}
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar {
+  width: 5px;
+  height: 0;
+}
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-button {
+  display: none;
+}
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-corner {
+  display: none;
+}
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-track {
+  display: none;
+}
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-resizer {
+  display: none;
+}
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  background-color: #9a9b9d;
+}
+.FixedAssets_dialog .el-dialog__footer .el-pagination {
+  justify-content: end;
 }

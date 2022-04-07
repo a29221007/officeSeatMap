@@ -83,6 +83,12 @@ body {
     padding:5px;
     .el-drawer__body{
         padding: unset;
+        .reserve{
+            margin-bottom: 0px;
+        }
+        .make-btn{
+            text-align: center;
+        }
     }
 }
 
@@ -94,4 +100,54 @@ body {
 // 去除input框获得焦点时的外边框
 input{
     outline: none;
+}
+
+// 设置展示固定资产弹框样式
+.FixedAssets_dialog{
+    // 弹框内容
+    .el-dialog__body{
+        .el-table{
+            .el-table__inner-wrapper{
+                .el-table__body-wrapper{
+                    max-height: 60vh;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    // 去除 el-table 自带的横向滚动条
+                    .el-scrollbar__bar.is-horizontal {
+                        height: unset; 
+                        left: unset;
+                    }
+                }
+                .el-table__body-wrapper::-webkit-scrollbar {
+                    width: 5px;
+                    height: 0;
+                }
+                
+                .el-table__body-wrapper::-webkit-scrollbar-button {
+                    display: none;
+                }
+                .el-table__body-wrapper::-webkit-scrollbar-corner {
+                    display: none;
+                }
+                .el-table__body-wrapper::-webkit-scrollbar-track {
+                    display: none;
+                }
+                .el-table__body-wrapper::-webkit-resizer {
+                    display: none;
+                }
+                
+                .el-table__body-wrapper::-webkit-scrollbar-thumb{
+                    border-radius: 100px;
+                    background-color: #9a9b9d;
+                }
+            }
+        }
+    }
+    // 弹框底部
+    .el-dialog__footer{
+        // 设置分页器右对齐
+        .el-pagination{
+            justify-content: end;
+        }
+    }
 }

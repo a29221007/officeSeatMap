@@ -13,7 +13,7 @@ export const successMessage = (message) => {
 export const errorMessage = (message) => {
     return ElMessage({
         type:'error',
-        duration:8000,
+        duration:3000,
         showClose:true,
         customClass:'errorMessageBox',
         message
@@ -24,7 +24,7 @@ export const errorMessage = (message) => {
 export const infoMessage = (message) => {
     return ElMessage({
         type:'info',
-        duration:8000,
+        duration:3000,
         showClose:true,
         customClass:'infoMessageBox',
         message
@@ -35,7 +35,7 @@ export const infoMessage = (message) => {
 export const warnMessage = (message) => {
     return ElMessage({
         type:'warning',
-        duration:8000,
+        duration:3000,
         showClose:true,
         customClass:'warnMessageBox',
         message
