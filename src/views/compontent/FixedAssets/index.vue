@@ -1,8 +1,8 @@
 <template>
     <el-dialog custom-class='FixedAssets_dialog' v-model="FixedAssets_dialog" :title=" FixedAssetsUserName + ' - 固定资产信息' " :close-on-click-modal='false' draggable width="55%" top='8vh'>
         <el-table :data="FixedAssetsList_pagination" border>
-            <el-table-column prop="FixedCode" label="固定资产编号" />
-            <el-table-column prop="FixedName" label="固定资产名称" />
+            <el-table-column prop="FixedCode" align='center' label="固定资产编号" />
+            <el-table-column prop="FixedName" align='center' label="固定资产名称" />
         </el-table>
         <template #footer>
             <el-pagination v-model:currentPage="currentPage" v-model:page-size="pageSize" :page-sizes="[20,40,60]" :small="true" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />

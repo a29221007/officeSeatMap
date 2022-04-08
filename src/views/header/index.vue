@@ -64,9 +64,11 @@
             <el-form-item label="编号：">{{ currentInfo.code }}</el-form-item>
             <el-form-item label="会议室设备：">{{ currentInfo.setting }}</el-form-item>
             <el-form-item class="reserve" label="预定信息："></el-form-item>
-            <el-form-item class="reserve" label="当前预定:">{{is_curentMeeting_active ? currentInfo.current.USERNAME : '无'}}</el-form-item>
+            <el-form-item :class="{'reserve':is_curentMeeting_active}" label="当前预定:">
+                <div :class="{'jump':is_curentMeeting_active}" v-on:click="handleClickJumpWX(currentInfo.current.USERID)">{{is_curentMeeting_active ? currentInfo.current.USERNAME : '无'}}</div>
+            </el-form-item>
             <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.Date + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
-            <el-form-item label="预定记录："><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
+            <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
             <div class="make-btn"><el-button type="danger" round :disabled='is_curentMeeting_active'>预约</el-button></div>
         </el-form>
         <!-- 选中空位 -->
@@ -79,7 +81,7 @@
     <!-- 展示员工固定资产信息 -->
     <FixedAssets ref="FixedAssetsRef" :FixedAssetsUserName='FixedAssetsUserName' :FixedAssetsList='FixedAssetsList'></FixedAssets>
     <!-- 展示会议室预约记录 -->
-    <MeetingRoom></MeetingRoom>
+    <MeetingRoom ref="MeetingRoomRef" :MeetingRoomName='MeetingRoomName' :MeetingRoomHistoryList='MeetingRoomHistoryList'></MeetingRoom>
 </template>
 
 <script>
@@ -106,6 +108,9 @@ import { getMeeting } from '@/api/getMeeting.js'
 import FixedAssets from '../compontent/FixedAssets'
 // 导入会议室预定记录的子组件
 import MeetingRoom from '../compontent/meetingRoom'
+
+// 导入与企业微信通讯相关的接口
+import { getAccessToken, getLaunchCode } from '@/api/jumpWX.js'
 export default {
     name:'Header',
     components:{
@@ -331,7 +336,28 @@ export default {
             },
             // 点击查看会议室预约记录
             handleClickMeetingMessage(){
-
+                MeetingRoomRef.value.setMeetingRoom_dialog(true)
+            },
+            // 点击当前预约人，跳转到企业微信个人聊天窗口
+            handleClickJumpWX(USERID){
+                if(!is_curentMeeting_active.value) return
+                // 然后执行跳转的逻辑
+                // 1、先获取企业微信应用的AccessToken凭证
+                getAccessToken().then((res) => {
+                    if(res.code !== 0) return errorMessage(res.message)
+                    const obj = {
+                        "operator_userid":"jixianggong",
+                        "single_chat":{
+                            "userid":USERID
+                        }
+                    }
+                    // 2、获取 launch_code
+                    return getLaunchCode(res.data,obj)
+                }).then( res => {
+                    if(res.errcode !== 0) return errorMessage(res.errmsg)
+                    // 3、跳转到企业微信新个人对话窗口
+                    window.location.href = 'wxwork://launch?launch_code=' + res.launch_code
+                })
             }
         })
         // 当前固资信息的员工名称
@@ -342,15 +368,25 @@ export default {
         const FixedAssetsRef = ref(null)
 
         
-        // 定义一个变量，判断当前会议室是否有预约记录
+        // 定义一个变量，判断会议室当前是否有预约
         let is_curentMeeting_active = ref(true) // 默认是有预约记录的
+        // 会议室的名称
+        let MeetingRoomName = ref('')
+        // 会议室预定预约记录
+        let MeetingRoomHistoryList = ref([])
+        // 获取会议室预定预约子组件的实例
+        const MeetingRoomRef = ref(null)
+        // 当前会议室是否有预约记录
+        let is_have_MeetingHistory = ref(true)
         // 获取会议室的名称、设备、当前预约、历史预约记录
         function getMeetingInfo(code){
             getMeeting(code).then(res => {
-                if(res.code !== 0) return errorMessage(res.message)
+                if(res.code !== 0) {
+                    drawerData.is_show = false
+                    return errorMessage(res.message)
+                }
                 // 将 res.data 结构出来
                 const { name, setting, current, HistoryList } = res.data
-                console.log('会议室',res)
                 // 选中会议室的相关信息赋值
                 drawerData.currentInfo = {
                     // 类型为1
@@ -362,9 +398,7 @@ export default {
                     // 会议室设备
                     setting,
                     // 当前预约记录
-                    current,
-                    // 预定记录
-                    HistoryList
+                    current
                 }
                 // 判断当前会议室有没有人预定
                 // 要判断 current 这个字段值类型
@@ -391,6 +425,27 @@ export default {
                     is_curentMeeting_active.value = true
                 }
                 drawerData.is_show = true
+                // 赋值会议室名称、预定预约记录
+                MeetingRoomName.value = name
+                MeetingRoomHistoryList.value =  [
+                    {
+                        yusercode: "B200307", //预定人员工号
+                        USERID: "alexzhang", //预定人userid
+                        USERNAME: "alexzhang(张明月)", //预定人员名称
+                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                        Date: "2022-04-02", //预定日期
+                        STARTTIME: "11:00", //当前预定会议室开始时间
+                        ENDTIME: "12:00", //当前预定会议室结束时间
+                        Title: "测试获取预定会议记录" //会议主题名称
+                    }
+                ]
+                // if(HistoryList.length){
+                //     // 如果 HistoryList 的长度不等于0
+                //     is_have_MeetingHistory.value = true
+                // }else{
+                //     //如果等于0
+                //     is_have_MeetingHistory.value = false
+                // }
             }).catch(error => {
                 errorMessage(error)
             })
@@ -406,7 +461,11 @@ export default {
             FixedAssetsRef,
             FixedAssetsUserName,
             FixedAssetsList,
-            is_curentMeeting_active
+            is_curentMeeting_active,
+            MeetingRoomHistoryList,
+            MeetingRoomName,
+            MeetingRoomRef,
+            is_have_MeetingHistory
         }
     }
 }

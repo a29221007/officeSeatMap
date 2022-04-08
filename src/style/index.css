@@ -65,6 +65,10 @@ body {
 .drawer .el-drawer__body .reserve {
   margin-bottom: 0px;
 }
+.drawer .el-drawer__body .jump {
+  color: orangered;
+  cursor: pointer;
+}
 .drawer .el-drawer__body .make-btn {
   text-align: center;
 }
@@ -74,35 +78,70 @@ body {
 input {
   outline: none;
 }
-.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper {
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper,
+.meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper {
   max-height: 60vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
-.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper .el-scrollbar__bar.is-horizontal {
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper .el-scrollbar__bar.is-horizontal,
+.meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper .el-scrollbar__bar.is-horizontal {
   height: unset;
   left: unset;
 }
-.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar {
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar,
+.meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar {
   width: 5px;
   height: 0;
 }
-.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-button {
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-button,
+.meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-button {
   display: none;
 }
-.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-corner {
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-corner,
+.meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-corner {
   display: none;
 }
-.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-track {
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-track,
+.meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-track {
   display: none;
 }
-.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-resizer {
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-resizer,
+.meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-resizer {
   display: none;
 }
-.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-thumb {
+.FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-thumb,
+.meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper::-webkit-scrollbar-thumb {
   border-radius: 100px;
   background-color: #9a9b9d;
 }
-.FixedAssets_dialog .el-dialog__footer .el-pagination {
+.FixedAssets_dialog .el-dialog__footer .el-pagination,
+.meetingRoom_dialog .el-dialog__footer .el-pagination {
   justify-content: end;
+}
+.meetingRoom_dialog .el-dialog__body {
+  padding-top: 0;
+}
+.meetingRoom_dialog .el-dialog__body .inputBox {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+}
+.meetingRoom_dialog .el-dialog__body .inputBox .el-input {
+  margin-right: 15px;
+  width: 30%;
+}
+.meetingRoom_dialog .el-dialog__body .inputBox button {
+  border: none;
+  padding: 5px 15px;
+  height: max-content;
+  border-radius: 7px;
+  color: #fff;
+  background-color: #d9001b;
+  cursor: pointer;
+}
+.meetingRoom_dialog .Date {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
