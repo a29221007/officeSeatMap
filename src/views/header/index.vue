@@ -427,25 +427,14 @@ export default {
                 drawerData.is_show = true
                 // 赋值会议室名称、预定预约记录
                 MeetingRoomName.value = name
-                MeetingRoomHistoryList.value =  [
-                    {
-                        yusercode: "B200307", //预定人员工号
-                        USERID: "alexzhang", //预定人userid
-                        USERNAME: "alexzhang(张明月)", //预定人员名称
-                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
-                        Date: "2022-04-02", //预定日期
-                        STARTTIME: "11:00", //当前预定会议室开始时间
-                        ENDTIME: "12:00", //当前预定会议室结束时间
-                        Title: "测试获取预定会议记录" //会议主题名称
-                    }
-                ]
-                // if(HistoryList.length){
-                //     // 如果 HistoryList 的长度不等于0
-                //     is_have_MeetingHistory.value = true
-                // }else{
-                //     //如果等于0
-                //     is_have_MeetingHistory.value = false
-                // }
+                MeetingRoomHistoryList.value = HistoryList
+                if(HistoryList.length){
+                    // 如果 HistoryList 的长度不等于0
+                    is_have_MeetingHistory.value = true
+                }else{
+                    //如果等于0
+                    is_have_MeetingHistory.value = false
+                }
             }).catch(error => {
                 errorMessage(error)
             })
