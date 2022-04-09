@@ -22,7 +22,7 @@ function roll() {
       if(value < 0){
           const timer123 = setTimeout(() => {
               clearInterval(item.timer)
-              let target = Math.floor(value)
+              let target = Math.floor(value) - 10
               let leader = 0
               item.timer = setInterval(() => {
                 let step = 1
@@ -34,7 +34,7 @@ function roll() {
                     item.style.left = target + 'px'
                     target = leader === 0 ? value : 0
                 }
-              },200)
+              },70)
               obj.push(item)
           }, 1000)
           store.commit('setTimer', timer123)

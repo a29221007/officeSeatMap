@@ -2,17 +2,22 @@
     <div class="container">
         <!-- 第一行 -->
         <div class="line">
-            <div class="title">工位号：</div>
-            <div class="content"><span class="scroll">{{$store.state.activeInfo.seat_id}}</span></div>
+            <div class="title">会议设备：</div>
+            <div class="content"><span class="scroll">{{$store.state.activeInfo.setting}}</span></div>
         </div>
         <!-- 第二行 -->
         <div class="line">
-            <div class="title">部门：</div>
+            <div class="title">当前预定：</div>
             <div class="content"><span class="scroll">{{$store.state.activeInfo.depart}}</span></div>
         </div>
         <!-- 第三行 -->
         <div class="line">
-            <div class="title">个人固定资产信息：</div>
+            <div class="title">预定时间：</div>
+            <div class="content"><span class="button">查看</span></div>
+        </div>
+        <!-- 第四行 -->
+        <div class="line">
+            <div class="title">预约记录：</div>
             <div class="content"><span class="button">查看</span></div>
         </div>
     </div>
@@ -20,7 +25,7 @@
 
 <script>
 export default {
-    name:'personnel',
+    name:'MeetingRoom',
 }
 </script>
 
@@ -39,13 +44,13 @@ export default {
         display: flex;
         align-items: baseline;
         .title{
-            flex: 2;
+            flex: 1;
             font-size: .3763rem;
             color: #f8f9fa;
             text-align: end;
         }
         .content{
-            flex: 3.5;
+            flex: 4.5;
             overflow: hidden;
             span{
                 position: relative;

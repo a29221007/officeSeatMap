@@ -1,12 +1,13 @@
 <template>
-    <!-- 3、点击了搜索结果的某一项后，显示对应区域或座位的详细信息 -->
+    <!-- 点击了搜索结果的某一项后，显示对应区域或座位的详细信息 -->
     <div class="Seat-Area-Information">
         <!-- 头部区域 -->
         <div class="header">
-            <div class='title'>{{title}}</div>
-            <div class="buttons">
+            <div class='title'>{{title_Code.title}}</div>
+            <!-- <div class="buttons">
                 <div v-if="$store.state.is_have_editor" v-on:click="handleClickEdit"><i class="iconfont oamap-xiugai"></i> 编辑</div>
-            </div>
+            </div> -->
+            <div class="code">{{title_Code.code}}</div>
         </div>
         <!-- 内容区域 -->
         <div class="content">
@@ -18,18 +19,21 @@
 <script>
 import { computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
-
-import Area from './compontent/area'
+// 部门以及其他区域
+import DepartmentAndOtherAreas from './compontent/department_and_otherAreas'
+// 员工
 import Personnel from './compontent/personnel'
+// 固资占位
 import TakeUp from './compontent/Take-up'
-
-// 导入事件中心
-// import emitter from '@/views/eventbus.js'
+// 会议室
+import MeetingRoom from './compontent/meetingRoom'
+// 空座
+import EmptySeat from './compontent/empty_seat'
 import clearTimer from '@/views-rem/hook/clearTimer.js'
 export default {
     name:'BottomBoxInformation',
     components:{
-        Area, Personnel, TakeUp
+        DepartmentAndOtherAreas, Personnel, TakeUp, MeetingRoom, EmptySeat
     },
     setup() {
         const store = useStore()
@@ -47,37 +51,54 @@ export default {
             if(store.state.activeInfo.type === '0-2'){
                 // 固资占位
                 compontentNameValue = 'TakeUp'
-            }else if(store.state.activeInfo.type === '0' || store.state.activeInfo.type === '0-1'){
-                // 人员 || 空座
+            }else if(store.state.activeInfo.type === '0-1'){
+                // 空座
+                compontentNameValue = 'EmptySeat'
+            }else if(store.state.activeInfo.type === '0'){
+                // 人员
                 compontentNameValue = 'Personnel'
-            }else if(store.state.activeInfo.type === 1 || store.state.activeInfo.type === 2 || store.state.activeInfo.type === 3){
-                // 区域信息
-                compontentNameValue = 'Area'
+            }else if(store.state.activeInfo.type === 1){
+                // 会议室
+                compontentNameValue = 'MeetingRoom'
+            }else if(store.state.activeInfo.type === 2 || store.state.activeInfo.type === 3){
+                // 部门和其他区域
+                compontentNameValue = 'DepartmentAndOtherAreas'
             }
             return compontentNameValue
         })
         // 动态切换头信息
-        const title = computed(() => {
-            let title = ''
-            if(store.state.activeInfo.type === '0' || store.state.activeInfo.type === '0-1' || store.state.activeInfo.type === '0-2'){
-                // 固资占位
-                title = '已选工位'
-            }else if(store.state.activeInfo.type === 1 || store.state.activeInfo.type === 2 || store.state.activeInfo.type === 3){
+        const title_Code = computed(() => {
+            let obj = {title:'',code:''}
+            if(store.state.activeInfo.type === '0' || store.state.activeInfo.type === '0-2' || store.state.activeInfo.type === 1){
+                // 人员 || 资产占位 || 会议室
+                obj.title = store.state.activeInfo.name
+                if(store.state.activeInfo.type === '0'){
+                    obj.code = '工号：' + store.state.activeInfo.id
+                }else if(store.state.activeInfo.type === '0-2'){
+                    obj.code = '编号：' + store.state.activeInfo.id
+                }else if(store.state.activeInfo.type === 1){
+                    obj.code = '编号：' + store.state.activeInfo.code
+                }
+            }else if(store.state.activeInfo.type === '0-1'){
+                // 空座
+                obj.title = '空座'
+                obj.code = ''
+            }else if(store.state.activeInfo.type === 2 || store.state.activeInfo.type === 3){
                 // 区域信息
-                title = '已选区域'
+                obj.title = '已选区域'
+                obj.code = ''
             }
-            return title
+            return obj
         })
         // 组件卸载阶段
         onBeforeUnmount(() => {
             clearTimer()
-            // emitter.emit('clearAreaTimer')
         })
         return {
             activeInfo,
             handleClickEdit,
             compontentType,
-            title,
+            title_Code,
         }
     }
 }

@@ -253,10 +253,8 @@ export default {
                             const obj = searchArea(item.code)
                             emitter.emit('activeArea',obj)
                             // 如果搜索的不是会议室，则不需要将弹框显示出来
-                            if(item.type !== 1) return
+                            if(item.type !== 1) return drawerData.is_show = false
                             getMeetingInfo(item.code) // 调接口获取会议室相关信息
-                            // drawerData.is_show = true
-                            // drawerData.currentInfo = item
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             ElMessageBox.confirm(
@@ -276,10 +274,8 @@ export default {
                                     emitter.emit('activeArea',obj)
                                     successMessage('切换成功')
                                     // 如果搜索的不是会议室，则不需要将弹框显示出来
-                                    if(item.type !== 1) return
+                                    if(item.type !== 1) return drawerData.is_show = false
                                     getMeetingInfo(item.code) // 调接口获取会议室相关信息
-                                    // drawerData.is_show = true
-                                    // drawerData.currentInfo = item
                                 })
                             }).catch(() => {
                                 infoMessage(`您可以手动切换到${item.floor}楼查找`)

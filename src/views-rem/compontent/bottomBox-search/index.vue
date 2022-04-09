@@ -162,7 +162,11 @@ export default {
                             emit('setSearchLegendContant','information')
                             // 如果搜索的区域在当前楼层将其高亮
                             searchArea(item.code,upDataCurrentAreaCode)
-                            store.commit('setActiveInfo',item)
+                            if(item.type === 1){
+                                getMeetingRoomData(item.code,item.name)
+                            }else{
+                                store.commit('setActiveInfo',item)
+                            }
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             Dialog.confirm({
@@ -176,7 +180,11 @@ export default {
                                 nextTick(() => {
                                     searchArea(item.code,upDataCurrentAreaCode)
                                     beginToast('success','切换成功',2000)
-                                    store.commit('setActiveInfo',item)
+                                    if(item.type === 1){
+                                        getMeetingRoomData(item.code,item.name)
+                                    }else{
+                                        store.commit('setActiveInfo',item)
+                                    }
                                 })
                             }).catch(() => {
                                 // 用户如果取消跳转
@@ -201,6 +209,8 @@ export default {
         let upDataCurrentAreaCode = inject('upCurrentAreaCode')
         // 接受祖先组件传递来的设置选中座位id的函数
         let upDataCurrentSeat_id = inject('upCurrentSeat_id')
+        // 接受祖先组件传递过来的获取会议室相关数据的函数
+        let getMeetingRoomData = inject('getMeetingRoomData')
         // 卸载阶段
         onBeforeUnmount(() => {
             clearTimeout(searchInput.searchTimer)

@@ -2,29 +2,18 @@
     <div class="container">
         <!-- 第一行 -->
         <div class="line">
-            <!-- 第一列 -->
-            <div class="col">
-                <div class="title">固资名称：</div>
-                <div class="content"><span class="scroll">{{$store.state.activeInfo.name}}</span></div>
-            </div>
-            <!-- 第二列 -->
-            <div class="col">
-                <div class="title">固资编号：</div>
-                <div class="content"><span class="scroll">123345667555</span></div>
-            </div>
+            <div class="title">工位号：</div>
+            <div class="content"><span class="scroll">{{$store.state.activeInfo.seat_id}} </span></div>
         </div>
         <!-- 第二行 -->
         <div class="line">
-            <!-- 第一列 -->
-            <div class="col">
-                <div class="title">位置：</div>
-                <div class="content"><span class="scroll">平台技术部平台技术部</span></div>
-            </div>
-            <!-- 第二列 -->
-            <div class="col">
-                <div class="title">工位号：</div>
-                <div class="content"><span class="scroll">{{$store.state.activeInfo.seat_id}}</span></div>
-            </div>
+            <div class="title">位置：</div>
+            <div class="content"><span class="scroll">{{$store.state.activeInfo.depart}}</span></div>
+        </div>
+        <!-- 第三行 -->
+        <div class="line">
+            <div class="title">状态：</div>
+            <div class="content"><span class="scroll">{{$store.state.activeInfo.equipment_status}}</span></div>
         </div>
     </div>
 </template>
@@ -44,27 +33,22 @@ export default {
     justify-content: center;
     .line{
         display: flex;
-        height: .8602rem;
-        align-items: center;
-        justify-content: space-between;
-        .col{
+        padding: .0538rem 0;
+        white-space:nowrap;
+        overflow: hidden;
+        display: flex;
+        align-items: baseline;
+        .title{
             flex: 1;
-            white-space:nowrap;
+            font-size: .3763rem;
+            color: #f8f9fa;
+            text-align: end;
+        }
+        .content{
+            flex: 4.9;
             overflow: hidden;
-            display: flex;
-            align-items: baseline;
-            .title{
-                flex: 2;
-                font-size: .3763rem;
-                color: #f8f9fa;
-                text-align: end;
-            }
-            .content{
-                flex: 3;
-                overflow: hidden;
-                span{
-                    position: relative;
-                }
+            span{
+                position: relative;
             }
         }
     }

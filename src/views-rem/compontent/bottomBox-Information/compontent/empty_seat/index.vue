@@ -4,24 +4,8 @@
         <div class="line">
             <!-- 第一列 -->
             <div class="col">
-                <div class="title">区域名称：</div>
-                <div class="content"><span class="scroll">{{$store.state.activeInfo.name + $store.state.activeInfo.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")}}</span></div>
-            </div>
-        </div>
-        <!-- 第一行 -->
-        <div class="line">
-            <!-- 第一列 -->
-            <div class="col">
-                <div class="title">区域编号：</div>
-                <div class="content"><span class="scroll">{{$store.state.activeInfo.code}}</span></div>
-            </div>
-        </div>
-        <!-- 第一行 -->
-        <div class="line">
-            <!-- 第一列 -->
-            <div class="col">
-                <div class="title">区域背景色：</div>
-                <div class="content"><span class="scroll">{{$store.state.activeInfo.backgroundcolor}}</span></div>
+                <div class="title">工位号：</div>
+                <div class="content"><span class="scroll">{{$store.state.activeInfo.seat_id}}</span></div>
             </div>
         </div>
     </div>
@@ -29,7 +13,7 @@
 
 <script>
 export default {
-    name:'region',
+    name:'EmptySeat',
 }
 </script>
 
@@ -39,7 +23,6 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     .line{
         display: flex;
         height: .8602rem;
@@ -58,7 +41,7 @@ export default {
                 text-align: end;
             }
             .content{
-                flex: 3;
+                flex: 5;
                 overflow: hidden;
                 span{
                     position: relative;

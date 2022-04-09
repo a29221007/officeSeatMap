@@ -70,6 +70,9 @@ import searchArea from '@/views-rem/hook/searchArea.js'
 import { beginToast, endToast } from '@/views-rem/hook/toast.js'
 
 import transtionFn from '@/views-rem/hook/bottomBoxTranstion.js'
+
+// 导入获取会议室相关数据的接口
+import { getMeeting } from '@/api/getMeeting.js'
 export default {
     name:'M-Home',
     components:{
@@ -428,7 +431,7 @@ export default {
             },
             // 点击每一个会议室
             handleClickMeetingRoom(item,$event){
-                // 将当前项的字段结构出来
+                // 将当前项的字段解构出来
                 const {type,code} = item
                 // 排出掉除会议室以外的点击
                 if(type !== 1) return
@@ -444,13 +447,37 @@ export default {
                     if(!scaling) MapBoxTapFn()
                     return
                 }
+                // 点击会议室确保底部的盒子处于升起来的状态
+                scaling = false
+                MapBoxTapFn()
                 // 将底部操作盒子设置为 'information' 状态
                 BottomBoxRef.value.setSearchLegendContant('information')
-                // 设置当前选中的会议室信息
-                store.commit('setActiveInfo',item)
+                // 获取当前会议室相关的信息
+                getMeetingData(code,item.name)
                 searchArea(item.code,seatData.setCurrentAreaCode)
             }
         })
+        // 获取会议室相关数据以及预定记录函数
+        function getMeetingData(code,name) {
+            getMeeting(code).then(res => {
+                if(res.code !== 0){
+                    beginToast('fail', res.message, 2000)
+                    store.commit('setActiveInfo',{
+                        type: 1,
+                        code,
+                        name
+                    })
+                    if(!scaling) MapBoxTapFn()
+                    return
+                } 
+                res.data.code = code
+                res.data.type = 1
+                // 设置会议室的相关信息
+                store.commit('setActiveInfo',res.data)
+            }).catch(error => {
+                beginToast('fail', error, 2000)
+            })
+        }
         // 向子组件传递 switchFloor 事件，在切换图例时，也要触发该事件，将高亮的座位和区域重置
         provide('switchLenged',seatData.switchFloor)
 
@@ -458,6 +485,8 @@ export default {
         provide('upCurrentAreaCode',seatData.setCurrentAreaCode)
         // 向子组件传递设置高亮的方法
         provide('upCurrentSeat_id',seatData.setCurrentSeat_id)
+        // 向子组件传递获取会议室相关的数据方法
+        provide('getMeetingRoomData',getMeetingData)
         // 卸载阶段，事件解绑
         onBeforeUnmount(() => {
             // 1 卸载 MapBox 盒子的 tap 事件

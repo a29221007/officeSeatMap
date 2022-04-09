@@ -278,7 +278,7 @@ export default {
     bottom: 1.2581rem;
     height: 2.7957rem;
     border-radius: 10px 10px 0 0;
-    padding: .3226rem;
+    padding: .3226rem .3226rem 0 .3226rem;
     .arrow{
         position: absolute;
         top: .1rem;
