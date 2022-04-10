@@ -23,6 +23,7 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     .line{
         display: flex;
         height: .8602rem;

@@ -450,8 +450,6 @@ export default {
                 // 点击会议室确保底部的盒子处于升起来的状态
                 scaling = false
                 MapBoxTapFn()
-                // 将底部操作盒子设置为 'information' 状态
-                BottomBoxRef.value.setSearchLegendContant('information')
                 // 获取当前会议室相关的信息
                 getMeetingData(code,item.name)
                 searchArea(item.code,seatData.setCurrentAreaCode)
@@ -467,13 +465,129 @@ export default {
                         code,
                         name
                     })
+                    BottomBoxRef.value.setSearchLegendContant('information')
                     if(!scaling) MapBoxTapFn()
                     return
                 } 
                 res.data.code = code
                 res.data.type = 1
+                res.data.current = {
+                    yusercode: "B200307", //预定人员工号
+                    USERID: "alexzhang", //预定人userid
+                    USERNAME: "alexzhang(张明月)", //预定人员名称
+                    DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                    Date: "2022-04-02", //预定日期
+                    STARTTIME: "11:00", //当前预定会议室开始时间
+                    ENDTIME: "12:00", //当前预定会议室结束时间
+                    Title: "测试获取预定会议记录" //会议主题名称
+                }
+
+                let array = [
+                    {
+                        yusercode: "B200307", //预定人员工号
+                        USERID: "alexzhang", //预定人userid
+                        USERNAME: "alexzhang(张明月)", //预定人员名称
+                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                        Date: "2022-04-03", //预定日期
+                        STARTTIME: "01:00", //当前预定会议室开始时间
+                        ENDTIME: "02:00", //当前预定会议室结束时间
+                        Title: "测试获取预定会议记录" //会议主题名称
+                    },
+                    {
+                        yusercode: "B200307", //预定人员工号
+                        USERID: "alexzhang", //预定人userid
+                        USERNAME: "alexzhang(张明月)", //预定人员名称
+                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                        Date: "2022-04-03", //预定日期
+                        STARTTIME: "04:00", //当前预定会议室开始时间
+                        ENDTIME: "05:00", //当前预定会议室结束时间
+                        Title: "测试获取预定会议记录" //会议主题名称
+                    },
+                    {
+                        yusercode: "B200307", //预定人员工号
+                        USERID: "alexzhang", //预定人userid
+                        USERNAME: "alexzhang(张明月)", //预定人员名称
+                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                        Date: "2022-04-01", //预定日期
+                        STARTTIME: "11:00", //当前预定会议室开始时间
+                        ENDTIME: "12:00", //当前预定会议室结束时间
+                        Title: "测试获取预定会议记录" //会议主题名称
+                    },
+                    {
+                        yusercode: "B200307", //预定人员工号
+                        USERID: "alexzhang", //预定人userid
+                        USERNAME: "alexzhang(张明月)", //预定人员名称
+                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                        Date: "2022-04-06", //预定日期
+                        STARTTIME: "11:00", //当前预定会议室开始时间
+                        ENDTIME: "12:00", //当前预定会议室结束时间
+                        Title: "测试获取预定会议记录" //会议主题名称
+                    },
+                    {
+                        yusercode: "B200307", //预定人员工号
+                        USERID: "alexzhang", //预定人userid
+                        USERNAME: "alexzhang(张明月)", //预定人员名称
+                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                        Date: "2022-01-02", //预定日期
+                        STARTTIME: "11:00", //当前预定会议室开始时间
+                        ENDTIME: "12:00", //当前预定会议室结束时间
+                        Title: "测试获取预定会议记录" //会议主题名称
+                    },
+                    {
+                        yusercode: "B200307", //预定人员工号
+                        USERID: "alexzhang", //预定人userid
+                        USERNAME: "alexzhang(张明月)", //预定人员名称
+                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                        Date: "2022-01-02", //预定日期
+                        STARTTIME: "15:00", //当前预定会议室开始时间
+                        ENDTIME: "17:00", //当前预定会议室结束时间
+                        Title: "测试获取预定会议记录" //会议主题名称
+                    },
+                    {
+                        yusercode: "B200307", //预定人员工号
+                        USERID: "alexzhang", //预定人userid
+                        USERNAME: "alexzhang(张明月)", //预定人员名称
+                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                        Date: "2022-01-02", //预定日期
+                        STARTTIME: "18:00", //当前预定会议室开始时间
+                        ENDTIME: "19:00", //当前预定会议室结束时间
+                        Title: "测试获取预定会议记录" //会议主题名称
+                    },
+                    {
+                        yusercode: "B200307", //预定人员工号
+                        USERID: "alexzhang", //预定人userid
+                        USERNAME: "alexzhang(张明月)", //预定人员名称
+                        DeptName: "/研发中心/平台技术部/IT信息部/后端开发", //预定人员部门
+                        Date: "2022-01-02", //预定日期
+                        STARTTIME: "20:00", //当前预定会议室开始时间
+                        ENDTIME: "22:00", //当前预定会议室结束时间
+                        Title: "测试获取预定会议记录" //会议主题名称
+                    }
+
+                ]
+                // 对 array 进行排序
+                array.sort(function(a,b){
+                    return (a.Date + ' ' + a.STARTTIME) < (b.Date + ' ' + b.STARTTIME) ? -1 : 1
+                })
+                let timer = ''
+                // 将同一天的最早那一个时间留下，同一天剩余的去除时间
+                array.forEach((item, index) => {
+                    if(index === 0){
+                        timer = item.Date
+                    }else{
+                        if(item.Date === timer){
+                            // 如果相同，则将时间去除掉,渲染时，也是根据这个字段是否为空，来判断
+                            item.STARTTIME  = ''
+                        }
+                        timer = item.Date
+                    }
+
+                })
+                res.data.HistoryList = array
                 // 设置会议室的相关信息
                 store.commit('setActiveInfo',res.data)
+                // 将底部操作盒子设置为 'information' 状态
+                BottomBoxRef.value.setSearchLegendContant('information')
             }).catch(error => {
                 beginToast('fail', error, 2000)
             })

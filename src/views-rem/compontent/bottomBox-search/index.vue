@@ -158,14 +158,14 @@ export default {
                     }else{
                         // 如果是区域
                         if(item.floor == store.getters.floor){
-                            // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
-                            emit('setSearchLegendContant','information')
                             // 如果搜索的区域在当前楼层将其高亮
                             searchArea(item.code,upDataCurrentAreaCode)
                             if(item.type === 1){
                                 getMeetingRoomData(item.code,item.name)
                             }else{
                                 store.commit('setActiveInfo',item)
+                                // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
+                                emit('setSearchLegendContant','information')
                             }
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
@@ -175,8 +175,6 @@ export default {
                             }).then(() => {
                                 // 用户如果确认跳转
                                 store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
-                                // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
-                                emit('setSearchLegendContant','information')
                                 nextTick(() => {
                                     searchArea(item.code,upDataCurrentAreaCode)
                                     beginToast('success','切换成功',2000)
@@ -184,6 +182,8 @@ export default {
                                         getMeetingRoomData(item.code,item.name)
                                     }else{
                                         store.commit('setActiveInfo',item)
+                                        // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
+                                        emit('setSearchLegendContant','information')
                                     }
                                 })
                             }).catch(() => {
