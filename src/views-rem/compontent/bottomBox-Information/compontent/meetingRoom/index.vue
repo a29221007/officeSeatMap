@@ -65,7 +65,12 @@ export default {
         
         // 点击查看，会议室预约预定记录
         function handleClickPushMeetingRoom(){
-            router.push('/meetingRoomHistory')
+            // 判断会议室是否有预约记录
+            if(store.state.activeInfo.HistoryList && store.state.activeInfo.HistoryList.length !== 0){
+                router.push('/meetingRoomHistory')
+            }else {
+                router.push('/meetingRoomFree')
+            }
         }
         // 接受祖先组件传递过来的获取会议室相关数据的函数
         let getMeetingRoomData = inject('getMeetingRoomData')

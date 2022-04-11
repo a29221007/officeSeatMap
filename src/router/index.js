@@ -18,7 +18,13 @@ const routes = [
         path:'/fixedAssets',
         name:'fixedAssets',
         component: () => import(/* webpackChunkName: "home" */ '@/views-rem/FixedAssets'),
-    }
+    },
+    // 移动端 - 会议室空闲时，没有预定记录
+    {
+        path:'/meetingRoomFree',
+        name:'meetingRoomFree',
+        component: () => import(/* webpackChunkName: "home" */ '@/views-rem/MeetingRoomHistory/meetingRoomFree'),
+    },
 ]
 
 const router = createRouter({
