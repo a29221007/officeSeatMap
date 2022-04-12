@@ -67,7 +67,7 @@
             <el-form-item :class="{'reserve':is_curentMeeting_active}" label="当前预定:">
                 <div :class="{'jump':is_curentMeeting_active}" v-on:click="handleClickJumpWX(currentInfo.current.USERID)">{{is_curentMeeting_active ? currentInfo.current.USERNAME : '无'}}</div>
             </el-form-item>
-            <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.Date + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
+            <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
             <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
             <div class="make-btn"><el-button type="danger" round :disabled='is_curentMeeting_active'>预约</el-button></div>
         </el-form>
@@ -111,6 +111,9 @@ import MeetingRoom from '../compontent/meetingRoom'
 
 // 导入与企业微信通讯相关的接口
 import { getAccessToken, getLaunchCode } from '@/api/jumpWX.js'
+
+// 导入对会议室排序的公共方法
+import sortMeetingList from '@/views-rem/hook/sortArray.js'
 export default {
     name:'Header',
     components:{
@@ -423,7 +426,7 @@ export default {
                 drawerData.is_show = true
                 // 赋值会议室名称、预定预约记录
                 MeetingRoomName.value = name
-                MeetingRoomHistoryList.value = HistoryList
+                MeetingRoomHistoryList.value = sortMeetingList(HistoryList)
                 if(HistoryList.length){
                     // 如果 HistoryList 的长度不等于0
                     is_have_MeetingHistory.value = true

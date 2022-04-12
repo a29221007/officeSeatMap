@@ -14,7 +14,7 @@
             <!-- 第三行 -->
             <div class="line" v-if="is_curentMeeting_active">
                 <div class="title">预定时间：</div>
-                <div class="content"><span class="scroll">{{$store.state.activeInfo.current.Date + ' ' + $store.state.activeInfo.current.STARTTIME + '-' + $store.state.activeInfo.current.ENDTIME}}</span></div>
+                <div class="content"><span class="scroll">{{$store.state.activeInfo.current.MDate + ' ' + $store.state.activeInfo.current.STARTTIME + '-' + $store.state.activeInfo.current.ENDTIME}}</span></div>
             </div>
             <!-- 第四行 -->
             <div class="line">

@@ -5,45 +5,43 @@
             <van-search v-model="searchValue" placeholder="会议主题、预定人" @search="onSearch" v-on:clear="handleClickClearInput" />
         </form>
         <!-- 下面是预约预定列表 -->
-        <van-pull-refresh class="meetingRoomHistoryList" success-text="刷新成功" v-model="refreshing" @refresh="onRefresh">
-            <van-list v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onLoad()">
-                <div class="list-item" v-for="item in list" :key="item.id">
-                    <!-- 上面的日期 -->
-                    <div class="date" v-if="!item.is_hidden">
-                        <!-- 左边是 月-日 -->
-                        <div>{{item.month_day}}</div>
-                        <!-- 右边是 年 -->
-                        <div>{{item.year}}</div>
-                    </div>
-                    <!-- 下面的内容 -->
-                    <div class="content-container">
-                        <!-- 标题 -->
-                        <div class="meetingTitle" :class="{'borderTop':item.is_hidden}">{{item.Title}}</div>
-                        <!-- 内容区域 -->
-                        <div class="meetingContent" >
-                            <!-- 第一行 -->
-                            <div class="oneLine">
-                                <!-- 第一列 -->
-                                <div class="cell">
-                                    <div class="title">发起人：</div>
-                                    <div class="content">{{item.USERNAME}}</div>
-                                </div>
-                                <!-- 第二列 -->
-                                <div class="cell">
-                                    <div class="title">会议时间：</div>
-                                    <div class="content">{{item.STARTTIME + '-' + item.ENDTIME}}</div>
-                                </div>
+        <van-list class="meetingRoomHistoryList" v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onLoad()">
+            <div class="list-item" v-for="item in list" :key="item.id">
+                <!-- 上面的日期 -->
+                <div class="date" v-if="!item.is_hidden">
+                    <!-- 左边是 月-日 -->
+                    <div>{{item.month_day}}</div>
+                    <!-- 右边是 年 -->
+                    <div>{{item.year}}</div>
+                </div>
+                <!-- 下面的内容 -->
+                <div class="content-container">
+                    <!-- 标题 -->
+                    <div class="meetingTitle" :class="{'borderTop':item.is_hidden}">{{item.Title}}</div>
+                    <!-- 内容区域 -->
+                    <div class="meetingContent" >
+                        <!-- 第一行 -->
+                        <div class="oneLine">
+                            <!-- 第一列 -->
+                            <div class="cell">
+                                <div class="title">发起人：</div>
+                                <div class="content">{{item.USERNAME}}</div>
                             </div>
-                            <!-- 第二行 -->
-                            <div class="twoLine">
-                                <div class="title">部门：</div>
-                                <div class="content">{{item.DeptName}}</div>
+                            <!-- 第二列 -->
+                            <div class="cell">
+                                <div class="title">会议时间：</div>
+                                <div class="content">{{item.STARTTIME + '-' + item.ENDTIME}}</div>
                             </div>
+                        </div>
+                        <!-- 第二行 -->
+                        <div class="twoLine">
+                            <div class="title">部门：</div>
+                            <div class="content">{{item.DeptName}}</div>
                         </div>
                     </div>
                 </div>
-            </van-list>
-        </van-pull-refresh>
+            </div>
+        </van-list>
     </div>
 </template>
 
@@ -92,14 +90,6 @@ export default {
         let totalList = store.state.activeInfo.HistoryList
         // 预定预约列表的相关数据
         let meetingRoomHistoryListData = reactive({
-            // 控制下拉刷新的变量
-            refreshing:false,
-            // 下拉刷新触发的事件
-            onRefresh(){
-                meetingRoomHistoryListData.finished = false
-                meetingRoomHistoryListData.loading = true
-                meetingRoomHistoryListData.onLoad()
-            },
             // 控制上滑加载的变量
             loading: false,
             // 控制列表加载完毕的变量
@@ -109,11 +99,6 @@ export default {
                 message = message || '没有更多了'
                 meetingRoomHistoryListData.finishedText = message
                 setTimeout(() => {
-                    if (meetingRoomHistoryListData.refreshing) {
-                        meetingRoomHistoryListData.list = []
-                        meetingRoomHistoryListData.refreshing = false
-                        pagination.currentPage = 1
-                    }
                     let array = []
                     array = totalList.slice((pagination.currentPage-1)*pagination.pageSize,pagination.currentPage*pagination.pageSize)
                     meetingRoomHistoryListData.list.push(...array)
@@ -132,7 +117,7 @@ export default {
         })
         let pagination = {
             currentPage:1,
-            pageSize:3
+            pageSize:20
         }
         return {
             searchValue,

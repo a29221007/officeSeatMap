@@ -8,5 +8,5 @@ import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
 import './utils/flexible.js'
-import { Search, List, PullRefresh, Cell } from 'vant'
-createApp(App).use(router).use(store).use(ElementPlus,{ locale: zhCn }).use(Search).use(List).use(PullRefresh).use(Cell).mount('#app')
+import { Search, List, Cell } from 'vant'
+createApp(App).use(router).use(store).use(ElementPlus,{ locale: zhCn }).use(Search).use(List).use(Cell).mount('#app')

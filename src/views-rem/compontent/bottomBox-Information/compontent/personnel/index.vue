@@ -13,14 +13,36 @@
         <!-- 第三行 -->
         <div class="line">
             <div class="title">个人固定资产信息：</div>
-            <div class="content"><span class="button">查看</span></div>
+            <div class="content"><span class="button" v-on:click="handleCheckFixedAssetsList($store.state.activeInfo.id)">查看</span></div>
         </div>
     </div>
 </template>
 
 <script>
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+// 导入获取个人固资的api
+import { getFixedAssets } from '@/api/getFixedassets.js'
+import { beginToast } from '@/views-rem/hook/toast.js'
 export default {
     name:'personnel',
+    setup(){
+        const store = useStore()
+        const router = useRouter()
+        // 点击查看按钮，获取当前员工的固资信息、并跳转到固资信息页面
+        async function handleCheckFixedAssetsList(code){
+            const res = await getFixedAssets(code)
+            if(res.code !== 0) return beginToast('fail', res.message, 2000)
+            // 添加一个工位号信息
+            res.data.seat_id = store.state.activeInfo.seat_id
+            store.commit('setPersontFixedAssetsList',res.data)
+            // 跳转到固资信息页面
+            router.push('/fixedAssets')
+        }
+        return {
+            handleCheckFixedAssetsList
+        }
+    }
 }
 </script>
 

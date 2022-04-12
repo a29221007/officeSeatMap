@@ -9,7 +9,7 @@
             <el-table-column label="会议时间" align='center'>
                 <template #default="scope">
                     <div class="Date">
-                        <div>{{scope.row.Date}}</div>
+                        <div>{{scope.row.MDate}}</div>
                         <div>{{scope.row.STARTTIME}}-{{scope.row.ENDTIME}}</div>
                     </div>
                 </template>

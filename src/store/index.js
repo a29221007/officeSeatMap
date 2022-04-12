@@ -7,7 +7,7 @@ import { getSeatList } from '@/api/getSeatList'
 import { getAreaList } from '@/api/getArea.js'
 // 导入消息提示框组件
 import { errorMessage } from '@/utils/message.js'
-
+// 导入结束提示框的方法
 import { endToast } from '@/views-rem/hook/toast.js'
 export default createStore({
     state: {
@@ -39,6 +39,8 @@ export default createStore({
         ClentHeight: 0,
         // 当前用户是否有编辑的权限
         is_have_editor:false, // 默认是false，没有编辑权限
+        // 移动端的个人固资列表
+        PersontFixedAssetsList:getItem('PersontFixedAssetsList')
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -103,6 +105,11 @@ export default createStore({
         // 设置当前用户是否有编辑的权限
         setIs_have_editor(state,data){
             state.is_have_editor = data == 1 ? true : false
+        },
+        // 设置个人固资列表
+        setPersontFixedAssetsList(state,data){
+            state.PersontFixedAssetsList = data
+            setItem('PersontFixedAssetsList',state.PersontFixedAssetsList)
         }
     },
     actions: {

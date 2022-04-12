@@ -158,12 +158,12 @@ export default {
                     }else{
                         // 如果是区域
                         if(item.floor == store.getters.floor){
-                            // 如果搜索的区域在当前楼层将其高亮
-                            searchArea(item.code,upDataCurrentAreaCode)
                             if(item.type === 1){
-                                getMeetingRoomData(item.code,item.name)
+                                getMeetingRoomData(item,item.name)
                             }else{
                                 store.commit('setActiveInfo',item)
+                                // 如果搜索的区域在当前楼层将其高亮
+                                searchArea(item.code,upDataCurrentAreaCode)
                                 // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                 emit('setSearchLegendContant','information')
                             }
@@ -176,12 +176,12 @@ export default {
                                 // 用户如果确认跳转
                                 store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
                                 nextTick(() => {
-                                    searchArea(item.code,upDataCurrentAreaCode)
                                     beginToast('success','切换成功',2000)
                                     if(item.type === 1){
-                                        getMeetingRoomData(item.code,item.name)
+                                        getMeetingRoomData(item,item.name)
                                     }else{
                                         store.commit('setActiveInfo',item)
+                                        searchArea(item.code,upDataCurrentAreaCode)
                                         // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                         emit('setSearchLegendContant','information')
                                     }
