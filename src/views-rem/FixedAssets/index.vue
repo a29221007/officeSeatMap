@@ -105,7 +105,7 @@ export default {
                     PersontFixedAssetsData.list.push(...array)
                     PersontFixedAssetsData.loading = false
 
-                    if (array.length === 0) {
+                    if (array.length < 20) {
                         PersontFixedAssetsData.finished = true
                     }
                     pagination.currentPage += 1

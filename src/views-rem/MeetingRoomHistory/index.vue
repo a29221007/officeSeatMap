@@ -105,7 +105,7 @@ export default {
                     meetingRoomHistoryListData.list.push(...array)
                     meetingRoomHistoryListData.loading = false
 
-                    if (array.length === 0) {
+                    if (array.length < 20) {
                         meetingRoomHistoryListData.finished = true
                     }
                     pagination.currentPage += 1

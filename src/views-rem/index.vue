@@ -57,6 +57,7 @@
 <script>
 import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, watch, onBeforeMount} from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
 import BottomBox from './compontent/bottomBox.vue'
@@ -84,6 +85,7 @@ export default {
     setup(){
         // 获取vuex实例
         const store = useStore()
+        const router = useRouter()
         // 获取 MapBoxRef DOM 对象
         const MapBoxRef = ref(null)
         // 获取 BodyContainer DOM 对象
@@ -101,6 +103,8 @@ export default {
         // 互锁变量
         let a = true
 
+
+        // 定义一个定时器，防止
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
                 // 3、根据 url 中的参数跳转到对应区域
@@ -147,26 +151,26 @@ export default {
                 //     if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
                 //     store.commit('setIs_have_editor',res.data.u)
                 // })
-                /**
-                 * 如果是会议室扫码，那么会议室预约记录和会议室信息是同时获取的
-                 *
-                */
                 // 获取个人固资的信息
 
                 // 获取会议室预定记录的信息
 
                 // 3.6 将当前项设置到 vuex 中
-                store.commit('setActiveInfo',item)
-                BottomBoxRef.value.setSearchLegendContant('information')
+                // store.commit('setActiveInfo',item)
+                // BottomBoxRef.value.setSearchLegendContant('information')
                 // 3.7 根据当前的类型，调用不同的高亮函数
                 if(requestSearchObj.type == 1){
+                    store.commit('setActiveInfo',item)
                     // 如果为座位
                     seatData.setCurrentSeat_id(item.seat_id)
                     // 调用座位高亮的函数
                     searchSeat(item.seat_id)
+                    BottomBoxRef.value.setSearchLegendContant('information')
+                    // 调用获取个人固资列表的函数
+                    store.dispatch('getPersontFixedAssetsList',item.id)
                 }else if(requestSearchObj.type == 2){
-                    // 如果为会议室
-                    const flag = getMeetingData(item)
+                    // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行)
+                    getMeetingData(item,'push')
                 }
                 // 如果是扫码跳转进来的最后要关闭提示框
                 endToast()
@@ -472,7 +476,8 @@ export default {
             }
         })
         // 获取会议室相关数据以及预定记录函数
-        function getMeetingData(item) {
+        // flag 参数是为了区分是否为扫码进入项目，如果flag参数为undefind，则说明不是扫码进入时调用
+        function getMeetingData(item,flag) {
             const { code, name } = item
             getMeeting(code).then(res => {
                 if(res.code !== 0){
@@ -503,6 +508,10 @@ export default {
                 searchArea(code,seatData.setCurrentAreaCode)
                 // 将底部操作盒子设置为 'information' 状态
                 BottomBoxRef.value.setSearchLegendContant('information')
+                // 如果有flag参数，并且查询也没有报错的情况下，跳转到会议室预约记录展示页面
+                if(flag){
+                    router.push('/meetingRoomHistory')
+                }
             }).catch( error => {
                 store.commit('setActiveInfo',{
                     type: 1,

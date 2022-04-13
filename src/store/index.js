@@ -8,24 +8,27 @@ import { getAreaList } from '@/api/getArea.js'
 // 导入消息提示框组件
 import { errorMessage } from '@/utils/message.js'
 // 导入结束提示框的方法
-import { endToast } from '@/views-rem/hook/toast.js'
+import { endToast, beginToast } from '@/views-rem/hook/toast.js'
+import router from '@/router'
+// 导入获取个人固资的api
+import { getFixedAssets } from '@/api/getFixedassets.js'
 export default createStore({
     state: {
         // 当前选中的楼层（或地区）
         currentFloor:getItem('currentFloor'),
         // 3层的座位信息
-        seatListOfthree:getItem('seatListOfthree') || [],
+        seatListOfthree: [],
         // 4层的座位信息
-        seatListOfFour:getItem('seatListOfFour') || [],
+        seatListOfFour: [],
         // 当前选中的图例(此项不做本地缓存)
         currentLegend:'', // 默认是空字符串
         // 当前的地图的初始缩放系数
         scale:getItem('scale') || [1,1], // 默认是1
 
         // 3层的区域信息
-        areaListOfThree: getItem('areaListOfThree') || [],
+        areaListOfThree: [],
         // 4层的区域信息
-        areaListOfFour: getItem('areaListOfFour') || [],
+        areaListOfFour: [],
         // ---------------------------------------------
         // 移动端中的数据，当前选中的项
         activeInfo: getItem('activeInfo'),
@@ -51,12 +54,10 @@ export default createStore({
         // 设置3层的座位信息
         setSeatListOfthree(state,data) {
             state.seatListOfthree = data
-            setItem('seatListOfthree',state.seatListOfthree)
         },
         // 设置4层的座位信息
         setSeatListOfFour(state,data) {
             state.seatListOfFour = data
-            setItem('seatListOfFour',state.seatListOfFour)
         },
         // 设置currentLegend图例
         setCurrentLegend(state,data) {
@@ -72,12 +73,10 @@ export default createStore({
         // 设置3层的区域信息列表
         setAreaListOfThree(state,data){
             state.areaListOfThree = data
-            setItem('areaListOfThree',state.areaListOfThree)
         },
         // 设置4层的区域信息列表
         setAreaListOfFour(state,data){
             state.areaListOfFour = data
-            setItem('areaListOfFour',state.areaListOfFour)
         },
 
         // 设置移动端中选中项的数据
@@ -107,7 +106,9 @@ export default createStore({
             state.is_have_editor = data == 1 ? true : false
         },
         // 设置个人固资列表
-        setPersontFixedAssetsList(state,data){
+        setPersontFixedAssetsList(state, data) {
+            // 添加一个工位号信息
+            data.seat_id = state.activeInfo.seat_id
             state.PersontFixedAssetsList = data
             setItem('PersontFixedAssetsList',state.PersontFixedAssetsList)
         }
@@ -152,6 +153,14 @@ export default createStore({
                 endToast()
                 errorMessage(error)
             }
+        },
+        // 获取个人固资列表数据
+        async getPersontFixedAssetsList(context,code) {
+            const res = await getFixedAssets(code)
+            if(res.code !== 0) return beginToast('fail', res.message, 2000)
+            context.commit('setPersontFixedAssetsList',res.data)
+            // 跳转到固资信息页面
+            router.push('/fixedAssets')
         }
     },
     getters: {
