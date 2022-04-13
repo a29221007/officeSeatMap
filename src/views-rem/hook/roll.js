@@ -19,10 +19,11 @@ function roll() {
       let curentParentNdoeWidth = item.parentNode.offsetWidth
       // 子元素和父元素的差值
       let value = curentParentNdoeWidth - currentNodeWidth
-      if(value < 0){
+      if (value < 0) {
+        value = value - 10
           const timer123 = setTimeout(() => {
               clearInterval(item.timer)
-              let target = Math.floor(value) - 10
+              let target = Math.floor(value)
               let leader = 0
               item.timer = setInterval(() => {
                 let step = 1
