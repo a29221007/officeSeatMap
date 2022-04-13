@@ -118,7 +118,6 @@ export default {
             // 点击搜索建议中的某一项，触发的函数
             handleClickQuerySearchItem(item) {
                 if(!searchInput.is_none_sugges) return
-                beginToast('loading','加载中',0)
                 // 如果是触发某一项搜索，首先要把当前的图例复原，全部的dom渲染出来
                 store.commit('setCurrentLegend','')
                 // 要使用 nextTick 函数获取更新后的dom元素
@@ -159,7 +158,7 @@ export default {
                         // 如果是区域
                         if(item.floor == store.getters.floor){
                             if(item.type === 1){
-                                getMeetingRoomData(item,item.name)
+                                getMeetingRoomData(item)
                             }else{
                                 store.commit('setActiveInfo',item)
                                 // 如果搜索的区域在当前楼层将其高亮
@@ -178,7 +177,7 @@ export default {
                                 nextTick(() => {
                                     beginToast('success','切换成功',2000)
                                     if(item.type === 1){
-                                        getMeetingRoomData(item,item.name)
+                                        getMeetingRoomData(item)
                                     }else{
                                         store.commit('setActiveInfo',item)
                                         searchArea(item.code,upDataCurrentAreaCode)
@@ -192,8 +191,6 @@ export default {
                             })
                         }
                     }
-                    // 如果是扫码跳转进来的最后要关闭提示框
-                    endToast()
                 })
             },
             // 给搜索建议列表绑定一个 touchmove 事件，并阻止冒泡行为

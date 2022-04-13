@@ -77,7 +77,7 @@ import { getMeeting } from '@/api/getMeeting.js'
 // 导入对会议室排序的公共方法
 import sortMeetingList from '@/views-rem/hook/sortArray.js'
 export default {
-    name:'M-Home',
+    name:'MHome',
     components:{
         BottomBox
     },
@@ -141,12 +141,16 @@ export default {
                     return beginToast('fail','没有找到相关的座位或区域',2000)
                 }
                 
-                // 判断当前用户的操作权限
-                sendCode(requestSearchObj.code).then((res) => {
-                    if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
-                    store.commit('setIs_have_editor',res.data.u)
-                })
-
+                // 判断当前用户的操作权限(暂时编辑按钮也隐藏起来了，暂时这个接口先不掉了)
+                // sendCode(requestSearchObj.code).then((res) => {
+                //     console.log(res)
+                //     if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
+                //     store.commit('setIs_have_editor',res.data.u)
+                // })
+                /**
+                 * 如果是会议室扫码，那么会议室预约记录和会议室信息是同时获取的
+                 *
+                */
                 // 获取个人固资的信息
 
                 // 获取会议室预定记录的信息
@@ -161,9 +165,11 @@ export default {
                     // 调用座位高亮的函数
                     searchSeat(item.seat_id)
                 }else if(requestSearchObj.type == 2){
-                    // 如果为区域
-                    searchArea(item.code,seatData.setCurrentAreaCode)
+                    // 如果为会议室
+                    const flag = getMeetingData(item)
                 }
+                // 如果是扫码跳转进来的最后要关闭提示框
+                endToast()
             }
         })
         // onBeforeMount 中开启加载提示
@@ -458,7 +464,7 @@ export default {
                     MapBoxTapFn()
                     // store.dispatch('getMeetingRoomHistory',{code,name:item.name})
                     // 获取当前会议室相关的信息
-                    getMeetingData(item,item.name)
+                    getMeetingData(item)
                 }).catch( error => {
                     if(!scaling) MapBoxTapFn()
                     beginToast('fail', '查询失败', 2000)
@@ -466,10 +472,9 @@ export default {
             }
         })
         // 获取会议室相关数据以及预定记录函数
-        function getMeetingData(item,name) {
-            const {code} = item
+        function getMeetingData(item) {
+            const { code, name } = item
             getMeeting(code).then(res => {
-                console.log('res',res)
                 if(res.code !== 0){
                     // 在 code 不等于 0 的情况下，继续判断当前区域是否为会议室，如果不为会议室也会发生报错
                     if(res.code === 2013){

@@ -2,7 +2,8 @@
     <div class="meetingRoomHistoryContainer">
         <!-- 上面是搜索框 -->
         <form action="/" class="meetingRoomHistorySearch">
-            <van-search v-model="searchValue" placeholder="会议主题、预定人" @search="onSearch" v-on:clear="handleClickClearInput" />
+            <van-icon name="arrow-left" size=".4301rem" color="#000" v-on:click="$router.back()" />
+            <van-search left-icon='' v-model="searchValue" placeholder="会议主题、预定人" autocomplete='off' clear-trigger='always' @search="onSearch" v-on:clear="handleClickClearInput" />
         </form>
         <!-- 下面是预约预定列表 -->
         <van-list class="meetingRoomHistoryList" v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onLoad()">
@@ -137,10 +138,18 @@ export default {
     flex-direction: column;
     background-color: #f2f2f2;
     .meetingRoomHistorySearch{
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        .van-icon{
+            padding: .2151rem;
+        }
         .van-search{
+            flex: 1;
             padding: 5px 6px;
             /deep/.van-search__content{
                 background-color: #fff;
+                padding-left:0;
             }
         }
     }
