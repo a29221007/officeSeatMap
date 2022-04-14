@@ -195,8 +195,6 @@ export default {
             },
             // 给搜索建议列表绑定一个 touchmove 事件，并阻止冒泡行为
             querySearchMove(e){
-                // 阻止元素的默认行为，兼容苹果浏览器
-                e.preventDefault()
                 if(!searchInput.inputValue || !searchInput.is_none_sugges) return
                 e.stopPropagation()
                 inputRef.value.blur()

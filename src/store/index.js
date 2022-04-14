@@ -10,8 +10,8 @@ import { errorMessage } from '@/utils/message.js'
 // 导入结束提示框的方法
 import { endToast, beginToast } from '@/views-rem/hook/toast.js'
 import router from '@/router'
-// 导入获取个人固资的api
-import { getFixedAssets } from '@/api/getFixedassets.js'
+// 导入获取个人固资的api-移动端
+import { getFixedassets_Mobile } from '@/api/getFixedassets_Mobile.js'
 export default createStore({
     state: {
         // 当前选中的楼层（或地区）
@@ -43,7 +43,12 @@ export default createStore({
         // 当前用户是否有编辑的权限
         is_have_editor:false, // 默认是false，没有编辑权限
         // 移动端的个人固资列表
-        PersontFixedAssetsList:getItem('PersontFixedAssetsList')
+        PersontFixedAssetsList:getItem('PersontFixedAssetsList'),
+
+        // 当前登录人的 code
+        // 如果是通过OA平台进入的项目，需要设置这个 code
+        // 如果是扫码进入的项目，也需要设置这个code
+        code:getItem('code') || 'SyKL9TMASDtJAIYsGL_uySD7AVAtNysMttRlzP4v-jw',
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -77,6 +82,14 @@ export default createStore({
         // 设置4层的区域信息列表
         setAreaListOfFour(state,data){
             state.areaListOfFour = data
+        },
+
+
+
+        // 设置当前操作用户的 code (移动端和PC端都会用到)
+        setCode(state,data){
+            state.code = data
+            setItem('code',state.code)
         },
 
         // 设置移动端中选中项的数据
@@ -156,7 +169,9 @@ export default createStore({
         },
         // 获取个人固资列表数据
         async getPersontFixedAssetsList(context,code) {
-            const res = await getFixedAssets(code)
+            const res = await getFixedassets_Mobile(code)
+            
+            console.log('res',res)
             if(res.code !== 0) return beginToast('fail', res.message, 2000)
             context.commit('setPersontFixedAssetsList',res.data)
             // 跳转到固资信息页面

@@ -33,18 +33,23 @@
         </div>
         <!-- 固资列表 -->
         <van-list class="FixedAssetsList" v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onLoad">
-            <div class="list-item" v-for="item in list" :key="item.id">
-                <!-- 第一行 -->
-                <div>
-                    <div class="title">固定资产编号：</div>
-                    <div class="content">{{item.FixedCode}}</div>
+            <template v-if="list.length !== 0">
+                <div class="list-item" v-for="item in list" :key="item.id">
+                    <!-- 第一行 -->
+                    <div>
+                        <div class="title">固定资产编号：</div>
+                        <div class="content">{{item.FixedCode}}</div>
+                    </div>
+                    <!-- 第二行 -->
+                    <div>
+                        <div class="title">固定资产名称：</div>
+                        <div class="content">{{item.FixedName}}</div>
+                    </div>
                 </div>
-                <!-- 第二行 -->
-                <div>
-                    <div class="title">固定资产名称：</div>
-                    <div class="content">{{item.FixedName}}</div>
-                </div>
-            </div>
+            </template>
+            <template v-else>
+                <div class="list-item center">该员工无固资信息</div>
+            </template>
         </van-list>
     </div>
 </template>
@@ -217,7 +222,9 @@ export default {
             &:nth-child(n + 2){
                 border-top: 1px solid #ccc;
             }
-
+            &.center{
+                text-align: center;
+            }
         }
     }
 }

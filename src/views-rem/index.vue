@@ -151,13 +151,6 @@ export default {
                 //     if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
                 //     store.commit('setIs_have_editor',res.data.u)
                 // })
-                // 获取个人固资的信息
-
-                // 获取会议室预定记录的信息
-
-                // 3.6 将当前项设置到 vuex 中
-                // store.commit('setActiveInfo',item)
-                // BottomBoxRef.value.setSearchLegendContant('information')
                 // 3.7 根据当前的类型，调用不同的高亮函数
                 if(requestSearchObj.type == 1){
                     store.commit('setActiveInfo',item)
@@ -167,7 +160,8 @@ export default {
                     searchSeat(item.seat_id)
                     BottomBoxRef.value.setSearchLegendContant('information')
                     // 调用获取个人固资列表的函数
-                    store.dispatch('getPersontFixedAssetsList',item.id)
+                    store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,code:requestSearchObj.code})
+                    store.commit('setCode',requestSearchObj.code)
                 }else if(requestSearchObj.type == 2){
                     // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行)
                     getMeetingData(item,'push')
@@ -450,55 +444,52 @@ export default {
                 if(type !== 1) return
                 // 阻止点击会议室事件的冒泡行为
                 $event.stopPropagation()
-                // 再排除不可以预约的会议室，类似培训教室
-                getMeeting(code).then(res => {
-                    if(res.code === 2013) return // code 等于 2013, 说明当前点击的会议室不是可预约的会议室，则不执行后续的逻辑
-                    // 判断点击的会议室是否与当前选中的会议室code相同
-                    if(code === seatData.currentAreaCode){
-                        // 如果相同,则取消高亮，以及恢复底部盒子到主页（init）
-                        seatData.currentAreaCode = ''
-                        // 将底部操作盒子设置为初始状态
-                        BottomBoxRef.value.setSearchLegendContant('init')
-                        // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
-                        if(!scaling) MapBoxTapFn()
-                        return
-                    }
-                    // 点击会议室确保底部的盒子处于升起来的状态
-                    scaling = false
-                    MapBoxTapFn()
-                    // store.dispatch('getMeetingRoomHistory',{code,name:item.name})
-                    // 获取当前会议室相关的信息
-                    getMeetingData(item)
-                }).catch( error => {
+                if(code === seatData.currentAreaCode){
+                    // 如果相同,则取消高亮，以及恢复底部盒子到主页（init）
+                    seatData.currentAreaCode = ''
+                    // 将底部操作盒子设置为初始状态
+                    BottomBoxRef.value.setSearchLegendContant('init')
+                    // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
                     if(!scaling) MapBoxTapFn()
-                    beginToast('fail', '查询失败', 2000)
-                })
+                    return
+                }
+                // 点击会议室确保底部的盒子处于升起来的状态
+                scaling = false
+                MapBoxTapFn()
+                // 获取当前会议室相关的信息
+                getMeetingData(item)
             }
         })
         // 获取会议室相关数据以及预定记录函数
         // flag 参数是为了区分是否为扫码进入项目，如果flag参数为undefind，则说明不是扫码进入时调用
         function getMeetingData(item,flag) {
-            const { code, name } = item
+            const { code, name, subtitle } = item
             getMeeting(code).then(res => {
                 if(res.code !== 0){
                     // 在 code 不等于 0 的情况下，继续判断当前区域是否为会议室，如果不为会议室也会发生报错
                     if(res.code === 2013){
                         // code 为2013时，则当前选中的会议室（区域）不是会议室，只是当时路数据库时，写成了会议室，要单独处理一下
-                        item.type = 3
-                        store.commit('setActiveInfo',item)
+                        store.commit('setActiveInfo',{
+                            type: 1,
+                            code,
+                            name,
+                            subtitle,
+                            is_meeting:false,
+                        })
                     }else{
-                        beginToast('fail', res.message, 2000)
                         // 设置会议室的相关信息
                         store.commit('setActiveInfo',{
                             type: 1,
                             code,
                             name,
+                            subtitle,
+                            is_meeting:true,
                         })
                     }
                     searchArea(code,seatData.setCurrentAreaCode)
                     BottomBoxRef.value.setSearchLegendContant('information')
                     if(!scaling) MapBoxTapFn()
-                    return
+                    return beginToast('fail', res.message, 2000)
                 }
                 res.data.code = code
                 res.data.type = 1
@@ -1121,6 +1112,12 @@ export default {
         // 微传播（会议室）1/4半圆
         #QY01010400030{
             border-radius:.1505rem 0 0 0;
+        }
+        // 星悦轩、格尔威森林，去除 title 的 line-height
+        #QY010104001595,#QY010104001696{
+            .title{
+                line-height: 0;
+            }
         }
     }
 }

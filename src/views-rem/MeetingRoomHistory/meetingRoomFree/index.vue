@@ -1,7 +1,7 @@
 <template>
-    <div class="free">
+    <div class="free" v-on:click="$router.back()">
         <div>Free</div>
-        <span>当前会议室无人预定</span>
+        <span>当前会议室无人预定(点击任意处返回)</span>
     </div>
 </template>
 
@@ -21,8 +21,8 @@ export default {
     justify-content: center;
     background-color: #f2f2f2;
     div{
-        width: 50%;
-        height: 30%;
+        width: 5.3763rem;
+        height: 5.3763rem;
         border-radius: 50%;
         background-color: #fae7e7;
         color: #ff7fd8;

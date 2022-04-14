@@ -1,6 +1,6 @@
 <template>
     <el-dialog custom-class='FixedAssets_dialog' v-model="FixedAssets_dialog" :title=" FixedAssetsUserName + ' - 固定资产信息' " :close-on-click-modal='false' draggable width="55%" top='8vh'>
-        <el-table :data="FixedAssetsList_pagination" border>
+        <el-table :data="FixedAssetsList_pagination" border empty-text='该员工无固资信息'>
             <el-table-column prop="FixedCode" align='center' label="固定资产编号" />
             <el-table-column prop="FixedName" align='center' label="固定资产名称" />
         </el-table>

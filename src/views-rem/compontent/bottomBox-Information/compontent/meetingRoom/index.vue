@@ -23,7 +23,12 @@
             </div>
         </template>
         <template v-else>
-            <div class="questError" v-on:click="getMeetingRoomData($store.state.activeInfo.code,$store.state.activeInfo.name)">查询失败-点击重试</div>
+            <template v-if="$store.state.activeInfo.is_meeting === true">
+                <div class="questError" v-on:click="getMeetingRoomData($store.state.activeInfo.code,$store.state.activeInfo.name)">查询失败-点击重试</div>
+            </template>
+            <template v-if="$store.state.activeInfo.is_meeting === false">
+                <div class="questError">当前区域不是一个会议室</div>
+            </template>
         </template>
     </div>
 </template>

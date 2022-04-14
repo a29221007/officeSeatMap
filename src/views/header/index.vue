@@ -101,7 +101,7 @@ import scaleSeat from '@/utils/scaleSeat.js'
 // 导入区域高亮的逻辑
 import searchArea from '@/utils/searchArea.js'
 // 导入获取当前员工的固资信息的api
-import { getFixedAssets } from '@/api/getFixedassets.js'
+import { getFixedAssets_PC } from '@/api/getFixedassets_PC.js'
 // 导入获取会议室相关信息的api
 import { getMeeting } from '@/api/getMeeting.js'
 // 导入固资信息的子组件
@@ -321,7 +321,8 @@ export default {
             currentInfo:{},
             // 点击查看固资信息
             handleClickAssetsMessage(userCode){
-                getFixedAssets(userCode).then((res) => {
+                getFixedAssets_PC({b_usercode:userCode,v_usercode:store.state.code}).then((res) => {
+                    console.log(res)
                     if(res.code !== 0) return errorMessage(res.message)
                     // 赋值姓名
                     FixedAssetsUserName.value = res.data.UserName
