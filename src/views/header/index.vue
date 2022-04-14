@@ -69,7 +69,7 @@
             </el-form-item>
             <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
             <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
-            <div class="make-btn"><el-button type="danger" round :disabled='is_curentMeeting_active'>预约</el-button></div>
+            <div class="make-btn"><button type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button></div>
         </el-form>
         <!-- 选中空位 -->
         <el-form label-width="auto" v-if="currentInfo.type === '0-1'">
@@ -383,7 +383,7 @@ export default {
             getMeeting(code).then(res => {
                 if(res.code !== 0) {
                     drawerData.is_show = false
-                    return errorMessage(res.message)
+                    return infoMessage(res.message)
                 }
                 // 将 res.data 结构出来
                 const { name, setting, current, HistoryList } = res.data
@@ -439,6 +439,11 @@ export default {
                 errorMessage(error)
             })
         }
+
+        // 点击预约 跳转 OA 
+        function handleClickJumpOA(){
+
+        }
         return {
             AllArea,
             ...toRefs(searchData),
@@ -454,7 +459,8 @@ export default {
             MeetingRoomHistoryList,
             MeetingRoomName,
             MeetingRoomRef,
-            is_have_MeetingHistory
+            is_have_MeetingHistory,
+            handleClickJumpOA
         }
     }
 }

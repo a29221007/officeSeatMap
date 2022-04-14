@@ -72,6 +72,16 @@ body {
 .drawer .el-drawer__body .make-btn {
   text-align: center;
 }
+.drawer .el-drawer__body .make-btn button {
+  width: 100px;
+  height: 30px;
+  line-height: 30px;
+  border: none;
+  border-radius: 7px;
+  background-color: #d9001b;
+  color: #fff;
+  cursor: pointer;
+}
 .drawer-mask {
   position: unset!important;
 }
