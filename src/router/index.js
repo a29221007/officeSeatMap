@@ -7,7 +7,7 @@ const routes = [
         name: 'home',
         meta:{
             keepAlive:true,
-            title:'OA-MAP-首页'
+            title:'龙图办公区地图'
         },
         component: () => import(/* webpackChunkName: "home" */ '@/view-home'),
     },
