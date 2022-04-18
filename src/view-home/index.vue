@@ -37,6 +37,7 @@ export default {
         }else{
             is_PC.value = 'PCLayOut'
         }
+        
         return {
             is_PC
         }

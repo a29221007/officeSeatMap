@@ -1,9 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
+    // 登录
+    {
+        path: '/login',
+        name: 'login',
+        meta:{
+            keepAlive:false,
+            title:'正在登录龙图办公区地图'
+        },
+        component: () => import(/* webpackChunkName: "home" */ '@/login'),
+    },
     // 首页
     {
-        path: '/',
+        path: '/home',
         name: 'home',
         meta:{
             keepAlive:true,

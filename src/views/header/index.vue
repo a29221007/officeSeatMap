@@ -321,7 +321,7 @@ export default {
             currentInfo:{},
             // 点击查看固资信息
             handleClickAssetsMessage(userCode){
-                getFixedAssets_PC({b_usercode:userCode,v_usercode:store.state.code}).then((res) => {
+                getFixedAssets_PC({ b_usercode:userCode, code:store.state.code }).then((res) => {
                     console.log(res)
                     if(res.code !== 0) return errorMessage(res.message)
                     // 赋值姓名

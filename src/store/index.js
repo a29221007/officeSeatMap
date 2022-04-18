@@ -48,7 +48,9 @@ export default createStore({
         // 当前登录人的 code
         // 如果是通过OA平台进入的项目，需要设置这个 code
         // 如果是扫码进入的项目，也需要设置这个code
-        code:getItem('code') || 'SyKL9TMASDtJAIYsGL_uySD7AVAtNysMttRlzP4v-jw',
+        code:getItem('code') || '',
+        // 扫码跳转时的楼层、类型、位置信息
+        scanQRcodeObject:getItem('scanQRcodeObject') || {}
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -124,6 +126,11 @@ export default createStore({
             data.seat_id = state.activeInfo.seat_id
             state.PersontFixedAssetsList = data
             setItem('PersontFixedAssetsList',state.PersontFixedAssetsList)
+        },
+        // 设置移动端扫码跳转时的信息集合
+        setScanQRcodeObject(state, data){
+            state.scanQRcodeObject = data
+            setItem('scanQRcodeObject',state.scanQRcodeObject)
         }
     },
     actions: {

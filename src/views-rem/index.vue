@@ -107,16 +107,19 @@ export default {
         // 定义一个定时器，防止
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
-                // 3、根据 url 中的参数跳转到对应区域
-                // 3.1 获取url中的参数
-                let requestSearch = window.location.search
-                // 3.2 判断是否有参数
-                if(!requestSearch) return endToast() // 没有参数说明不是扫码进的项目,则不执行后续的逻辑,并关闭加载提示框
-                let requestSearchArray = requestSearch.slice(1).split('&')
-                let requestSearchObj = {}
-                requestSearchArray.forEach(item => {
-                    requestSearchObj[item.split('=')[0]] = item.split('=')[1]
-                })
+                // // 3、根据 url 中的参数跳转到对应区域
+                // // 3.1 获取url中的参数
+                // let requestSearch = window.location.search
+                // // 3.2 判断是否有参数
+                // if(!requestSearch) return endToast() // 没有参数说明不是扫码进的项目,则不执行后续的逻辑,并关闭加载提示框
+                // let requestSearchArray = requestSearch.slice(1).split('&')
+                // let requestSearchObj = {}
+                // requestSearchArray.forEach(item => {
+                //     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
+                // })
+                let requestSearchObj = store.state.scanQRcodeObject
+                // 判断如果 requestSearchObj 为空对象，则说明不是扫码跳转的，不执行后续的逻辑，停止加载提示
+                if(Object.keys(requestSearchObj).length === 0) return endToast()
                 // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
                 const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
                 store.commit('setCurrentFloor',floor)
@@ -160,8 +163,7 @@ export default {
                     searchSeat(item.seat_id)
                     BottomBoxRef.value.setSearchLegendContant('information')
                     // 调用获取个人固资列表的函数
-                    store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,code:requestSearchObj.code})
-                    store.commit('setCode',requestSearchObj.code)
+                    store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,code:store.state.code})
                 }else if(requestSearchObj.type == 2){
                     // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行)
                     getMeetingData(item,'push')
@@ -489,6 +491,7 @@ export default {
                     searchArea(code,seatData.setCurrentAreaCode)
                     BottomBoxRef.value.setSearchLegendContant('information')
                     if(!scaling) MapBoxTapFn()
+                    endToast()
                     return beginToast('fail', res.message, 2000)
                 }
                 res.data.code = code

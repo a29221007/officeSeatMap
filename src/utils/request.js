@@ -1,8 +1,8 @@
 // 封装axios
 import axios from 'axios'
-export const baseURL = 'http://172.16.200.152:8091/api/'
+// export const baseURL = 'http://172.16.200.152:8091/api/'
 // export const baseURL = 'http://maptest.longtubas.com:8091/api/'
-// export const baseURL = 'http://maptest.longtubas.com/api/'
+export const baseURL = 'https://mapbackend.longtubas.com/api/'
 // 创建axios的实例对象
 const instance = axios.create({
     baseURL,

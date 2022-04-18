@@ -29,6 +29,9 @@
             <template v-if="$store.state.activeInfo.is_meeting === false">
                 <div class="questError">当前区域不是一个会议室</div>
             </template>
+            <template v-else>
+                <div class="questError">查询失败</div>
+            </template>
         </template>
     </div>
 </template>
