@@ -70,6 +70,7 @@
             <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
             <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
             <div class="make-btn"><button type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button></div>
+            <a :href='`http://testoa.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=B1805951&clickid=meeting`'  target='_blank'>点击</a>
         </el-form>
         <!-- 选中空位 -->
         <el-form label-width="auto" v-if="currentInfo.type === '0-1'">
@@ -321,8 +322,7 @@ export default {
             currentInfo:{},
             // 点击查看固资信息
             handleClickAssetsMessage(userCode){
-                getFixedAssets_PC({ b_usercode:userCode, code:store.state.code }).then((res) => {
-                    console.log(res)
+                getFixedAssets_PC({ b_usercode:userCode, v_usercode:store.state.UserInfo.usercode }).then((res) => {
                     if(res.code !== 0) return errorMessage(res.message)
                     // 赋值姓名
                     FixedAssetsUserName.value = res.data.UserName
@@ -346,7 +346,7 @@ export default {
                 getAccessToken().then((res) => {
                     if(res.code !== 0) return errorMessage(res.message)
                     const obj = {
-                        "operator_userid":"jixianggong",
+                        "operator_userid":store.state.UserInfo.userid,
                         "single_chat":{
                             "userid":USERID
                         }
@@ -442,7 +442,7 @@ export default {
 
         // 点击预约 跳转 OA 
         function handleClickJumpOA(){
-
+            window.location.assign("https://www.baidu.com")
         }
         return {
             AllArea,

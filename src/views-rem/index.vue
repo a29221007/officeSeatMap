@@ -155,21 +155,24 @@ export default {
                 //     store.commit('setIs_have_editor',res.data.u)
                 // })
                 // 3.7 根据当前的类型，调用不同的高亮函数
-                if(requestSearchObj.type == 1){
-                    store.commit('setActiveInfo',item)
-                    // 如果为座位
-                    seatData.setCurrentSeat_id(item.seat_id)
-                    // 调用座位高亮的函数
-                    searchSeat(item.seat_id)
-                    BottomBoxRef.value.setSearchLegendContant('information')
-                    // 调用获取个人固资列表的函数
-                    store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,code:store.state.code})
-                }else if(requestSearchObj.type == 2){
-                    // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行)
-                    getMeetingData(item,'push')
-                }
-                // 如果是扫码跳转进来的最后要关闭提示框
-                endToast()
+                nextTick(() => {
+                    if(requestSearchObj.type == 1 && item.type === '0'){
+                        store.commit('setActiveInfo',item)
+                        // 如果为座位
+                        seatData.setCurrentSeat_id(item.seat_id)
+                        // 调用座位高亮的函数
+                        searchSeat(item.seat_id)
+                        BottomBoxRef.value.setSearchLegendContant('information')
+                        // 调用获取个人固资列表的函数
+                        store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,v_usercode:store.state.UserInfo.usercode})
+                    }else if(requestSearchObj.type == 2 && item.type === 1){
+                        // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行)
+
+                        getMeetingData(item,'push')
+                    }
+                    // 如果是扫码跳转进来的最后要关闭提示框
+                    endToast()
+                })
             }
         })
         // onBeforeMount 中开启加载提示

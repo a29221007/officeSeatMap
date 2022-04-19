@@ -48,7 +48,7 @@ export default createStore({
         // 当前登录人的 code
         // 如果是通过OA平台进入的项目，需要设置这个 code
         // 如果是扫码进入的项目，也需要设置这个code
-        code:getItem('code') || '',
+        UserInfo:getItem('UserInfo'),
         // 扫码跳转时的楼层、类型、位置信息
         scanQRcodeObject:getItem('scanQRcodeObject') || {}
     },
@@ -88,10 +88,10 @@ export default createStore({
 
 
 
-        // 设置当前操作用户的 code (移动端和PC端都会用到)
-        setCode(state,data){
-            state.code = data
-            setItem('code',state.code)
+        // 设置当前操作用户的个人信息 (移动端和PC端都会用到)
+        setUserInfo(state,data){
+            state.UserInfo = data
+            setItem('UserInfo',state.UserInfo)
         },
 
         // 设置移动端中选中项的数据

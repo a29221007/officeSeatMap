@@ -14,7 +14,7 @@
         <div class="line">
             <div class="title">个人固定资产信息：</div>
             <!-- <div class="content"><span class="button" v-on:click="handleCheckFixedAssetsList($store.state.activeInfo.id)">查看</span></div> -->
-            <div class="content"><span class="button" v-on:click="$store.dispatch('getPersontFixedAssetsList', {b_usercode:$store.state.activeInfo.id,code:$store.state.code})">查看</span></div>
+            <div class="content"><span class="button" v-on:click="$store.dispatch('getPersontFixedAssetsList', {b_usercode:$store.state.activeInfo.id,v_usercode:$store.state.UserInfo.usercode})">查看</span></div>
         </div>
     </div>
 </template>
