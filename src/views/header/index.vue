@@ -69,8 +69,10 @@
             </el-form-item>
             <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
             <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
-            <div class="make-btn"><button type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button></div>
-            <a :href='`http://testoa.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=B1805951&clickid=meeting`'  target='_blank'>点击</a>
+            <div class="make-btn">
+                <button :class="{'disable':is_curentMeeting_active}" type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button>
+                <a ref="A_Tag_Ref" :href='`http://testoa.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${$store.state.UserInfo.usercode}&clickid=meeting`' target='_blank'></a>
+            </div>
         </el-form>
         <!-- 选中空位 -->
         <el-form label-width="auto" v-if="currentInfo.type === '0-1'">
@@ -435,10 +437,12 @@ export default {
                 errorMessage(error)
             })
         }
-
+        const A_Tag_Ref = ref(null)
         // 点击预约 跳转 OA 
         function handleClickJumpOA(){
-            window.location.assign("https://www.baidu.com")
+            if(is_curentMeeting_active.value === false){
+                A_Tag_Ref.value.click()
+            }
         }
         return {
             AllArea,
@@ -456,7 +460,8 @@ export default {
             MeetingRoomName,
             MeetingRoomRef,
             is_have_MeetingHistory,
-            handleClickJumpOA
+            handleClickJumpOA,
+            A_Tag_Ref
         }
     }
 }

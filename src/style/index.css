@@ -82,6 +82,13 @@ body {
   color: #fff;
   cursor: pointer;
 }
+.drawer .el-drawer__body .make-btn button.disable {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.drawer .el-drawer__body .make-btn a {
+  display: none;
+}
 .drawer-mask {
   position: unset!important;
 }
