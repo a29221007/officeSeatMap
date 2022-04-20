@@ -73,7 +73,7 @@ export default {
             if(searchValue.value){
                 // 如果不为空
                 totalList = store.state.PersontFixedAssetsList.FixedChildList.filter(item => {
-                    return (item.FixedCode && (item.FixedCode + '').includes(searchValue.value)) || (item.FixedName && item.FixedName.toUpperCase().includes(searchValue.value.toUpperCase()))
+                    return (item.FixedCode && (item.FixedCode + '').includes(searchValue.value)) || (item.FixedName && (item.FixedName + '').toUpperCase().includes(searchValue.value.toUpperCase()))
                 })
                 if(totalList.length === 0){
                     message = '无匹配项'

@@ -51,7 +51,7 @@ export default {
                 array = prop.MeetingRoomHistoryList
             }else{
                 array = prop.MeetingRoomHistoryList.filter(item => {
-                    return (item.USERNAME && item.USERNAME.toUpperCase().includes(searchInput.value.toUpperCase())) || (item.Title && item.Title.toUpperCase().includes(searchInput.value.toUpperCase()))
+                    return (item.USERNAME && (item.USERNAME + '').toUpperCase().includes(searchInput.value.toUpperCase())) || (item.Title && (item.Title + '').toUpperCase().includes(searchInput.value.toUpperCase()))
                 })
             }
             return array.slice((pagination.currentPage-1)*pagination.pageSize,pagination.currentPage*pagination.pageSize)

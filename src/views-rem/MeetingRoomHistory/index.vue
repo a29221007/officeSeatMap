@@ -68,7 +68,7 @@ export default {
             if(searchValue.value){
                 // 如果不为空
                 totalList = sortMeetingList(store.state.activeInfo.HistoryList.filter(item => {
-                    return (item.USERNAME && item.USERNAME.toUpperCase().includes(searchValue.value.toUpperCase())) || (item.Title && item.Title.toUpperCase().includes(searchValue.value.toUpperCase()))
+                    return (item.USERNAME && (item.USERNAME + '').toUpperCase().includes(searchValue.value.toUpperCase())) || (item.Title && (item.Title + '').toUpperCase().includes(searchValue.value.toUpperCase()))
                 }))
                 if(totalList.length === 0){
                     message = '无匹配项'

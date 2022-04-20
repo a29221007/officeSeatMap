@@ -227,6 +227,7 @@ export default {
             // scaley: MapContainerRef盒子的实际高度 / MapContainerRef运来盒子的高度
             let scalex = (obj.width * 0.625) / 1200
             let scaley = (obj.height * 0.872) / 845
+            // 判断两个缩放系数的差值大小，如果两个比例差值的绝对值大于0.2，则将大比例的值设置为 小比例的 加 0.2
             MapBoxRef.value.style.transform = `scale(${scalex},${scaley})`
             store.commit('setScale',[scalex,scaley])
         })
