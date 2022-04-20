@@ -1,6 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
+    // 首页
+    // {
+    //     path: '/',
+    //     name: 'App',
+    //     meta:{
+    //         keepAlive:false,
+    //         title:'加载中'
+    //     },
+    //     component: () => import(/* webpackChunkName: "home" */ '@/App.vue'),
+    // },
     // 登录
     {
         path: '/login',
@@ -11,7 +21,7 @@ const routes = [
         },
         component: () => import(/* webpackChunkName: "home" */ '@/login'),
     },
-    // 首页
+    // 主页
     {
         path: '/home',
         name: 'home',
@@ -59,7 +69,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-    document.title = to.meta.title
+    document.title = to.meta.title || '加载中'
 })
 
 export default router

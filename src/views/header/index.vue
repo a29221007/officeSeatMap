@@ -111,7 +111,7 @@ import FixedAssets from '../compontent/FixedAssets'
 import MeetingRoom from '../compontent/meetingRoom'
 
 // 导入与企业微信通讯相关的接口
-import { getAccessToken, getLaunchCode } from '@/api/jumpWX.js'
+import { getLaunchCode } from '@/api/jumpWX.js'
 
 // 导入对会议室排序的公共方法
 import sortMeetingList from '@/views-rem/hook/sortArray.js'
@@ -342,19 +342,15 @@ export default {
             handleClickJumpWX(USERID){
                 if(!is_curentMeeting_active.value) return
                 // 然后执行跳转的逻辑
-                // 1、先获取企业微信应用的AccessToken凭证
-                getAccessToken().then((res) => {
-                    if(res.code !== 0) return errorMessage(res.message)
-                    const obj = {
-                        "operator_userid":store.state.UserInfo.userid,
-                        "single_chat":{
-                            "userid":USERID
-                        }
+                // 1、获取 launch_code
+                const obj = {
+                    operator_userid:store.state.UserInfo.userid,
+                    single_chat:{
+                        userid:USERID
                     }
-                    // 2、获取 launch_code
-                    return getLaunchCode(res.data,obj)
-                }).then( res => {
-                    if(res.errcode !== 0) return errorMessage(res.errmsg)
+                }
+                getLaunchCode(obj).then( res => {
+                    if(res.err !== 0) return errorMessage(res.msg)
                     // 3、跳转到企业微信新个人对话窗口
                     window.location.href = 'wxwork://launch?launch_code=' + res.launch_code
                 })

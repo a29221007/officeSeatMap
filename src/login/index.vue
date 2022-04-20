@@ -7,9 +7,9 @@ import { login } from '@/api/login.js'
 export default {
     name:'login',
     setup(){
-        // login().then(res => {
-        //     window.location.href = res.data
-        // })
+        login().then(res => {
+            window.location.href = res.data
+        })
     }
 }
 </script>

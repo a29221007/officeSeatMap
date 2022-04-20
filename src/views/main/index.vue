@@ -152,7 +152,6 @@ export default {
                 is_show_tooltip.value = false
                 tooltipText.value = ''
             }
-            
         })
         // MapBoxRef盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
