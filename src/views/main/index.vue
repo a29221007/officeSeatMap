@@ -227,7 +227,11 @@ export default {
             // scaley: MapContainerRef盒子的实际高度 / MapContainerRef运来盒子的高度
             let scalex = (obj.width * 0.625) / 1200
             let scaley = (obj.height * 0.872) / 845
-            // 判断两个缩放系数的差值大小，如果两个比例差值的绝对值大于0.2，则将大比例的值设置为 小比例的 加 0.2
+            // 判断两个缩放系数的差值大小，如果两个比例差值的绝对值大于0.2，则将 scalex 和 scaley 值以最小的为准
+            if(Math.abs(scalex - scaley) > 0.2){
+                scalex = Math.min(scalex,scaley)
+                scaley = Math.min(scalex,scaley)
+            }
             MapBoxRef.value.style.transform = `scale(${scalex},${scaley})`
             store.commit('setScale',[scalex,scaley])
         })
@@ -287,10 +291,13 @@ export default {
         let sacleX = 1
         let sacleY = 1
         // 监听切换楼层或者切换图例时发布的自定义事件initScale，将此时的缩放系数与缩放时的缩放系数同步
-        emitter.on('initScale', () => {
+        emitter.on('initScale', (value) => {
             sacleX = store.state.scale[0]
             sacleY = store.state.scale[1]
+            // 将座位和区域高亮取消
+            if(value) return // 如果value有值，则return出去，不取消高亮状态
             seatData.current = 0
+            seatData.currentAreaCode = ''
         })
         // 地图放大的
         function MapBoxAmplification (number){

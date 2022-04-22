@@ -4,7 +4,7 @@
 import emitter from '@/views/eventbus.js'
 // 导入vuex
 import store from '../store'
-// value 参数用来区分是回复页面的逻辑，还是切换楼层、图例的逻辑
+// value 参数用来区分是恢复页面的逻辑，还是切换楼层、图例的逻辑
 function initMap(value) {
     // 获取地图盒子
     let MapBox = document.querySelector('.map-box')
@@ -14,10 +14,9 @@ function initMap(value) {
     MapBox.style.left = 'unset'
     MapBox.style.transformOrigin = `50% 50%`
     MapBox.style.transform = `scale(${store.state.scale[0]},${store.state.scale[1]})`
-    if(value) return
-    emitter.emit('initScale')
-    emitter.emit('activeArea',{
-        code:'',
-    })
+    emitter.emit('initScale',value)
+    // emitter.emit('activeArea',{
+    //     code:'',
+    // })
 }
 export default initMap

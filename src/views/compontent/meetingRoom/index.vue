@@ -1,5 +1,5 @@
 <template>
-    <el-dialog custom-class='meetingRoom_dialog' v-model="meetingRoom_dialog" :title="MeetingRoomName + ' - 会议室预定预约记录' " :close-on-click-modal='false' draggable width="55%" top='8vh'>
+    <el-dialog custom-class='meetingRoom_dialog' v-model="meetingRoom_dialog" :title="MeetingRoomName + ' - 会议室预定预约记录' " :close-on-click-modal='false' draggable width="55%" top='8vh' v-on:closed='handleClosedDialog'>
         <div class="inputBox">
             <el-input v-model="searchValue" placeholder="会议主题、预订人" clearable :prefix-icon="Search" v-on:change="handleClickSearch" v-on:clear='handleClickSearch' />
             <button v-on:click="handleClickSearch">查 询</button>
@@ -83,6 +83,11 @@ export default {
         function handleClickSearch(){
             searchInput.value = searchValue.value
         }
+        // 关闭弹框后触发的函数
+        function handleClosedDialog(){
+            searchInput.value = ''
+            searchValue.value = ''
+        }
         return {
             meetingRoom_dialog,
             setMeetingRoom_dialog,
@@ -90,7 +95,8 @@ export default {
             MeetingRoomHistoryList_pagination,
             Search,
             searchValue,
-            handleClickSearch
+            handleClickSearch,
+            handleClosedDialog
         }
     }
 }

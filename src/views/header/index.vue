@@ -71,7 +71,7 @@
             <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
             <div class="make-btn">
                 <button :class="{'disable':is_curentMeeting_active}" type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button>
-                <a ref="A_Tag_Ref" :href='`http://testoa.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${$store.state.UserInfo.usercode}&clickid=meeting`' target='_blank'></a>
+                <a ref="A_Tag_Ref" :href='`https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${$store.state.UserInfo.usercode}&clickid=meeting`' target='_blank'></a>
             </div>
         </el-form>
         <!-- 选中空位 -->
