@@ -150,6 +150,7 @@ export default {
         }
         .van-search{
             padding: 5px 6px;
+            flex: 1;
             /deep/.van-search__content{
                 background-color: #fff;
                 padding-left:0;

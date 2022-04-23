@@ -35,7 +35,6 @@ export default{
         if(searchObj.state && searchObj.code){
             // 如果有这两个参数,则用 code 请求接口，返回用户个人信息
             getUserInfo(searchObj.code).then((res) => {
-                console.log('res',res)
                 if(res.code !== 0) {
                     return alert('登录失败，请重新进入或联系相关负责人')
                 }

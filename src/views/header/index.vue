@@ -50,6 +50,7 @@
             <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
             <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
             <el-form-item label="个人固定资产信息："><el-button type="text" v-on:click="handleClickAssetsMessage(currentInfo.id)">查看</el-button></el-form-item>
+            <button type="button" v-on:click="handleClickJumpOA">预约</button>
         </el-form>
         <!-- 选中资产座位 -->
         <el-form label-width="auto" v-if="currentInfo.type === '0-2'">
@@ -70,7 +71,7 @@
             <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
             <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
             <div class="make-btn">
-                <button :class="{'disable':is_curentMeeting_active}" type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button>
+                <!-- <button :class="{'disable':is_curentMeeting_active}" type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button> -->
                 <a ref="A_Tag_Ref" :href='`https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${$store.state.UserInfo.usercode}&clickid=meeting`' target='_blank'></a>
             </div>
         </el-form>
@@ -88,7 +89,7 @@
 </template>
 
 <script>
-import {ref, reactive, toRefs, nextTick, onMounted, inject} from 'vue'
+import {ref, reactive, toRefs, nextTick, onMounted, inject, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 import { ElMessageBox } from 'element-plus'
 // 导入消息提示框组件
@@ -123,6 +124,7 @@ export default {
         FixedAssets,MeetingRoom
     },
     setup(){
+        const { proxy } = getCurrentInstance()
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
         const headerContainerRef = ref(null)
@@ -440,9 +442,19 @@ export default {
         const A_Tag_Ref = ref(null)
         // 点击预约 跳转 OA 
         function handleClickJumpOA(){
-            if(is_curentMeeting_active.value === false){
-                A_Tag_Ref.value.click()
-            }
+            proxy.WX.invoke('openDefaultBrowser', {
+                // 'url': `https://open.weixin.qq.com/connect/oauth2/authorize?appid=CORPID&redirect_uri=https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting&response_type=code&scope=SCOPE&agentid=AGENTID&state=STATE#wechat_redirect`, // 在默认浏览器打开redirect_uri，并附加code参数；也可以直接指定要打开的url，此时不会附带上 code 参数。
+                'url': "https://www.baidu.com"
+            }, function(res){
+                console.log('打开外部浏览器函数的回调参数',res)
+                if(res.err_msg != "openDefaultBrowser:ok"){
+                    //错误处理
+                }
+            })
+            // if(is_curentMeeting_active.value === false){
+            //     console.log(222)
+            //     // A_Tag_Ref.value.click()
+            // }
         }
         return {
             AllArea,

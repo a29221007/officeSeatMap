@@ -1,4 +1,9 @@
 <template>
+    <br>
+    <button type="button" v-on:click="handleQR">扫码</button>
+    <br>
+    <br>
+    <br>
     <!-- 设置一个版心容器，里面放地图 -->
     <div ref="BodyContainerRef" v-on:click="handleClickMap" class="body-container">
         <!-- 中间用标准流布局展示地图 -->
@@ -55,7 +60,7 @@
 </template>
 
 <script>
-import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, watch, onBeforeMount} from 'vue'
+import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, watch, onBeforeMount, getCurrentInstance} from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import AlloyFinger from 'alloyfinger'
@@ -83,6 +88,7 @@ export default {
         BottomBox
     },
     setup(){
+        const { proxy } = getCurrentInstance()
         // 获取vuex实例
         const store = useStore()
         const router = useRouter()
@@ -544,6 +550,24 @@ export default {
             clearTimeout(timer1)
             clearTimeout(timer2)
         })
+        // 点击扫码按钮
+        function handleQR(){
+            proxy.WX.scanQRCode({
+                desc: 'scanQRCode desc',
+                needResult: 0, // 默认为0，扫描结果由企业微信处理，1则直接返回扫描结果，
+                scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是条形码（一维码），默认二者都有
+                success: function(res) {
+                    // 回调
+                    var result = res.resultStr;//当needResult为1时返回处理结果
+                },
+                error: function(res) {
+                    console.log(res)
+                    if (res.errMsg.indexOf('function_not_exist') > 0) {
+                        alert('版本过低请升级')
+                    }
+                }
+            })
+        }
         return {
             ...toRefs(seatData),
             MapBoxStyle,
@@ -551,6 +575,7 @@ export default {
             BodyContainerRef,
             handleClickMap,
             BottomBoxRef,
+            handleQR
         }
     }
 }
