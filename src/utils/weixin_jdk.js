@@ -5,6 +5,7 @@ import { getQrConfig } from '@/api/jumpWX.js'
 
 // 首先要获取当前页面的url
 const url = window.location.href
+console.log('url',url)
 getQrConfig(url).then(res => {
     const { appId, timestamp, nonceStr, signature } = res.data
     wx.config({beta: true, debug: true, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })

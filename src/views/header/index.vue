@@ -118,13 +118,15 @@ import { getLaunchCode } from '@/api/jumpWX.js'
 
 // 导入对会议室排序的公共方法
 import sortMeetingList from '@/views-rem/hook/sortArray.js'
+// 导入 wx
+import wx from '@/utils/weixin_jdk.js'
 export default {
     name:'Header',
     components:{
         FixedAssets,MeetingRoom
     },
     setup(){
-        const { proxy } = getCurrentInstance()
+        // const { proxy } = getCurrentInstance()
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
         const headerContainerRef = ref(null)
@@ -442,14 +444,14 @@ export default {
         const A_Tag_Ref = ref(null)
         // 点击预约 跳转 OA 
         function handleClickJumpOA(){
-            
-            proxy.WX.invoke('openDefaultBrowser', {
+            wx.invoke('openDefaultBrowser', {
                 // 'url': `https://open.weixin.qq.com/connect/oauth2/authorize?appid=CORPID&redirect_uri=https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting&response_type=code&scope=SCOPE&agentid=AGENTID&state=STATE#wechat_redirect`, // 在默认浏览器打开redirect_uri，并附加code参数；也可以直接指定要打开的url，此时不会附带上 code 参数。
                 'url': "https://www.baidu.com"
             }, function(res){
                 console.log('打开外部浏览器函数的回调参数',res)
                 if(res.err_msg != "openDefaultBrowser:ok"){
                     //错误处理
+                    console.log('打开外部浏览器错误',res)
                 }
             })
             // if(is_curentMeeting_active.value === false){
