@@ -9,7 +9,5 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
 import './utils/flexible.js'
 import { Search, List, Cell, Icon } from 'vant'
-// import wx from './utils/weixin_jdk.js'
 const app = createApp(App)
-// app.config.globalProperties.WX = wx
 app.use(router).use(store).use(ElementPlus,{ locale: zhCn }).use(Search).use(List).use(Cell).use(Icon).mount('#app')

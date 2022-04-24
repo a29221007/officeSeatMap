@@ -118,10 +118,6 @@ import { getLaunchCode } from '@/api/jumpWX.js'
 
 // 导入对会议室排序的公共方法
 import sortMeetingList from '@/views-rem/hook/sortArray.js'
-// 导入 wx
-// import wx from '@/utils/weixin_jdk.js'
-// 导入微信jdk
-import wx from "weixin-js-sdk"
 // 导入获取配置项的api
 import { getQrConfig } from '@/api/jumpWX.js'
 export default {
@@ -133,10 +129,26 @@ export default {
         onBeforeMount(() => {
             // 首先要获取当前页面的url
             const url = window.location.href
-            console.log('url',url)
             getQrConfig(url).then(res => {
                 const { appId, timestamp, nonceStr, signature } = res.data
                 wx.config({beta: true, debug: true, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
+                wx.agentConfig({
+                    corpid: 'wwf52dc03299bc0260', // 必填，企业微信的corpid，必须与当前登录的企业一致
+                    agentid: '1000022', // 必填，企业微信的应用id （e.g. 1000247）
+                    timestamp, // 必填，生成签名的时间戳
+                    nonceStr, // 必填，生成签名的随机串
+                    signature,// 必填，签名，见附录-JS-SDK使用权限签名算法
+                    jsApiList: ['openDefaultBrowser'], //必填，传入需要使用的接口名称
+                    success: function(res) {
+                        console.log('配置agentConfig',res)
+                        // 回调
+                    },
+                    fail: function(res) {
+                        if(res.errMsg.indexOf('function not exist') > -1){
+                            alert('版本过低请升级')
+                        }
+                    }
+                });
             })
             wx.ready(function(){
                 console.log('配置成功');
@@ -148,7 +160,6 @@ export default {
                 // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
             })
         })
-        // const { proxy } = getCurrentInstance()
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
         const headerContainerRef = ref(null)
@@ -467,10 +478,9 @@ export default {
         // 点击预约 跳转 OA 
         function handleClickJumpOA(){
             wx.invoke('openDefaultBrowser', {
-                // 'url': `https://open.weixin.qq.com/connect/oauth2/authorize?appid=CORPID&redirect_uri=https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting&response_type=code&scope=SCOPE&agentid=AGENTID&state=STATE#wechat_redirect`, // 在默认浏览器打开redirect_uri，并附加code参数；也可以直接指定要打开的url，此时不会附带上 code 参数。
-                'url': "https://www.baidu.com"
+                // 'url': "https://open.weixin.qq.com/connect/oauth2/authorize?appid=CORPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&agentid=AGENTID&state=STATE#wechat_redirect" // 在默认浏览器打开redirect_uri，并附加code参数；也可以直接指定要打开的url，此时不会附带上 code 参数。
+                'url': 'https://www.baidu.com/'
             }, function(res){
-                console.log('打开外部浏览器函数的回调参数',res)
                 if(res.err_msg != "openDefaultBrowser:ok"){
                     //错误处理
                     console.log('打开外部浏览器错误',res)

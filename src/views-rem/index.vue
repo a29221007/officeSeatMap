@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, watch, onBeforeMount, getCurrentInstance} from 'vue'
+import {ref, computed, toRefs, reactive, onMounted, provide, onBeforeUnmount, nextTick, watch, onBeforeMount} from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import AlloyFinger from 'alloyfinger'
@@ -82,10 +82,7 @@ import { getMeeting } from '@/api/getMeeting.js'
 
 // 导入对会议室排序的公共方法
 import sortMeetingList from '@/views-rem/hook/sortArray.js'
-// 导入 wx
-// import wx from '@/utils/weixin_jdk.js'
-// 导入微信jdk
-import wx from "weixin-js-sdk"
+
 // 导入获取配置项的api
 import { getQrConfig } from '@/api/jumpWX.js'
 export default {
@@ -94,7 +91,6 @@ export default {
         BottomBox
     },
     setup(){
-        const { proxy } = getCurrentInstance()
         // 获取vuex实例
         const store = useStore()
         const router = useRouter()
@@ -198,7 +194,7 @@ export default {
                 wx.config({beta: true, debug: true, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
             })
             wx.ready(function(){
-                console.log('配置成功');
+                console.log('配置成功')
                 
                 // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
             })
@@ -576,7 +572,7 @@ export default {
         function handleQR(){
             wx.scanQRCode({
                 desc: 'scanQRCode desc',
-                needResult: 0, // 默认为0，扫描结果由企业微信处理，1则直接返回扫描结果，
+                needResult: 1, // 默认为0，扫描结果由企业微信处理，1则直接返回扫描结果，
                 scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是条形码（一维码），默认二者都有
                 success: function(res) {
                     console.log(res)
