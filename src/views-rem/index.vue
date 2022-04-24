@@ -552,11 +552,13 @@ export default {
         })
         // 点击扫码按钮
         function handleQR(){
+            
             proxy.WX.scanQRCode({
                 desc: 'scanQRCode desc',
                 needResult: 0, // 默认为0，扫描结果由企业微信处理，1则直接返回扫描结果，
                 scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是条形码（一维码），默认二者都有
                 success: function(res) {
+                    console.log(res)
                     // 回调
                     var result = res.resultStr;//当needResult为1时返回处理结果
                 },

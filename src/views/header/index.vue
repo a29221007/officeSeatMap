@@ -442,6 +442,7 @@ export default {
         const A_Tag_Ref = ref(null)
         // 点击预约 跳转 OA 
         function handleClickJumpOA(){
+            
             proxy.WX.invoke('openDefaultBrowser', {
                 // 'url': `https://open.weixin.qq.com/connect/oauth2/authorize?appid=CORPID&redirect_uri=https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting&response_type=code&scope=SCOPE&agentid=AGENTID&state=STATE#wechat_redirect`, // 在默认浏览器打开redirect_uri，并附加code参数；也可以直接指定要打开的url，此时不会附带上 code 参数。
                 'url': "https://www.baidu.com"
