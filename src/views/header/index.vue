@@ -50,7 +50,6 @@
             <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
             <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
             <el-form-item label="个人固定资产信息："><el-button type="text" v-on:click="handleClickAssetsMessage(currentInfo.id)">查看</el-button></el-form-item>
-            <button type="button" v-on:click="handleClickJumpOA">预约</button>
         </el-form>
         <!-- 选中资产座位 -->
         <el-form label-width="auto" v-if="currentInfo.type === '0-2'">
@@ -71,8 +70,7 @@
             <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
             <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
             <div class="make-btn">
-                <!-- <button :class="{'disable':is_curentMeeting_active}" type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button> -->
-                <a ref="A_Tag_Ref" :href='`https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${$store.state.UserInfo.usercode}&clickid=meeting`' target='_blank'></a>
+                <button :class="{'disable':is_curentMeeting_active}" type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button>
             </div>
         </el-form>
         <!-- 选中空位 -->
@@ -89,9 +87,9 @@
 </template>
 
 <script>
-import {ref, reactive, toRefs, nextTick, onMounted, inject, getCurrentInstance, onBeforeMount } from 'vue'
+import {ref, reactive, toRefs, nextTick, onMounted, inject, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox,ElLoading } from 'element-plus'
 // 导入消息提示框组件
 import { successMessage, infoMessage, errorMessage } from '@/utils/message.js'
 // 导入事件中心
@@ -114,50 +112,43 @@ import FixedAssets from '../compontent/FixedAssets'
 import MeetingRoom from '../compontent/meetingRoom'
 
 // 导入与企业微信通讯相关的接口
-import { getLaunchCode } from '@/api/jumpWX.js'
+import { getLaunchCode, getAgentConfig, getQrConfig } from '@/api/jumpWX.js'
 
 // 导入对会议室排序的公共方法
 import sortMeetingList from '@/views-rem/hook/sortArray.js'
-// 导入获取配置项的api
-import { getQrConfig } from '@/api/jumpWX.js'
 export default {
     name:'Header',
     components:{
         FixedAssets,MeetingRoom
     },
     setup(){
+        // 判断当前的版本 agentConfig 配置是否成功
+        const is_agentConfig_success = true
         onBeforeMount(() => {
             // 首先要获取当前页面的url
             const url = window.location.href
             getQrConfig(url).then(res => {
                 const { appId, timestamp, nonceStr, signature } = res.data
-                wx.config({beta: true, debug: true, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
-                wx.agentConfig({
-                    corpid: 'wwf52dc03299bc0260', // 必填，企业微信的corpid，必须与当前登录的企业一致
-                    agentid: '1000022', // 必填，企业微信的应用id （e.g. 1000247）
-                    timestamp, // 必填，生成签名的时间戳
-                    nonceStr, // 必填，生成签名的随机串
-                    signature,// 必填，签名，见附录-JS-SDK使用权限签名算法
-                    jsApiList: ['openDefaultBrowser'], //必填，传入需要使用的接口名称
-                    success: function(res) {
-                        console.log('配置agentConfig',res)
-                        // 回调
-                    },
-                    fail: function(res) {
-                        if(res.errMsg.indexOf('function not exist') > -1){
-                            alert('版本过低请升级')
+                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
+            }).then(() => {
+                getAgentConfig(url).then(res => {
+                    const { timestamp, nonceStr, signature } = res.data
+                    wx.agentConfig({
+                        corpid: 'wwf52dc03299bc0260', // 必填，企业微信的corpid，必须与当前登录的企业一致
+                        agentid: '1000022', // 必填，企业微信的应用id （e.g. 1000247）
+                        timestamp, // 必填，生成签名的时间戳
+                        nonceStr, // 必填，生成签名的随机串
+                        signature,// 必填，签名，见附录-JS-SDK使用权限签名算法
+                        jsApiList: ['openDefaultBrowser'], //必填，传入需要使用的接口名称
+                        fail: function(res) {
+                            if(res.errMsg.indexOf('function not exist') > -1){
+                                return errorMessage('版本过低请升级')
+                            }
+                            is_agentConfig_success = false
+                            errorMessage(res.errMsg)
                         }
-                    }
-                });
-            })
-            wx.ready(function(){
-                console.log('配置成功');
-                
-                // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
-            })
-            wx.error(function(res){
-                console.log('config配置错误',res)
-                // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+                    })
+                })
             })
         })
         // 获取浏览器可视区宽高的依赖注入
@@ -380,6 +371,11 @@ export default {
             // 点击当前预约人，跳转到企业微信个人聊天窗口
             handleClickJumpWX(USERID){
                 if(!is_curentMeeting_active.value) return
+                const loading = ElLoading.service({
+                    lock: true,
+                    text: '跳转中请稍等',
+                    background: 'rgba(0, 0, 0, 0.7)',
+                })
                 // 然后执行跳转的逻辑
                 // 1、获取 launch_code
                 const obj = {
@@ -389,6 +385,7 @@ export default {
                     }
                 }
                 getLaunchCode(obj).then( res => {
+                    loading.close()
                     if(res.err !== 0) return errorMessage(res.msg)
                     // 3、跳转到企业微信新个人对话窗口
                     window.location.href = 'wxwork://launch?launch_code=' + res.launch_code
@@ -474,22 +471,22 @@ export default {
                 errorMessage(error)
             })
         }
-        const A_Tag_Ref = ref(null)
         // 点击预约 跳转 OA 
         function handleClickJumpOA(){
-            wx.invoke('openDefaultBrowser', {
-                // 'url': "https://open.weixin.qq.com/connect/oauth2/authorize?appid=CORPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&agentid=AGENTID&state=STATE#wechat_redirect" // 在默认浏览器打开redirect_uri，并附加code参数；也可以直接指定要打开的url，此时不会附带上 code 参数。
-                'url': 'https://www.baidu.com/'
-            }, function(res){
-                if(res.err_msg != "openDefaultBrowser:ok"){
-                    //错误处理
-                    console.log('打开外部浏览器错误',res)
-                }
-            })
-            // if(is_curentMeeting_active.value === false){
-            //     console.log(222)
-            //     // A_Tag_Ref.value.click()
-            // }
+            if(is_curentMeeting_active.value === false){
+                if(!is_agentConfig_success) return errorMessage('当前企业微信版本太低或者agentConfig配置失败，请确认！')
+                const loading = ElLoading.service({
+                    lock: true,
+                    text: '跳转中请稍等',
+                    background: 'rgba(0, 0, 0, 0.7)',
+                })
+                wx.invoke('openDefaultBrowser', {
+                    'url': `https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`
+                }, function(res){
+                    loading.close()
+                    if(res.err_msg != "openDefaultBrowser:ok") errorMessage('跳转失败，请重试')
+                })
+            }
         }
         return {
             AllArea,
@@ -508,7 +505,6 @@ export default {
             MeetingRoomRef,
             is_have_MeetingHistory,
             handleClickJumpOA,
-            A_Tag_Ref
         }
     }
 }

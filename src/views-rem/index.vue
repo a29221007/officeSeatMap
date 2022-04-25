@@ -83,8 +83,10 @@ import { getMeeting } from '@/api/getMeeting.js'
 // 导入对会议室排序的公共方法
 import sortMeetingList from '@/views-rem/hook/sortArray.js'
 
-// 导入获取配置项的api
+// 导入获取微信配置项的api
 import { getQrConfig } from '@/api/jumpWX.js'
+// 导入根据条形码获取固资信息的api
+import { getAssetInfoByQR } from '@/api/getAssetInfo.js'
 export default {
     name:'MHome',
     components:{
@@ -115,18 +117,19 @@ export default {
         // 定义一个定时器，防止
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
-                // // 3、根据 url 中的参数跳转到对应区域
-                // // 3.1 获取url中的参数
-                // let requestSearch = window.location.search
-                // // 3.2 判断是否有参数
-                // if(!requestSearch) return endToast() // 没有参数说明不是扫码进的项目,则不执行后续的逻辑,并关闭加载提示框
-                // let requestSearchArray = requestSearch.slice(1).split('&')
-                // let requestSearchObj = {}
-                // requestSearchArray.forEach(item => {
-                //     requestSearchObj[item.split('=')[0]] = item.split('=')[1]
-                // })
                 let requestSearchObj = store.state.scanQRcodeObject
+                scanCodeFn(requestSearchObj)
+                // 判断当前用户的操作权限(暂时编辑按钮也隐藏起来了，暂时这个接口先不调了)
+                // sendCode(requestSearchObj.code).then((res) => {
+                //     console.log(res)
+                //     if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
+                //     store.commit('setIs_have_editor',res.data.u)
+                // })
                 // 判断如果 requestSearchObj 为空对象，则说明不是扫码跳转的，不执行后续的逻辑，停止加载提示
+            }
+        })
+        // 将扫码后跳转的逻辑封装
+        function scanCodeFn(requestSearchObj){
                 if(Object.keys(requestSearchObj).length === 0) return endToast()
                 // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
                 const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
@@ -156,51 +159,39 @@ export default {
                     return beginToast('fail','没有找到相关的座位或区域',2000)
                 }
                 
-                // 判断当前用户的操作权限(暂时编辑按钮也隐藏起来了，暂时这个接口先不掉了)
-                // sendCode(requestSearchObj.code).then((res) => {
-                //     console.log(res)
-                //     if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
-                //     store.commit('setIs_have_editor',res.data.u)
-                // })
+                
                 // 3.7 根据当前的类型，调用不同的高亮函数
                 nextTick(() => {
-                    if(requestSearchObj.type == 1 && item.type === '0'){
+                    if(requestSearchObj.type == 1){
                         store.commit('setActiveInfo',item)
+                        // 每一次扫码之前确定上一次有没有高亮做动画的元素
+                        beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
+                        beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
                         // 如果为座位
                         seatData.setCurrentSeat_id(item.seat_id)
                         // 调用座位高亮的函数
                         searchSeat(item.seat_id)
                         BottomBoxRef.value.setSearchLegendContant('information')
+                        if(item.type !== '0') return
                         // 调用获取个人固资列表的函数
                         store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,v_usercode:store.state.UserInfo.usercode})
                     }else if(requestSearchObj.type == 2 && item.type === 1){
-                        // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行)
+                        // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行，此时定义的 'push',意思是要跳转)
 
                         getMeetingData(item,'push')
                     }
                     // 如果是扫码跳转进来的最后要关闭提示框
                     endToast()
                 })
-            }
-        })
+        }
         // onBeforeMount 中开启加载提示
         onBeforeMount(() => {
             beginToast('loading','加载中',0)
             // 首先要获取当前页面的url
             const url = window.location.href
-            console.log('url',url)
             getQrConfig(url).then(res => {
                 const { appId, timestamp, nonceStr, signature } = res.data
-                wx.config({beta: true, debug: true, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
-            })
-            wx.ready(function(){
-                console.log('配置成功')
-                
-                // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
-            })
-            wx.error(function(res){
-                console.log('config配置错误',res)
-                // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+                wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
             })
         })
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
@@ -541,7 +532,7 @@ export default {
                 })
                 BottomBoxRef.value.setSearchLegendContant('information')
                 if(!scaling) MapBoxTapFn()
-                beginToast('fail', '查询失败', 2000)
+                beginToast('fail', '查询失败' + error, 2000)
             })
         }
         // 向子组件传递 switchFloor 事件，在切换图例时，也要触发该事件，将高亮的座位和区域重置
@@ -570,23 +561,61 @@ export default {
         })
         // 点击扫码按钮
         function handleQR(){
+            // 点击扫码开始提示
+            beginToast('loading','加载中',0)
             wx.scanQRCode({
                 desc: 'scanQRCode desc',
                 needResult: 1, // 默认为0，扫描结果由企业微信处理，1则直接返回扫描结果，
                 scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是条形码（一维码），默认二者都有
                 success: function(res) {
-                    console.log(res)
-                    // 回调
-                    var result = res.resultStr;//当needResult为1时返回处理结果
-                    console.log('result',result)
+                    var result = res.resultStr
+                    // 拿到扫码成功的结果后，判断扫描的是条形码还是二维码
+                    // 判断返回的字符串是否以 http 开头
+                    var is_url = result.startsWith('http')
+                    if(is_url){
+                        // 是一个 url 路径
+                        // 如果是扫二维码得到的连接，则截取连接中的 redirect_uri 字段值
+                        let obj1 = formatURL(result)
+                        let obj2 = formatURL(decodeURIComponent(obj1.redirect_uri + ''))
+                        // 如果走这个方法，则 关闭提示框函数调用在 这个 scanCodeFn 方法内
+                        scanCodeFn(obj2)
+                    }else{
+                        // 不是一个 url 路径
+                        // 则调接口获取固资信息
+                        getAssetInfoByQR({asset_code:result,v_usercode:store.state.UserInfo.usercode}).then( res => {
+                            // 如果扫条形码，扫描完成后，关闭提示框
+                            endToast()
+                            if(res.code !== 0) return beginToast('fail', res.message, 2000)
+                            console.log('固资信息',res.data)
+                        })
+                    }
                 },
                 error: function(res) {
-                    console.log('扫码错误',res)
+                    // 如果扫码失败，发生错误，则关闭提示框
+                    endToast()
                     if (res.errMsg.indexOf('function_not_exist') > 0) {
-                        alert('版本过低请升级')
+                        return beginToast('fail', '版本过低请升级', 2000)
                     }
+                    beginToast('fail', res.errMsg, 2000)
                 }
             })
+        }
+        function formatURL(url){
+            var searchObj = {}
+            // 找出 url 中的 ? 字符所在的位置
+            var index = url.indexOf('?')
+            if(index !== -1){
+                // 说明有参数，则格式化参数
+                var searchString = url.slice(index + 1) // 截取 ? 之后所有的字符
+                var searchArray = searchString.split('&') // 将字符串转化为数组
+                searchArray.forEach(item => {
+                    searchObj[item.split('=')[0]] = item.split('=')[1]
+                })
+            }else{
+                beginToast('fail', '链接中没有参数信息', 2000)
+                searchObj = ''
+            }
+            return searchObj
         }
         return {
             ...toRefs(seatData),

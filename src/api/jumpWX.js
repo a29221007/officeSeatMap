@@ -7,7 +7,12 @@ export const getLaunchCode = (params) => {
     return request('get/launchCode', 'post',params)
 }
 
-// 2、获取配置微信 jdk 时，用到的配置项
+// 2、获取微信的 config 配置参数 - 企业
 export const getQrConfig = (url) => {
     return request(`getQrConfig?url=${url}`, 'post')
+}
+
+// 3、获取微信的 agentConfig 配置参数 - 应用的
+export const getAgentConfig = (url) => {
+    return request(`get/app/config?url=${url}`, 'post')
 }

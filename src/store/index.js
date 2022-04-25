@@ -174,15 +174,18 @@ export default createStore({
                 errorMessage(error)
             }
         },
-        // 获取个人固资列表数据
+        // 获取个人固资列表数据(移动端)
         async getPersontFixedAssetsList(context,code) {
-            const res = await getFixedassets_Mobile(code)
-            
-            console.log('res',res)
-            if(res.code !== 0) return beginToast('fail', res.message, 2000)
-            context.commit('setPersontFixedAssetsList',res.data)
-            // 跳转到固资信息页面
-            router.push('/fixedAssets')
+            try{
+                const res = await getFixedassets_Mobile(code)
+                if(res.code !== 0) return beginToast('fail', res.message, 2000)
+                context.commit('setPersontFixedAssetsList',res.data)
+                // 跳转到固资信息页面
+                router.push('/fixedAssets')
+            }catch(error){
+                endToast()
+                errorMessage('获取个人固资失败',error)
+            }
         }
     },
     getters: {
