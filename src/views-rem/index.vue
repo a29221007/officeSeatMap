@@ -1,9 +1,4 @@
 <template>
-    <!-- <br>
-    <button type="button" v-on:click="handleQR">扫码</button>
-    <br>
-    <br>
-    <br> -->
     <!-- 设置一个版心容器，里面放地图 -->
     <div ref="BodyContainerRef" v-on:click="handleClickMap" class="body-container">
         <!-- 中间用标准流布局展示地图 -->
@@ -58,7 +53,7 @@
     <!-- 底部搜索相关组件 -->
     <BottomBox ref="BottomBoxRef" v-on:switchFloor="switchFloor"></BottomBox>
     <!-- 扫一扫按钮 -->
-    <Scan></Scan>
+    <Scan v-on:scanBarCode="handleQR"></Scan>
 </template>
 
 <script>
@@ -177,7 +172,7 @@ export default {
                         // 调用座位高亮的函数
                         searchSeat(item.seat_id)
                         BottomBoxRef.value.setSearchLegendContant('information')
-                        if(item.type !== '0') return
+                        if(item.type !== '0') return endToast()
                         // 调用获取个人固资列表的函数
                         store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,v_usercode:store.state.UserInfo.usercode})
                     }else if(requestSearchObj.type == 2 && item.type === 1){
@@ -564,15 +559,16 @@ export default {
             clearTimeout(timer1)
             clearTimeout(timer2)
         })
-        // 点击扫码按钮
+        // 监听子组件的扫码行为
         function handleQR(){
             // 点击扫码开始提示
-            beginToast('loading','加载中',0)
+            beginToast('success', '正在打开扫一扫。。。', 1500)
             wx.scanQRCode({
                 desc: 'scanQRCode desc',
                 needResult: 1, // 默认为0，扫描结果由企业微信处理，1则直接返回扫描结果，
                 scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是条形码（一维码），默认二者都有
                 success: function(res) {
+                    beginToast('loading','加载中',0)
                     var result = res.resultStr
                     // 拿到扫码成功的结果后，判断扫描的是条形码还是二维码
                     // 判断返回的字符串是否以 http 开头
@@ -596,13 +592,13 @@ export default {
                             // 跳转到固定资产信息展示页面
                             router.push('/BarCode')
                         }).catch((error) => {
+                            endToast()
                             beginToast('fail', '获取条形码信息失败' + error, 2000)
                         })
                     }
                 },
                 error: function(res) {
                     // 如果扫码失败，发生错误，则关闭提示框
-                    endToast()
                     if (res.errMsg.indexOf('function_not_exist') > 0) {
                         return beginToast('fail', '版本过低请升级', 2000)
                     }

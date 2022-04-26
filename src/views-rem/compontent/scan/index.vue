@@ -8,7 +8,7 @@
 import { onMounted } from 'vue'
 export default {
     name:'scan',
-    setup() {
+    setup(prop,{ emit }) {
         // 判断是点击还是移动
         let flag = 'click' // 默认是点击
         // 手指在元素内的坐标
@@ -19,6 +19,10 @@ export default {
         onMounted(() => {
             scan = document.querySelector('.scan')
         })
+        // 屏幕的宽度
+        let clientWidth = document.documentElement.clientWidth
+        // 屏幕的高度
+        let clientHeight = document.documentElement.clientHeight
         // 元素开始触摸事件
         function handleTouchstart(e) {
             // 开始触摸时，要记录手指在元素内的坐标
@@ -29,14 +33,37 @@ export default {
         }
         // 元素移动事件
         function handleTouchmove(e) {
+            // 计算出右边的最大值
+            const maxRightValue = clientWidth - scan.offsetWidth
+            // 计算出下面的最大值
+            const maxBottomValue = clientHeight - scan.offsetHeight
             // 如果发生了移动，则将 flag 设置为 'move'
             flag = 'move'
-            scan.style.left = e.targetTouches[0].pageX - touch_x + 'px'
-            scan.style.top = e.targetTouches[0].pageY - touch_y + 'px'
+            // 判断左右是否出界
+            if((e.targetTouches[0].pageX - touch_x) <= 0){
+                scan.style.left = 0
+            }else if((e.targetTouches[0].pageX - touch_x) >= maxRightValue){
+                scan.style.left = maxRightValue + 'px'
+            }else{
+                scan.style.left = e.targetTouches[0].pageX - touch_x + 'px'
+            }
+
+            // 判断上下是否出界
+            if((e.targetTouches[0].pageY - touch_y) <= 0){
+                scan.style.top = 0
+            }else if((e.targetTouches[0].pageY - touch_y) >= maxBottomValue){
+                scan.style.top = maxBottomValue + 'px'
+            }else{
+                scan.style.top = e.targetTouches[0].pageY - touch_y + 'px'
+            }
         }
         // 元素触摸结束事件
         function handleTouchend() {
-            console.log('flag',flag)
+            // 触摸结束时，判断事件类型
+            if(flag === 'click'){
+                // 如果是点击事件,向父组件传递扫码事件
+                emit('scanBarCode')
+            }
         }
         return {
             handleTouchstart,

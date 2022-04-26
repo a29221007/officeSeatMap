@@ -33,7 +33,7 @@
         </div>
         <!-- 固资列表 -->
         <van-list class="FixedAssetsList" v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onLoad">
-            <template v-if="list.length !== 0">
+            <template v-if="$store.state.PersontFixedAssetsList.FixedChildList.length !== 0">
                 <div class="list-item" v-for="item in list" :key="item.id">
                     <!-- 第一行 -->
                     <div>

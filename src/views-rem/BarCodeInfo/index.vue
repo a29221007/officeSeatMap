@@ -73,7 +73,6 @@ export default {
             align-items: baseline;
             .title{
                 flex: 1.7;
-                text-align: end;
                 font-size: .3763rem;
             }
             .content{
