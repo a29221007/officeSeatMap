@@ -61,6 +61,24 @@ const routes = [
         },
         component: () => import(/* webpackChunkName: "home" */ '@/views-rem/MeetingRoomHistory/meetingRoomFree'),
     },
+    {
+        path:'/BarCode',
+        name:'BarCode',
+        meta:{
+            keepAlive:false,
+            title:'固定资产信息'
+        },
+        component: () => import(/* webpackChunkName: "home" */ '@/views-rem/BarCodeInfo'),
+    },
+    {
+        path:'/BarCodeNoPermission',
+        name:'BarCodeNoPermission',
+        meta:{
+            keepAlive:false,
+            title:'固定资产信息'
+        },
+        component: () => import(/* webpackChunkName: "home" */ '@/views-rem/BarCodeInfo/BarCodeNoPermission'),
+    },
 ]
 
 const router = createRouter({

@@ -41,16 +41,18 @@ export default createStore({
         // 移动端可视区的高度
         ClentHeight: 0,
         // 当前用户是否有编辑的权限
-        is_have_editor:false, // 默认是false，没有编辑权限
+        is_have_editor: false, // 默认是false，没有编辑权限
         // 移动端的个人固资列表
-        PersontFixedAssetsList:getItem('PersontFixedAssetsList'),
+        PersontFixedAssetsList: getItem('PersontFixedAssetsList'),
 
         // 当前登录人的 code
         // 如果是通过OA平台进入的项目，需要设置这个 code
         // 如果是扫码进入的项目，也需要设置这个code
-        UserInfo:getItem('UserInfo'),
+        UserInfo: getItem('UserInfo'),
         // 扫码跳转时的楼层、类型、位置信息
-        scanQRcodeObject:getItem('scanQRcodeObject') || {}
+        scanQRcodeObject: getItem('scanQRcodeObject') || {},
+        // 扫条形码得到的数据（移动端）
+        scanBarcodeInfoObject: getItem('scanBarcodeInfoObject') || {}
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -131,6 +133,11 @@ export default createStore({
         setScanQRcodeObject(state, data){
             state.scanQRcodeObject = data
             setItem('scanQRcodeObject',state.scanQRcodeObject)
+        },
+        // 设置移动端扫条形码得到的数据
+        setScanBarcodeInfoObject(state, data){
+            state.scanBarcodeInfoObject = data
+            setItem('scanBarcodeInfoObject',state.scanBarcodeInfoObject)
         }
     },
     actions: {

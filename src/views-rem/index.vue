@@ -1,9 +1,9 @@
 <template>
-    <br>
+    <!-- <br>
     <button type="button" v-on:click="handleQR">扫码</button>
     <br>
     <br>
-    <br>
+    <br> -->
     <!-- 设置一个版心容器，里面放地图 -->
     <div ref="BodyContainerRef" v-on:click="handleClickMap" class="body-container">
         <!-- 中间用标准流布局展示地图 -->
@@ -57,6 +57,8 @@
     </div>
     <!-- 底部搜索相关组件 -->
     <BottomBox ref="BottomBoxRef" v-on:switchFloor="switchFloor"></BottomBox>
+    <!-- 扫一扫按钮 -->
+    <Scan></Scan>
 </template>
 
 <script>
@@ -66,6 +68,8 @@ import { useRouter } from 'vue-router'
 import AlloyFinger from 'alloyfinger'
 // 导入底部搜索组件
 import BottomBox from './compontent/bottomBox.vue'
+// 导入扫一扫子组件
+import Scan from './compontent/scan'
 
 // 导入发送code的接口
 import { sendCode } from '@/api/mobile.js'
@@ -90,7 +94,8 @@ import { getAssetInfoByQR } from '@/api/getAssetInfo.js'
 export default {
     name:'MHome',
     components:{
-        BottomBox
+        BottomBox,
+        Scan
     },
     setup(){
         // 获取vuex实例
@@ -585,8 +590,13 @@ export default {
                         getAssetInfoByQR({asset_code:result,v_usercode:store.state.UserInfo.usercode}).then( res => {
                             // 如果扫条形码，扫描完成后，关闭提示框
                             endToast()
-                            if(res.code !== 0) return beginToast('fail', res.message, 2000)
-                            console.log('固资信息',res.data)
+                            if(res.code !== 0) return router.push('/BarCodeNoPermission')
+                            // 保存扫码得到的数据
+                            store.commit('setScanBarcodeInfoObject', res.data)
+                            // 跳转到固定资产信息展示页面
+                            router.push('/BarCode')
+                        }).catch((error) => {
+                            beginToast('fail', '获取条形码信息失败' + error, 2000)
                         })
                     }
                 },
