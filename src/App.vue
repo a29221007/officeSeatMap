@@ -8,11 +8,11 @@
 </template>
 
 <script>
-// 调试工具
-// eruda.init()
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { getUserInfo } from '@/api/login.js'
+import eruda from 'eruda'
+eruda.init()
 export default{
     name: 'App',
     setup() {
