@@ -50,13 +50,15 @@ export default{
             }).catch(error => {
                 console.log('error',error)
             })
-        }else if(searchObj.usercode && searchObj.token && searchObj.time){
+        }else if(searchObj.OpenAddress && searchObj.usercode && searchObj.token && searchObj.time){
             // 如果有这三个参数，则说明是从 OA 进来的，要掉接口来获取用户信息
             getUserInfoFromOA(searchObj).then((res) => {
                 if(res.code !== 0) {
                     return alert('登录失败，请重新进入或联系相关负责人')
                 }
                 store.commit('setUserInfo',res.data)
+                // 最后push到home页
+                router.push('/home')
             }).catch(error => {
                 console.log('error',error)
             })
