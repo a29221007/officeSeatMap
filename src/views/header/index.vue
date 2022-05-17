@@ -64,10 +64,10 @@
             <el-form-item label="编号：">{{ currentInfo.code }}</el-form-item>
             <el-form-item label="会议室设备：">{{ currentInfo.setting }}</el-form-item>
             <el-form-item class="reserve" label="预定信息："></el-form-item>
-            <el-form-item :class="{'reserve':is_curentMeeting_active}" label="当前预定:">
+            <el-form-item :class="{'reserve':is_curentMeeting_active,'pad':true}" label="当前预定:">
                 <div :class="{'jump':is_curentMeeting_active}" v-on:click="handleClickJumpWX(currentInfo.current.USERID)">{{is_curentMeeting_active ? currentInfo.current.USERNAME : '无'}}</div>
             </el-form-item>
-            <el-form-item label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
+            <el-form-item class="pad" label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
             <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
             <div class="make-btn">
                 <button :class="{'disable':is_curentMeeting_active}" type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button>

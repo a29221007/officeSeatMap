@@ -62,6 +62,9 @@ body {
 .drawer .el-drawer__body {
   padding: unset;
 }
+.drawer .el-drawer__body .pad .el-form-item__label-wrap .el-form-item__label {
+  padding-left: 14px;
+}
 .drawer .el-drawer__body .reserve {
   margin-bottom: 0px;
 }
