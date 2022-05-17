@@ -52,7 +52,9 @@ export default createStore({
         // 扫码跳转时，座位或者区域的唯一标识
         scanQRcode: getItem('scanQRcode') || '',
         // 扫条形码得到的数据（移动端）
-        scanBarcodeInfoObject: getItem('scanBarcodeInfoObject') || {}
+        scanBarcodeInfoObject: getItem('scanBarcodeInfoObject') || {},
+        // 通过 OA 进入项目或者通过企业微信进入项目标识
+        intoTheWay: getItem('intoTheWay') || null
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -138,6 +140,12 @@ export default createStore({
         setScanBarcodeInfoObject(state, data){
             state.scanBarcodeInfoObject = data
             setItem('scanBarcodeInfoObject',state.scanBarcodeInfoObject)
+        },
+
+        // 设置 进入方式
+        setIntoTheWay(state, data) {
+            state.intoTheWay = data
+            setItem('intoTheWay',state.intoTheWay)
         }
     },
     actions: {

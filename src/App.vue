@@ -20,7 +20,11 @@ export default{
         const store = useStore()
         // 获取 search
         let search = window.location.search
-        // 如果没有参数，则跳转到 login 页面
+        // 判断 进入的标识是否有值
+        if(store.state.intoTheWay === 'OA'){
+            return router.push('/home')
+        }
+        // 如果没有参数，也没有进入项目的标识，则跳转到 login 页面
         if(!search) {
             router.push('/login')
             return
@@ -35,6 +39,7 @@ export default{
         // 判断是否有state以及code参数 
         if(searchObj.state && searchObj.code){
             // 如果有这两个参数,则说明是从企业微信点击应用图标过来的，或者是扫二维码进入的
+            store.commit('setIntoTheWay','weixin')
             // 用 code 请求接口，返回用户个人信息
             getUserInfo(searchObj.code).then((res) => {
                 if(res.code !== 0) {
@@ -51,6 +56,7 @@ export default{
                 console.log('error',error)
             })
         }else if(searchObj.OpenAddress && searchObj.usercode && searchObj.token && searchObj.time){
+            store.commit('setIntoTheWay','OA')
             // 如果有这三个参数，则说明是从 OA 进来的，要掉接口来获取用户信息
             getUserInfoFromOA(searchObj).then((res) => {
                 if(res.code !== 0) {
@@ -63,6 +69,7 @@ export default{
                 console.log('error',error)
             })
         }else{
+            store.commit('setIntoTheWay',null)
             // 如果没有这个两个参数，就提示登陆失败
             return alert('登录失败，请重新进入或联系相关负责人')
         }
