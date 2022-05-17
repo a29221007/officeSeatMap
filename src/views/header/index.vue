@@ -131,6 +131,7 @@ export default {
                 const { appId, timestamp, nonceStr, signature } = res.data
                 return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
             }).then(() => {
+                if(store.state.intoTheWay !== 'weixin') return
                 getAgentConfig(url).then(res => {
                     const { timestamp, nonceStr, signature } = res.data
                     wx.agentConfig({
@@ -477,18 +478,22 @@ export default {
         // 点击预约 跳转 OA 
         function handleClickJumpOA(){
             if(is_curentMeeting_active.value === false){
-                if(!is_agentConfig_success) return errorMessage('当前企业微信版本太低或者agentConfig配置失败，请确认！')
-                const loading = ElLoading.service({
-                    lock: true,
-                    text: '跳转中请稍等',
-                    background: 'rgba(0, 0, 0, 0.7)',
-                })
-                wx.invoke('openDefaultBrowser', {
-                    'url': `https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`
-                }, function(res){
-                    loading.close()
-                    if(res.err_msg != "openDefaultBrowser:ok") errorMessage('跳转失败，请重试')
-                })
+                if(store.state.intoTheWay === 'weixin'){
+                    if(!is_agentConfig_success) return errorMessage('当前企业微信版本太低或者agentConfig配置失败，请确认！')
+                    const loading = ElLoading.service({
+                        lock: true,
+                        text: '跳转中请稍等',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                    })
+                    wx.invoke('openDefaultBrowser', {
+                        'url': `https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`
+                    }, function(res){
+                        loading.close()
+                        if(res.err_msg != "openDefaultBrowser:ok") errorMessage('跳转失败，请重试')
+                    })
+                }else if(store.state.intoTheWay === 'OA'){
+                    window.location.href = `https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`
+                }
             }
         }
         return {

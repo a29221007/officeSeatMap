@@ -25,7 +25,7 @@ export default{
             router.push('/home')
             return 
         }
-        // 如果没有参数，也没有进入项目的标识，则跳转到 login 页面
+        // 如果没有参数，则跳转到 login 页面
         if(!search) {
             router.push('/login')
             return
