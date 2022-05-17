@@ -42,14 +42,8 @@ export default{
                 }
                 store.commit('setUserInfo',res.data)
                 // 判断是否有type、floor、seat_id这3个参数
-                if(searchObj.type || searchObj.floor || searchObj.seat_id){
-                    // 如果有座位区域信息
-                    let obj = {
-                        type: searchObj.type,
-                        floor: searchObj.floor,
-                        seat_id: searchObj.seat_id
-                    }
-                    store.commit('setScanQRcodeObject',obj)
+                if(searchObj.id){
+                    store.commit('setScanQRcode',searchObj.id)
                 }
                 // 最后push到home页
                 router.push('/home')

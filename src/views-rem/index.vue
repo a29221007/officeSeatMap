@@ -117,8 +117,8 @@ export default {
         // 定义一个定时器，防止
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
-                let requestSearchObj = store.state.scanQRcodeObject
-                scanCodeFn(requestSearchObj)
+                // let requestSearchObj = store.state.scanQRcodeObject
+                scanCodeFn(store.state.scanQRcode)
                 // 判断当前用户的操作权限(暂时编辑按钮也隐藏起来了，暂时这个接口先不调了)
                 // sendCode(requestSearchObj.code).then((res) => {
                 //     console.log(res)
@@ -128,41 +128,24 @@ export default {
             }
         })
         // 将扫码后跳转的逻辑封装
-        function scanCodeFn(requestSearchObj){
-            // 判断如果 requestSearchObj 为空对象，则说明不是扫码跳转的，不执行后续的逻辑，停止加载提示
-            if(Object.keys(requestSearchObj).length === 0) return endToast()
-            // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
-            const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
-            store.commit('setCurrentFloor',floor)
-            // 3.4 找出当前扫码查找的项，并向 vuex 设置
-            let value = requestSearchObj.type == 1 ? 'seat_id' : 'code' // 匹配的字段
-            // 3.5 找出当前项
-            let FindArray = []
-            if(requestSearchObj.floor == 3 && requestSearchObj.type == 1){
-                // 3层的座位
-                FindArray = store.state.seatListOfthree
-            }else if(requestSearchObj.floor == 3 && requestSearchObj.type == 2){
-                // 3层的区域
-                FindArray = store.state.areaListOfThree
-            }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 1){
-                // 4层的座位
-                FindArray = store.state.seatListOfFour
-            }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 2){
-                // 4层的区域
-                FindArray = store.state.areaListOfFour
-            }
-            let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
-            // 判断是否找到
+        function scanCodeFn(scanQRcode){
+            // 判断有没有 scanQRcode 这个参数
+            if(!scanQRcode) return endToast() // 如果没有这个参数，则直接停止 toast 提示
+            // 如果有这个 scanQRcode 这个参数，则根据这个字段查找对应项
+            let item = store.getters.AllSeatList.find(item => item.qr_code === scanQRcode)
+            // 判断是否有 item 项
             if(!item){
                 // 如果没找到，则先关闭加载的提示，然后再弹框提示没有找到对应座位或区域
                 endToast()
                 return beginToast('fail','没有找到相关的座位或区域',2000)
             }
-            
-            
-            // 3.7 根据当前的类型，调用不同的高亮函数
+            // 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
+            const floor = item.floor == 3 ? 'three' : 'four'
+            store.commit('setCurrentFloor',floor)
             nextTick(() => {
-                if(requestSearchObj.type == 1){
+                // 判断找到的 item 的类型
+                if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
+                    // 如果扫码结果是座位
                     store.commit('setActiveInfo',item)
                     // 每一次扫码之前确定上一次有没有高亮做动画的元素
                     beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
@@ -175,9 +158,8 @@ export default {
                     if(item.type !== '0') return endToast()
                     // 调用获取个人固资列表的函数
                     store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,v_usercode:store.state.UserInfo.usercode})
-                }else if(requestSearchObj.type == 2 && item.type === 1){
+                }else if(item.type === 1){
                     // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行，此时定义的 'push',意思是要跳转)
-
                     getMeetingData(item,'push')
                 }
                 // 如果是扫码跳转进来的最后要关闭提示框
@@ -579,7 +561,7 @@ export default {
                         let obj1 = formatURL(result)
                         let obj2 = formatURL(decodeURIComponent(obj1.redirect_uri + ''))
                         // 如果走这个方法，则 关闭提示框函数调用在 这个 scanCodeFn 方法内
-                        scanCodeFn(obj2)
+                        scanCodeFn(obj2.id)
                     }else{
                         // 不是一个 url 路径
                         // 则调接口获取固资信息

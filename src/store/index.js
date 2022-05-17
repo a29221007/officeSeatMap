@@ -49,8 +49,8 @@ export default createStore({
         // 如果是通过OA平台进入的项目，需要设置这个 code
         // 如果是扫码进入的项目，也需要设置这个code
         UserInfo: getItem('UserInfo'),
-        // 扫码跳转时的楼层、类型、位置信息
-        scanQRcodeObject: getItem('scanQRcodeObject') || {},
+        // 扫码跳转时，座位或者区域的唯一标识
+        scanQRcode: getItem('scanQRcode') || '',
         // 扫条形码得到的数据（移动端）
         scanBarcodeInfoObject: getItem('scanBarcodeInfoObject') || {}
     },
@@ -129,10 +129,10 @@ export default createStore({
             state.PersontFixedAssetsList = data
             setItem('PersontFixedAssetsList',state.PersontFixedAssetsList)
         },
-        // 设置移动端扫码跳转时的信息集合
-        setScanQRcodeObject(state, data){
-            state.scanQRcodeObject = data
-            setItem('scanQRcodeObject',state.scanQRcodeObject)
+        // 设置移动端扫码跳转时唯一标识
+        setScanQRcode(state, data){
+            state.scanQRcode = data
+            setItem('scanQRcode',state.scanQRcode)
         },
         // 设置移动端扫条形码得到的数据
         setScanBarcodeInfoObject(state, data){

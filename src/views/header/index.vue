@@ -389,6 +389,9 @@ export default {
                     if(res.err !== 0) return errorMessage(res.msg)
                     // 3、跳转到企业微信新个人对话窗口
                     window.location.href = 'wxwork://launch?launch_code=' + res.launch_code
+                }).catch((error) => {
+                    loading.close()
+                    errorMessage('跳转失败')
                 })
             }
         })
