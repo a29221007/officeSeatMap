@@ -391,7 +391,7 @@ export default {
                     window.location.href = 'wxwork://launch?launch_code=' + res.launch_code
                 }).catch((error) => {
                     loading.close()
-                    errorMessage('跳转失败')
+                    errorMessage('跳转失败,请重试或者手动打开')
                 })
             }
         })

@@ -6,7 +6,12 @@ export const login = () => {
     return request('get/wework/code','get')
 }
 
-// 登录的第二步
+// 登录的第二步(从企业微信登录)
 export const getUserInfo = (code) => {
     return request('get/wework/userinfo','get',{code})
+}
+
+// 登录的第二步(从 OA 登录)
+export const getUserInfoFromOA = (params) => {
+    return request('get/oa/userinfo','post',params)
 }
