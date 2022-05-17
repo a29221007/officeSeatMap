@@ -22,7 +22,8 @@ export default{
         let search = window.location.search
         // 判断 进入的标识是否有值
         if(store.state.intoTheWay === 'OA'){
-            return router.push('/home')
+            router.push('/home')
+            return 
         }
         // 如果没有参数，也没有进入项目的标识，则跳转到 login 页面
         if(!search) {
