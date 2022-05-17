@@ -9,7 +9,7 @@
 
 <script>
 // 调试工具
-eruda.init()
+// eruda.init()
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { getUserInfo } from '@/api/login.js'
