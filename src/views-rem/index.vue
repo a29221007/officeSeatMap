@@ -125,64 +125,64 @@ export default {
                 //     if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
                 //     store.commit('setIs_have_editor',res.data.u)
                 // })
-                // 判断如果 requestSearchObj 为空对象，则说明不是扫码跳转的，不执行后续的逻辑，停止加载提示
             }
         })
         // 将扫码后跳转的逻辑封装
         function scanCodeFn(requestSearchObj){
-                if(Object.keys(requestSearchObj).length === 0) return endToast()
-                // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
-                const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
-                store.commit('setCurrentFloor',floor)
-                // 3.4 找出当前扫码查找的项，并向 vuex 设置
-                let value = requestSearchObj.type == 1 ? 'seat_id' : 'code' // 匹配的字段
-                // 3.5 找出当前项
-                let FindArray = []
-                if(requestSearchObj.floor == 3 && requestSearchObj.type == 1){
-                    // 3层的座位
-                    FindArray = store.state.seatListOfthree
-                }else if(requestSearchObj.floor == 3 && requestSearchObj.type == 2){
-                    // 3层的区域
-                    FindArray = store.state.areaListOfThree
-                }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 1){
-                    // 4层的座位
-                    FindArray = store.state.seatListOfFour
-                }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 2){
-                    // 4层的区域
-                    FindArray = store.state.areaListOfFour
-                }
-                let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
-                // 判断是否找到
-                if(!item){
-                    // 如果没找到，则先关闭加载的提示，然后再弹框提示没有找到对应座位或区域
-                    endToast()
-                    return beginToast('fail','没有找到相关的座位或区域',2000)
-                }
-                
-                
-                // 3.7 根据当前的类型，调用不同的高亮函数
-                nextTick(() => {
-                    if(requestSearchObj.type == 1){
-                        store.commit('setActiveInfo',item)
-                        // 每一次扫码之前确定上一次有没有高亮做动画的元素
-                        beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
-                        beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
-                        // 如果为座位
-                        seatData.setCurrentSeat_id(item.seat_id)
-                        // 调用座位高亮的函数
-                        searchSeat(item.seat_id)
-                        BottomBoxRef.value.setSearchLegendContant('information')
-                        if(item.type !== '0') return endToast()
-                        // 调用获取个人固资列表的函数
-                        store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,v_usercode:store.state.UserInfo.usercode})
-                    }else if(requestSearchObj.type == 2 && item.type === 1){
-                        // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行，此时定义的 'push',意思是要跳转)
+            // 判断如果 requestSearchObj 为空对象，则说明不是扫码跳转的，不执行后续的逻辑，停止加载提示
+            if(Object.keys(requestSearchObj).length === 0) return endToast()
+            // 3.3 设置扫码的楼层 (目前只有3层4层，如果以后，增加的话，这的逻辑得改)
+            const floor = requestSearchObj.floor == 3 ? 'three' : 'four'
+            store.commit('setCurrentFloor',floor)
+            // 3.4 找出当前扫码查找的项，并向 vuex 设置
+            let value = requestSearchObj.type == 1 ? 'seat_id' : 'code' // 匹配的字段
+            // 3.5 找出当前项
+            let FindArray = []
+            if(requestSearchObj.floor == 3 && requestSearchObj.type == 1){
+                // 3层的座位
+                FindArray = store.state.seatListOfthree
+            }else if(requestSearchObj.floor == 3 && requestSearchObj.type == 2){
+                // 3层的区域
+                FindArray = store.state.areaListOfThree
+            }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 1){
+                // 4层的座位
+                FindArray = store.state.seatListOfFour
+            }else if(requestSearchObj.floor == 4 && requestSearchObj.type == 2){
+                // 4层的区域
+                FindArray = store.state.areaListOfFour
+            }
+            let item = FindArray.find(item => item[value] === requestSearchObj.seat_id)
+            // 判断是否找到
+            if(!item){
+                // 如果没找到，则先关闭加载的提示，然后再弹框提示没有找到对应座位或区域
+                endToast()
+                return beginToast('fail','没有找到相关的座位或区域',2000)
+            }
+            
+            
+            // 3.7 根据当前的类型，调用不同的高亮函数
+            nextTick(() => {
+                if(requestSearchObj.type == 1){
+                    store.commit('setActiveInfo',item)
+                    // 每一次扫码之前确定上一次有没有高亮做动画的元素
+                    beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
+                    beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
+                    // 如果为座位
+                    seatData.setCurrentSeat_id(item.seat_id)
+                    // 调用座位高亮的函数
+                    searchSeat(item.seat_id)
+                    BottomBoxRef.value.setSearchLegendContant('information')
+                    if(item.type !== '0') return endToast()
+                    // 调用获取个人固资列表的函数
+                    store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,v_usercode:store.state.UserInfo.usercode})
+                }else if(requestSearchObj.type == 2 && item.type === 1){
+                    // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行，此时定义的 'push',意思是要跳转)
 
-                        getMeetingData(item,'push')
-                    }
-                    // 如果是扫码跳转进来的最后要关闭提示框
-                    endToast()
-                })
+                    getMeetingData(item,'push')
+                }
+                // 如果是扫码跳转进来的最后要关闭提示框
+                endToast()
+            })
         }
         // onBeforeMount 中开启加载提示
         onBeforeMount(() => {

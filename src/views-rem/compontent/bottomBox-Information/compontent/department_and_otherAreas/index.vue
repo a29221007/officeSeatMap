@@ -55,7 +55,6 @@ export default {
                 flex: 1;
                 font-size: .3763rem;
                 color: #f8f9fa;
-                text-align: end;
             }
             .content{
                 flex: 3;

@@ -43,7 +43,6 @@ export default {
             flex: 2;
             font-size: .3763rem;
             color: #f8f9fa;
-            text-align: end;
         }
         .content{
             flex: 3.5;

@@ -52,7 +52,7 @@
                 </template>
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                     <!-- 座位 -->
-                    <div class="seat" :id="item.seat_id" :class="{'active':current === item.seat_id}" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
+                    <div class="seat" :id="item.seat_id" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
                     </div>
                 </template>
             </template>
@@ -83,14 +83,17 @@ export default {
         // 监听搜索区域高亮事件
         emitter.on('activeArea',({code, scaleX, scaleY}) => {
             // 触发了区域高亮事件时，将座位的动画停止
-            seatData.current = 0
+            clearCurrentElementInterval()
             seatData.currentAreaCode = code
             sacleX = scaleX || store.state.scale[0]
             sacleY = scaleY || store.state.scale[1]
         })
         // 监听搜索座位高亮事件
         emitter.on('SearchSeat', (seat_id) => {
-            seatData.current = seat_id
+            currentSeat_id = seat_id
+            beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
+            beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
+            beforeSeatAnimateElement = document.getElementById(seat_id)
             // 将区域的高亮取消
             seatData.currentAreaCode = ''
             // 同步搜索变量
@@ -106,6 +109,25 @@ export default {
         const tooltipText = ref('')
         // 获取提示框的实例对象
         const tooltipRef = ref(null)
+
+        // 记录选中的座位id
+        let currentSeat_id = 0
+        // 存储上一个元素，用来清除上一个元素的定时器
+        let beforeSeatAnimateElement = null
+
+        // 清除当前元素的动画定时器函数
+        function clearCurrentElementInterval(){
+            // 1、获取当前的元素实例 DOM
+            let curentElement = document.getElementById(currentSeat_id)
+            if(curentElement){
+                // 2、如果有 curentElement 这个DOM实例，则清除定时器
+                clearInterval(curentElement.timer)
+                curentElement.style.transform = `scale(1)`
+                currentSeat_id = 0
+            }
+        }
+
+
         // 当前地图的信息（包括人员、座位、区域、会议室等）
         let seatData = reactive({
             // 人员信息座位集合
@@ -128,8 +150,6 @@ export default {
                     return currentFloorSeatList
                 }
             }),
-            // 当前选中的座位
-            current:0,
             // 当前选中的区域
             currentAreaCode:'',
             // 设置每一个座位的样式
@@ -165,12 +185,16 @@ export default {
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
-            if(seatItem.seat_id === seatData.current){
-                seatData.current = 0
+            if(seatItem.seat_id === currentSeat_id){
+                // 如果相同，则清除当前元素的定时器
+                clearCurrentElementInterval()
                 // 向兄弟组件header发布一个自定义事件form，参数为空字符串
                 return emitter.emit('form','')
             }else{
-                seatData.current = seatItem.seat_id
+                beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
+                beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
+                beforeSeatAnimateElement = $event.target
+                currentSeat_id = seatItem.seat_id
                 emitter.emit('form',seatItem)
             }
             scaleSeat($event.target)
@@ -184,8 +208,8 @@ export default {
             const {type,code} = item
             // 排出掉除会议室以外的点击
             if(type !== 1) return
-            // 先将座位的高亮取消掉
-            seatData.current = 0
+            // 座位的高亮清除定时器
+            clearCurrentElementInterval()
             // 判断当前点击的和已经选中的值，是否相同
             if(seatData.currentAreaCode === code){
                 // 如果点前点击的和选中的一致，则取消高亮状态
@@ -388,11 +412,6 @@ export default {
             background-size: cover;
             background-repeat: no-repeat;
             z-index: 5;
-            // 座位选中的高亮样式
-            &.active{
-                // 使用动画
-                animation: scaleAnimation 1s infinite alternate;
-            }
         }
         // 区域选中的高亮样式
         .active-area{

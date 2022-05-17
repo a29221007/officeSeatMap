@@ -45,21 +45,21 @@
     <!-- 抽屉式弹框、展示选中信息 -->
     <el-drawer custom-class='drawer' modal-class='drawer-mask' v-model="is_show" :with-header="false" direction='ltr' :modal='false' size='15%'>
         <!-- 选中员工座位 -->
-        <el-form label-width="auto" v-if="currentInfo.type === '0'">
+        <el-form label-width="auto" label-position='left' v-if="currentInfo.type === '0'">
             <el-form-item label="姓名：">{{currentInfo.name || '暂无数据'}}</el-form-item>
             <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
             <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
             <el-form-item label="个人固定资产信息："><el-button type="text" v-on:click="handleClickAssetsMessage(currentInfo.id)">查看</el-button></el-form-item>
         </el-form>
         <!-- 选中资产座位 -->
-        <el-form label-width="auto" v-if="currentInfo.type === '0-2'">
+        <el-form label-width="auto" label-position='left' v-if="currentInfo.type === '0-2'">
             <el-form-item label="资产名称：">{{currentInfo.name || '暂无数据'}}</el-form-item>
             <el-form-item label="状态：">{{currentInfo.equipment_status}}</el-form-item>
             <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
             <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
         </el-form>
         <!-- 选中会议室 -->
-        <el-form label-width="auto" v-if="currentInfo.type === 1">
+        <el-form label-width="auto" label-position='left' v-if="currentInfo.type === 1">
             <el-form-item label="会议室名称：">{{ currentInfo.name || '暂无数据' }}</el-form-item>
             <el-form-item label="编号：">{{ currentInfo.code }}</el-form-item>
             <el-form-item label="会议室设备：">{{ currentInfo.setting }}</el-form-item>
@@ -74,7 +74,7 @@
             </div>
         </el-form>
         <!-- 选中空位 -->
-        <el-form label-width="auto" v-if="currentInfo.type === '0-1'">
+        <el-form label-width="auto" label-position='left' v-if="currentInfo.type === '0-1'">
             <el-form-item>空座</el-form-item>
             <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
             <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
