@@ -4,7 +4,7 @@
         <!-- 搜索栏 -->
         <div class="search">
             <div class="floor-switch">
-                <span :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<span v-if="item.id !== AllArea.length - 1"> / </span></span>
+                <span :class="{'floor':true,'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<span v-if="item.id !== AllArea.length - 1"> / </span></span>
             </div>
             <el-autocomplete v-model="searchState" value-key='name' popper-class='autocomplete' :prefix-icon="Search" :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:clear="handleClearInput">
                 <!-- 自定义搜索建议列表模板(当有搜索建议时) -->
@@ -532,7 +532,7 @@ export default {
         padding: 5px;
         .floor-switch{
             font-size: 16px;
-            &>span{
+            .floor{
                 cursor: pointer;
                 &.active{
                     color: chocolate;
