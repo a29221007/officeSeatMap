@@ -532,7 +532,7 @@ export default {
         padding: 5px;
         .floor-switch{
             font-size: 16px;
-            span{
+            &>span{
                 cursor: pointer;
                 &.active{
                     color: chocolate;
