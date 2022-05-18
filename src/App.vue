@@ -37,7 +37,7 @@ export default{
             searchObj[item.split('=')[0]] = item.split('=')[1]
         })
         
-        // 判断是否有state以及code参数 
+        // 判断是否有state以及code参数
         if(searchObj.state && searchObj.code){
             // 如果有这两个参数,则说明是从企业微信点击应用图标过来的，或者是扫二维码进入的
             store.commit('setIntoTheWay','weixin')
