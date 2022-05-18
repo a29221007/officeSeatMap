@@ -492,7 +492,9 @@ export default {
                         if(res.err_msg != "openDefaultBrowser:ok") errorMessage('跳转失败，请重试')
                     })
                 }else if(store.state.intoTheWay === 'OA'){
-                    window.location.href = `https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`
+                    // window.location.href = `https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`
+                    window.open(`https://oabak.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`)
+                    // window.location.href = 
                 }
             }
         }
