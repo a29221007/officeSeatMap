@@ -210,7 +210,7 @@ export default {
         const MapBoxStyle = computed(() => {
             // MapBoxRef盒子的行内样式暂时只有背景图片
             return {
-                backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`,
+                backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`
             }
         })
         

@@ -136,9 +136,18 @@ export default {
                 let seatAndAreaListOfThree = store.state.seatListOfthree.concat(store.state.areaListOfThree)
                 // 4层的座位人员信息和区域会议室信息集合
                 let seatAndAreaListOfFour = store.state.seatListOfFour.concat(store.state.areaListOfFour)
+                // 深圳地区的人员信息和区域会议室信息集合
+                let seatAndAreaListOfShenZhen = store.state.seatListOfShenZhen.concat(store.state.areaListOfShenZhen)
                 // 点击图例筛选后的座位信息
                 // 1、判断当前的楼层，选择出要做筛选的数组
-                const currentFloorSeatList = store.state.currentFloor === 'three' ? seatAndAreaListOfThree : seatAndAreaListOfFour
+                let currentFloorSeatList = []
+                if(store.state.currentFloor === 'three'){
+                    currentFloorSeatList = seatAndAreaListOfThree
+                }else if(store.state.currentFloor === 'four'){
+                    currentFloorSeatList = seatAndAreaListOfFour
+                }else if(store.state.currentFloor === 'shenzhen'){
+                    currentFloorSeatList = seatAndAreaListOfShenZhen
+                }
                 // 2、判断当前是否有选中的图例
                 if(store.state.currentLegend){
                     // 3、如果有选中的图例
@@ -154,11 +163,28 @@ export default {
             currentAreaCode:'',
             // 设置每一个座位的样式
             seatItemStyle(seatItem) {
-                return {
-                    top:seatItem.gRow * 9.64 + 23 +'px',
-                    left:seatItem.gCol * 9.6 + 35 +'px',
-                    backgroundImage: `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
+                let styleObject = {}
+                if((seatItem.floor === '3' || seatItem.floor === '4') && seatItem.office === '1'){
+                    styleObject = {
+                        top:seatItem.gRow * 9.64 + 23 +'px',
+                        left:seatItem.gCol * 9.6 + 35 +'px',
+                    }
+                }else if(seatItem.floor === '7' && seatItem.office === '2'){
+                    styleObject = {
+                        top: (seatItem.gCol / 571) * 843 +'px',
+                        left: (seatItem.gRow / 1287)  * 930 +'px',
+                    }
                 }
+                styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
+                return styleObject
+            },
+            // 设置每一个区域的样式（单个区域）
+            oneAreaStyle(){
+
+            },
+            // 设置每一个区域的样式（多个区域）
+            multipleAreaStyle(){
+
             },
             // 鼠标进入每一个座位的处理程序
             seatMouseenter(seatItem,$event) {
@@ -402,7 +428,7 @@ export default {
         position:absolute;
         width: 930px;
         height: 843px;
-        background-size: cover;
+        background-size: 100% 100%;
         background-repeat: no-repeat;
         // 给盒子设置上一个过渡的默认值
         transition: all 1s;
@@ -410,7 +436,7 @@ export default {
             position: absolute;
             width: 8px;
             height: 8px;
-            background-size: cover;
+            background-size: contain;
             background-repeat: no-repeat;
             z-index: 5;
         }
