@@ -13,38 +13,30 @@
                 <template v-if="item.type === 1 || item.type === 2 || item.type === 3">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 区域 -->
-                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="{
-                            position: 'absolute',
-                            top:item.coordinate.top / 1612 * 843 + 'px',
-                            left:item.coordinate.left / 1777 * 930 + 'px',
-                            width:item.coordinate.width / 1777 * 930 + 'px',
-                            height: item.coordinate.height / 1612 * 843 + 'px',
-                            backgroundColor: item.backgroundcolor,
-                            color:'#646464',
-                            fontSize:'12px'
-                        }" v-on:click="handleClickMeetingRoom(item)">
+                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="oneAreaStyle(item)" v-on:click="handleClickMeetingRoom(item)">
                             <div class="title">
                                 <span class="name">{{item.name}}</span>
-                                <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
+                                <template v-if="item.floor == '3' || item.floor == '4'">
+                                    <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
+                                </template>
+                                <template v-else>
+                                    <span v-if="item.subtitle && item.subtitle !== '（深圳）'" class="subtitle">{{item.subtitle}}</span>
+                                </template>
                             </div>
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item2.id">
                             <!-- 区域 -->
-                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="{
-                                position: 'absolute',
-                                top:item2.top / 1612 * 843 + 'px',
-                                left:item2.left / 1777 * 930 + 'px',
-                                width:item2.width / 1777 * 930 + 'px',
-                                height: item2.height / 1612 * 843 + 'px',
-                                backgroundColor: item.backgroundcolor,
-                                color:'#646464',
-                                fontSize:'12px'
-                            }" v-on:click="handleClickMeetingRoom(item)">
+                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="multipleAreaStyle(item,item2)" v-on:click="handleClickMeetingRoom(item)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
-                                    <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
+                                    <template v-if="item.floor == '3' || item.floor == '4'">
+                                        <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
+                                    </template>
+                                    <template v-else>
+                                        <span v-if="item.subtitle && item.subtitle !== '深圳'" class="subtitle">{{item.subtitle}}</span>
+                                    </template>
                                 </div>
                             </div>
                         </template>
@@ -164,12 +156,12 @@ export default {
             // 设置每一个座位的样式
             seatItemStyle(seatItem) {
                 let styleObject = {}
-                if((seatItem.floor === '3' || seatItem.floor === '4') && seatItem.office === '1'){
+                if((seatItem.floor == '3' || seatItem.floor == '4') && seatItem.office == '1'){
                     styleObject = {
                         top:seatItem.gRow * 9.64 + 23 +'px',
                         left:seatItem.gCol * 9.6 + 35 +'px',
                     }
-                }else if(seatItem.floor === '7' && seatItem.office === '2'){
+                }else if(seatItem.floor == '7' && seatItem.office == '2'){
                     styleObject = {
                         top: (seatItem.gCol / 571) * 843 +'px',
                         left: (seatItem.gRow / 1287)  * 930 +'px',
@@ -179,12 +171,60 @@ export default {
                 return styleObject
             },
             // 设置每一个区域的样式（单个区域）
-            oneAreaStyle(){
-
+            oneAreaStyle(item){
+                let styleObject = {}
+                if((item.floor == '3' || item.floor == '4') && item.office == '1'){
+                    styleObject = {
+                        position: 'absolute',
+                        top:item.coordinate.top / 1612 * 843 + 'px',
+                        left:item.coordinate.left / 1777 * 930 + 'px',
+                        width:item.coordinate.width / 1777 * 930 + 'px',
+                        height: item.coordinate.height / 1612 * 843 + 'px',
+                        backgroundColor: item.backgroundcolor,
+                        color:'#646464',
+                        fontSize:'12px'
+                    }
+                }else if(item.floor == '7' && item.office == '2'){
+                    styleObject = {
+                        position: 'absolute',
+                        top:item.coordinate.top / 571 * 843 + 'px',
+                        left:item.coordinate.left / 1287 * 930 + 'px',
+                        width:item.coordinate.width / 1287 * 930 + 'px',
+                        height: item.coordinate.height / 571 * 843 + 'px',
+                        backgroundColor: item.backgroundcolor,
+                        color:'#646464',
+                        fontSize:'12px'
+                    }
+                }
+                return styleObject
             },
             // 设置每一个区域的样式（多个区域）
-            multipleAreaStyle(){
-
+            multipleAreaStyle(item,item2){
+                let styleObject = {}
+                if((item.floor == '3' || item.floor == '4') && item.office == '1'){
+                    styleObject = {
+                        position: 'absolute',
+                        top:item2.top / 1612 * 843 + 'px',
+                        left:item2.left / 1777 * 930 + 'px',
+                        width:item2.width / 1777 * 930 + 'px',
+                        height: item2.height / 1612 * 843 + 'px',
+                        backgroundColor: item.backgroundcolor,
+                        color:'#646464',
+                        fontSize:'12px'
+                    }
+                }else if(item.floor == '7' && item.office == '2'){
+                    styleObject = {
+                        position: 'absolute',
+                        top:item2.top / 571 * 843 + 'px',
+                        left:item2.left / 1287 * 930 + 'px',
+                        width:item2.width / 1287 * 930 + 'px',
+                        height: item2.height / 571 * 843 + 'px',
+                        backgroundColor: item.backgroundcolor,
+                        color:'#646464',
+                        fontSize:'12px'
+                    }
+                }
+                return styleObject
             },
             // 鼠标进入每一个座位的处理程序
             seatMouseenter(seatItem,$event) {
@@ -978,12 +1018,187 @@ export default {
                 transform-origin: bottom center;
             }
         }
-    }
-    // 定义动画
-    @keyframes scaleAnimation {
-        to {
-            transform:scale(3);
+
+        // 深圳地区，区域样式
+        // CBR 1
+        #QY02020700241{
+            .title{
+                top: unset;
+                left: unset;
+                bottom: 27px;
+                right: -42px;
+            }
         }
+        // CBR 2
+        #QY02020700243{
+            .title{
+                top: 60%;
+                left: unset;
+                right: -42px;
+            }
+        }
+        // CBR 3
+        #QY02020700246{
+            .title{
+                top: -12%;
+                left: 26%;
+            }
+        }
+        // CBR 4
+        #QY02020700247{
+            .title{
+                top: unset;
+                left: 76%;
+                bottom: -20%;
+            }
+        }
+        // CBR 5
+        #QY02020700248{
+            .title{
+                top: unset;
+                left: 103%;
+                bottom: -14%;
+            }
+        }
+        // CBR 6
+        #QY020207002413{
+            .title{
+                top: unset;
+                left: 33%;
+                bottom: -16%;
+            }
+        }
+        // CBR 7
+        #QY020207002415{
+            .title{
+                top: unset;
+                left: 68%;
+                bottom: -15%;
+            }
+        }
+        // CBR 8
+        #QY020207002419{
+            .title{
+                top: -8%;
+                left: 11%;
+            }
+        }
+        // 用户体验部
+        #QY0202070029213{
+            .title{
+                top: -10%;
+            }
+        }
+        // S&G
+        #QY02020700300{
+            .title{
+                top: unset;
+                bottom: -13%;
+                left: 80%;
+            }
+        }
+        // 其他 1
+        #QY02020700311{
+            .title{
+                left: 0;
+                top: unset;
+                bottom: -19px;
+                transform: unset;
+            }
+        }
+        // 其他 2
+        #QY02020700312{
+            .title{
+                left: -24px;
+                transform: translate(0, -50%);
+            }
+        }
+        // 其他 3
+        #QY02020700310{
+            background-color: rgba(2, 122, 255, 0.05)!important;
+            .title{
+                top: -20%;
+            }
+        }
+        // 职能部门
+        #QY0202070028212{
+            .title{
+                top: -14%;
+                left: -3px;
+                transform: unset;
+            }
+        }
+        // 渠道 1
+        #QY02020700272{
+            .title{
+                left: -24px;
+                transform: translate(0, -50%);
+            }
+        }
+        // 渠道 2
+        #QY02020700271{
+            .title{
+                top: -17px;
+                left: 12px;
+                transform: unset;
+            }
+        }
+        // 视频
+        #QY02020700260{
+            .title{
+                top: -17px;
+                left: 16px;
+                transform: unset;
+            }
+        }
+        // 投放
+        #QY02020700251{
+            .title{
+                top: -17px;
+                left: 11px;
+                transform: unset;
+            }
+        }
+        // 零食柜
+        #QY0202070009193{
+            .title{
+                top: unset;
+                bottom: -17px;
+                transform: translate( -50%, 0);
+            }
+        }
+        // 1# 货梯
+        #QY0202070018202{
+            .title{
+                top: 4px;
+                left: -45px;
+                transform: unset;
+            }
+        }
+        // 2# 货梯
+        #QY0202070019203{
+            .title{
+                top: 59px;
+                left: -45px;
+                transform: unset;
+            }
+        }
+        // 大门 1
+        #QY02020700160{
+            .title{
+                top: -23px;
+                transform: translate( -50%, 0);
+            }
+        }
+        // 大门 2
+        #QY02020700161{
+            .title{
+                top: unset;
+                bottom: -23px;
+                transform: translate( -50%, 0);
+            }
+        }
+        
     }
 }
 </style>
