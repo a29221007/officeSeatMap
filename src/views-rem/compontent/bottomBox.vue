@@ -34,7 +34,8 @@ export default {
         // 楼层或地区的数据
         const AllArea = [
             {id:0,name:'3楼',lable:'three'},
-            {id:1,name:'4楼',lable:'four'}
+            {id:1,name:'4楼',lable:'four'},
+            {id:2,name:'深圳',lable:'shenzhen'}
         ]
         // 触摸切换楼层（或地区）触发的函数
         function handleClickFloor(floor) {
@@ -128,7 +129,7 @@ export default {
                 // 滑动的变量
                 const value = e.changedTouches[0].pageY - touchstartPageY
                 // 判断滑动的方向
-                if(value > 0 && c){
+                if(value > 0 && c){ 
                     flag = 'down'
                     b = true
                     // 如果大于0，则说明是向下滑

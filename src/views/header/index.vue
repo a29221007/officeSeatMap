@@ -49,7 +49,7 @@
             <el-form-item label="姓名：">{{currentInfo.name || '暂无数据'}}</el-form-item>
             <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
             <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
-            <el-form-item label="个人固定资产信息："><el-button type="text" v-on:click="handleClickAssetsMessage(currentInfo.id)">查看</el-button></el-form-item>
+            <el-form-item label="资产信息："><el-button type="text" v-on:click="handleClickAssetsMessage(currentInfo.id)">查看</el-button></el-form-item>
         </el-form>
         <!-- 选中资产座位 -->
         <el-form label-width="auto" label-position='left' v-if="currentInfo.type === '0-2'">
@@ -267,8 +267,15 @@ export default {
                                     type: 'info',
                                 }
                             ).then(() => {
-                                // 将要切换的楼层
-                                let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                                // 判断将要切换的楼层
+                                let pushFloor = null
+                                if(item.floor == 3 && item.office == '1'){
+                                    pushFloor = 'three'
+                                }else if(item.floor == 4 && item.office == '1'){
+                                    pushFloor = 'four'
+                                }else if(item.floor == 7 && item.office == '2'){
+                                    pushFloor = 'shenzhen'
+                                }
                                 handleClickFloor(pushFloor)
                                 drawerData.is_show = true
                                 drawerData.currentInfo = item
@@ -302,8 +309,15 @@ export default {
                                     type: 'info',
                                 }
                             ).then(() => {
-                                // 将要切换的楼层
-                                let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                                // 判断将要切换的楼层
+                                let pushFloor = null
+                                if(item.floor == 3 && item.office == '1'){
+                                    pushFloor = 'three'
+                                }else if(item.floor == 4 && item.office == '1'){
+                                    pushFloor = 'four'
+                                }else if(item.floor == 7 && item.office == '2'){
+                                    pushFloor = 'shenzhen'
+                                }
                                 handleClickFloor(pushFloor)
                                 nextTick(() => {
                                     const obj = searchArea(item.code)

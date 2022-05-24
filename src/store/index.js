@@ -244,9 +244,13 @@ export default createStore({
         seatAndAreaListOfFour(state){
             return state.seatListOfFour && state.seatListOfFour.concat(state.areaListOfFour)
         },
+        // 深圳地区的人员信息和区域会议室信息集合
+        seatAndAreaListOfShenZhen(state){
+            return state.seatListOfShenZhen && state.seatListOfShenZhen.concat(state.areaListOfShenZhen)
+        },
         // 全部座位人员以及区域信息集合
         AllSeatList(state,getter){
-            return getter.seatAndAreaListOfThree && getter.seatAndAreaListOfThree.concat(getter.seatAndAreaListOfFour)
+            return getter.seatAndAreaListOfThree && getter.seatAndAreaListOfThree.concat(getter.seatAndAreaListOfFour,getter.seatAndAreaListOfShenZhen)
         },
         // 根据currentFloor得到当前的楼层（或地区）的数值
         floor(state) {
