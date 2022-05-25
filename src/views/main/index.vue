@@ -184,7 +184,6 @@ export default {
         function handleClickSeat(seatItem,$event){
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
-            console.log(222, seatItem)
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
             if(seatItem.seat_id === currentSeat_id){
                 // 如果相同，则清除当前元素的定时器

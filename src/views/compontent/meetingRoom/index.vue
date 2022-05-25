@@ -1,5 +1,5 @@
 <template>
-    <el-dialog custom-class='meetingRoom_dialog' v-model="meetingRoom_dialog" :title="MeetingRoomName + ' - 会议室预定预约记录' " :close-on-click-modal='false' draggable width="55%" top='8vh' v-on:closed='handleClosedDialog'>
+    <el-dialog custom-class='meetingRoom_dialog' v-model="meetingRoom_dialog" :title="MeetingRoomName + ' - 会议室预定预约记录' " :close-on-click-modal='false' draggable width="55%" top='1vh' v-on:closed='handleClosedDialog'>
         <div class="inputBox">
             <el-input v-model="searchValue" placeholder="会议主题、预订人" clearable :prefix-icon="Search" v-on:change="handleClickSearch" v-on:clear='handleClickSearch' />
             <button v-on:click="handleClickSearch">查 询</button>

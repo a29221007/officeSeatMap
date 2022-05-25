@@ -150,6 +150,9 @@ body {
 input {
   outline: none;
 }
+.el-overlay .el-overlay-dialog {
+  overflow: hidden;
+}
 .FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper,
 .meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper {
   max-height: 60vh;
