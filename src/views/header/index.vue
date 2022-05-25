@@ -43,42 +43,171 @@
         </div>
     </div>
     <!-- 抽屉式弹框、展示选中信息 -->
-    <el-drawer custom-class='drawer' modal-class='drawer-mask' v-model="is_show" :with-header="false" direction='ltr' :modal='false' size='15%'>
+    <el-drawer custom-class='drawer' modal-class='drawer-mask' v-model="is_show" :with-header="false" direction='btt' :modal='false'>
         <!-- 选中员工座位 -->
-        <el-form label-width="auto" label-position='left' v-if="currentInfo.type === '0'">
-            <el-form-item label="姓名：">{{currentInfo.name || '暂无数据'}}</el-form-item>
-            <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
-            <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
-            <el-form-item label="资产信息："><el-button type="text" v-on:click="handleClickAssetsMessage(currentInfo.id)">查看</el-button></el-form-item>
-        </el-form>
+        <div class="container" v-if="currentInfo.type === '0'">
+            <!-- 第一行 -->
+            <div class="row">
+                <!-- 第一列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">姓名：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{currentInfo.name || '暂无数据'}}</div>
+                </div>
+                <!-- 第二列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">座位号：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{currentInfo.seat_id}}</div>
+                </div>
+            </div>
+            <!-- 第二行 -->
+            <div class="row">
+                <!-- 第一列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">部门：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{currentInfo.depart || '暂无数据'}}</div>
+                </div>
+                <!-- 第二列 -->
+                <div class="col" v-if="$store.state.is_have_ckeck_persontFixedAssets">
+                    <!-- 标题 -->
+                    <div class="title">资产信息：</div>
+                    <!-- 内容 -->
+                    <div class="content"><div class="check_button" v-on:click="handleClickAssetsMessage">查看</div></div>
+                </div>
+            </div>
+        </div>
         <!-- 选中资产座位 -->
-        <el-form label-width="auto" label-position='left' v-if="currentInfo.type === '0-2'">
-            <el-form-item label="资产名称：">{{currentInfo.name || '暂无数据'}}</el-form-item>
-            <el-form-item label="状态：">{{currentInfo.equipment_status}}</el-form-item>
-            <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
-            <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
-        </el-form>
+        <div class="container" v-if="currentInfo.type === '0-2'">
+            <!-- 第一行 -->
+            <div class="row">
+                <!-- 第一列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">资产名称：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{currentInfo.name || '暂无数据'}}</div>
+                </div>
+                <!-- 第二列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">状态：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{currentInfo.equipment_status}}</div>
+                </div>
+            </div>
+            <!-- 第二行 -->
+            <div class="row">
+                <!-- 第一列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">座位号：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{currentInfo.seat_id}}</div>
+                </div>
+                <!-- 第二列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">部门：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{currentInfo.depart || '暂无数据'}}</div>
+                </div>
+            </div>
+        </div>
         <!-- 选中会议室 -->
-        <el-form label-width="auto" label-position='left' v-if="currentInfo.type === 1">
-            <el-form-item label="会议室名称：">{{ currentInfo.name || '暂无数据' }}</el-form-item>
-            <el-form-item label="编号：">{{ currentInfo.code }}</el-form-item>
-            <el-form-item label="会议室设备：">{{ currentInfo.setting }}</el-form-item>
-            <el-form-item class="reserve" label="预定信息："></el-form-item>
-            <el-form-item :class="{'reserve':is_curentMeeting_active,'pad':true}" label="当前预定:">
-                <div :class="{'jump':is_curentMeeting_active}" v-on:click="handleClickJumpWX(currentInfo.current.USERID)">{{is_curentMeeting_active ? currentInfo.current.USERNAME : '无'}}</div>
-            </el-form-item>
-            <el-form-item class="pad" label="预定时间:" v-if="is_curentMeeting_active">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</el-form-item>
-            <el-form-item label="预定记录：" v-if="is_have_MeetingHistory"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></el-form-item>
+        <div class="container" v-if="currentInfo.type === 1">
+            <!-- 第一行 -->
+            <div class="row">
+                <!-- 第一列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">会议室名称：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{ currentInfo.name || '暂无数据' }}</div>
+                </div>
+                <!-- 第二列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">编号：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{ currentInfo.code }}</div>
+                </div>
+            </div>
+            <!-- 第二行 -->
+            <div class="row">
+                <!-- 第一列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">会议室设备：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{ currentInfo.setting }}</div>
+                </div>
+                <!-- 第二列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">预定信息：</div>
+                    <!-- 内容 -->
+                    <div class="content _content">
+                        <div class="line">
+                            <div class="title">当前预定：</div>
+                            <div :class="{'jump':is_curentMeeting_active,'content':true}" v-on:click="handleClickJumpWX(currentInfo.current.USERID)">{{is_curentMeeting_active ? currentInfo.current.USERNAME : '无'}}</div>
+                        </div>
+                        <div class="line" v-if="is_curentMeeting_active">
+                            <div class="title">预定时间：</div>
+                            <div class="content">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 第三行 -->
+            <div class="row" v-if="is_have_MeetingHistory">
+                <!-- 第一列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">预定记录：</div>
+                    <!-- 内容 -->
+                    <div class="content"><el-button type="text" v-on:click="handleClickMeetingMessage">查看</el-button></div>
+                </div>
+            </div>
+            <!-- 第四行 -->
             <div class="make-btn">
                 <button :class="{'disable':is_curentMeeting_active}" type="button" :disabled='is_curentMeeting_active' v-on:click="handleClickJumpOA">预约</button>
             </div>
-        </el-form>
+        </div>
         <!-- 选中空位 -->
-        <el-form label-width="auto" label-position='left' v-if="currentInfo.type === '0-1'">
-            <el-form-item>空座</el-form-item>
-            <el-form-item label="座位号：">{{currentInfo.seat_id}}</el-form-item>
-            <el-form-item label="部门：">{{currentInfo.depart || '暂无数据'}}</el-form-item>
-        </el-form>
+        <div class="container" v-if="currentInfo.type === '0-1'">
+            <!-- 第一行 -->
+            <div class="row">
+                <!-- 第一列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">空座</div>
+                    <!-- 内容 -->
+                    <div class="content"></div>
+                </div>
+            </div>
+            <!-- 第二行 -->
+            <div class="row">
+                <!-- 第一列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">座位号：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{currentInfo.seat_id}}</div>
+                </div>
+                <!-- 第二列 -->
+                <div class="col">
+                    <!-- 标题 -->
+                    <div class="title">部门：</div>
+                    <!-- 内容 -->
+                    <div class="content">{{currentInfo.depart || '暂无数据'}}</div>
+                </div>
+            </div>
+        </div>
     </el-drawer>
     <!-- 展示员工固定资产信息 -->
     <FixedAssets ref="FixedAssetsRef" :FixedAssetsUserName='FixedAssetsUserName' :FixedAssetsList='FixedAssetsList'></FixedAssets>
@@ -102,8 +231,6 @@ import { Search } from '@element-plus/icons-vue'
 import scaleSeat from '@/utils/scaleSeat.js'
 // 导入区域高亮的逻辑
 import searchArea from '@/utils/searchArea.js'
-// 导入获取当前员工的固资信息的api
-import { getFixedAssets_PC } from '@/api/getFixedassets_PC.js'
 // 导入获取会议室相关信息的api
 import { getMeeting } from '@/api/getMeeting.js'
 // 导入固资信息的子组件
@@ -367,18 +494,14 @@ export default {
             // 当前座位人员的信息集合
             currentInfo:{},
             // 点击查看固资信息
-            handleClickAssetsMessage(userCode){
-                getFixedAssets_PC({ b_usercode:userCode, v_usercode:store.state.UserInfo.usercode }).then((res) => {
-                    if(res.code !== 0) return errorMessage(res.message)
-                    // 赋值姓名
-                    FixedAssetsUserName.value = res.data.UserName
-                    // 赋值固资列表
-                    FixedAssetsList.value = res.data.FixedChildList
-                    // 将弹框显示出来
-                    FixedAssetsRef.value.setFixedAssets_dialog(true)
-                }).catch((error) => {
-                    errorMessage(error)
-                })
+            handleClickAssetsMessage(){
+                if(!store.state.is_have_ckeck_persontFixedAssets) return errorMessage('没有权限查看')
+                // 赋值姓名
+                FixedAssetsUserName.value = store.state.PersontFixedAssetsList.UserName
+                // 赋值固资列表
+                FixedAssetsList.value = store.state.PersontFixedAssetsList.FixedChildList
+                // 将弹框显示出来
+                FixedAssetsRef.value.setFixedAssets_dialog(true)
             },
             // 点击查看会议室预约记录
             handleClickMeetingMessage(){

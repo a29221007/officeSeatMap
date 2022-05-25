@@ -9,9 +9,8 @@ import { getAreaList } from '@/api/getArea.js'
 import { errorMessage } from '@/utils/message.js'
 // 导入结束提示框的方法
 import { endToast, beginToast } from '@/views-rem/hook/toast.js'
-import router from '@/router'
-// 导入获取个人固资的api-移动端
-import { getFixedassets_Mobile } from '@/api/getFixedassets_Mobile.js'
+// 导入获取个人固资的api
+import { getFixedassets } from '@/api/getFixedassets.js'
 export default createStore({
     state: {
         // 当前选中的楼层（或地区）
@@ -46,8 +45,10 @@ export default createStore({
         ClentHeight: 0,
         // 当前用户是否有编辑的权限
         is_have_editor: false, // 默认是false，没有编辑权限
-        // 移动端的个人固资列表
+        // 个人固资列表
         PersontFixedAssetsList: getItem('PersontFixedAssetsList'),
+        // 判断当前用户是否有权限查看点击用户的个人固定资产的权限
+        is_have_ckeck_persontFixedAssets:false, // 默认是没有的
 
         // 当前登录人的 code
         // 如果是通过OA平台进入的项目，需要设置这个 code
@@ -138,10 +139,12 @@ export default createStore({
         },
         // 设置个人固资列表
         setPersontFixedAssetsList(state, data) {
-            // 添加一个工位号信息
-            data.seat_id = state.activeInfo.seat_id
             state.PersontFixedAssetsList = data
             setItem('PersontFixedAssetsList',state.PersontFixedAssetsList)
+        },
+        // 设置当前用户是否有权限查看被点击员工的个人固资列表权限
+        setIs_have_ckeck_persontFixedAssets(state, data) {
+            state.is_have_ckeck_persontFixedAssets = data
         },
         // 设置移动端扫码跳转时唯一标识
         setScanQRcode(state, data){
@@ -221,19 +224,21 @@ export default createStore({
                 errorMessage(error)
             }
         },
-        // 获取个人固资列表数据(移动端)
+        // 获取个人固资列表数据
         async getPersontFixedAssetsList(context,code) {
             try{
-                const res = await getFixedassets_Mobile(code)
-                if(res.code !== 0) return beginToast('fail', res.message, 2000)
+                const res = await getFixedassets(code)
+                if (res.code !== 0) {
+                    return context.commit('setIs_have_ckeck_persontFixedAssets',false)
+                }
+                context.commit('setIs_have_ckeck_persontFixedAssets',true)
                 context.commit('setPersontFixedAssetsList',res.data)
-                // 跳转到固资信息页面
-                router.push('/fixedAssets')
             }catch(error){
                 endToast()
                 errorMessage('获取个人固资失败',error)
             }
         }
+
     },
     getters: {
         // 3层的座位人员信息和区域会议室信息集合

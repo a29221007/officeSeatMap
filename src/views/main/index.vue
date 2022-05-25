@@ -250,7 +250,6 @@ export default {
         function handleClickSeat(seatItem,$event){
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
-            console.log(seatItem.seat_id)
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
             if(seatItem.seat_id === currentSeat_id){
                 // 如果相同，则清除当前元素的定时器
@@ -268,6 +267,10 @@ export default {
             // 将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacleX = 3
             sacleY = 3
+            if(seatItem.type === '0'){
+                // 点击座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                store.dispatch('getPersontFixedAssetsList',{ b_usercode:seatItem.id, v_usercode:store.state.UserInfo.usercode })
+            }
         }
         // 鼠标点击会议室的事件处理程序
         function handleClickMeetingRoom(item){

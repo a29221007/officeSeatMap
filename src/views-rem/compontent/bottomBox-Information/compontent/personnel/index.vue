@@ -11,18 +11,33 @@
             <div class="content"><span class="scroll">{{$store.state.activeInfo.depart}}</span></div>
         </div>
         <!-- 第三行 -->
-        <div class="line">
+        <div class="line"  v-if="$store.state.is_have_ckeck_persontFixedAssets">
             <div class="title">个人固定资产信息：</div>
             <!-- <div class="content"><span class="button" v-on:click="handleCheckFixedAssetsList($store.state.activeInfo.id)">查看</span></div> -->
-            <div class="content"><span class="button" v-on:click="$store.dispatch('getPersontFixedAssetsList', {b_usercode:$store.state.activeInfo.id,v_usercode:$store.state.UserInfo.usercode})">查看</span></div>
+            <div class="content"><span class="button" v-on:click="handleClickAssetsMessage">查看</span></div>
         </div>
     </div>
 </template>
 
 <script>
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { beginToast } from '@/views-rem/hook/toast.js'
 export default {
     name:'personnel',
+    setup(){
+        const router = useRouter()
+        const store = useStore()
+        function handleClickAssetsMessage(){
+            if(!store.state.is_have_ckeck_persontFixedAssets) return beginToast('fail','没有权限查看',2000)
+            router.push('/fixedAssets')
+        }
+        return {
+            handleClickAssetsMessage
+        }
+    }
 }
+
 </script>
 
 <style lang="less" scoped>

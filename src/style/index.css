@@ -7,6 +7,7 @@ html,
 body,
 #app {
   height: 100%;
+  overflow: hidden;
 }
 body {
   -moz-user-select: none;
@@ -51,16 +52,67 @@ body {
   margin-left: unset;
 }
 .drawer {
-  top: 20px!important;
-  left: 20px!important;
-  bottom: unset!important;
-  height: unset!important;
+  z-index: 1;
+  top: unset!important;
   right: unset!important;
+  left: 50%!important;
+  bottom: 0!important;
+  height: unset!important;
+  width: 62.5% !important;
+  transform: translateX(-50%);
+  transition: none!important;
   border-radius: 7px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   padding: 5px;
 }
 .drawer .el-drawer__body {
   padding: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.drawer .el-drawer__body .container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.drawer .el-drawer__body .container .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 32px;
+}
+.drawer .el-drawer__body .container .row .col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.drawer .el-drawer__body .container .row .col .title {
+  font-size: 16px;
+}
+.drawer .el-drawer__body .container .row .col .content {
+  font-size: 14px;
+}
+.drawer .el-drawer__body .container .row .col .content .check_button {
+  color: blue;
+  cursor: pointer;
+}
+.drawer .el-drawer__body .container .row .col ._content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+.drawer .el-drawer__body .container .row .col ._content .line {
+  display: flex;
+}
+.drawer .el-drawer__body .container .row .col ._content .line .title {
+  font-size: 14px;
+}
+.drawer .el-drawer__body .container .row .col ._content .line .content {
+  font-size: 12px;
 }
 .drawer .el-drawer__body .pad .el-form-item__label-wrap .el-form-item__label {
   padding-left: 14px;
@@ -97,6 +149,9 @@ body {
 }
 input {
   outline: none;
+}
+.el-overlay .el-overlay-dialog {
+  overflow: hidden;
 }
 .FixedAssets_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper,
 .meetingRoom_dialog .el-dialog__body .el-table .el-table__inner-wrapper .el-table__body-wrapper {
