@@ -157,7 +157,12 @@ export default {
                     BottomBoxRef.value.setSearchLegendContant('information')
                     if(item.type !== '0') return endToast()
                     // 调用获取个人固资列表的函数
-                    store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,v_usercode:store.state.UserInfo.usercode})
+                    store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,v_usercode:store.state.UserInfo.usercode}).then(() => {
+                        if(store.state.is_have_ckeck_persontFixedAssets) {
+                            // 跳转到固资信息页面
+                            router.push('/fixedAssets')
+                        }
+                    })
                 }else if(item.type === 1){
                     // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行，此时定义的 'push',意思是要跳转)
                     getMeetingData(item,'push')
@@ -437,6 +442,10 @@ export default {
                 BottomBoxRef.value.setSearchLegendContant('information')
                 // 调用座位高亮的函数
                 searchSeat(seatItem.seat_id)
+                if(seatItem.type === '0'){
+                    // 点击座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                    store.dispatch('getPersontFixedAssetsList',{ b_usercode:seatItem.id, v_usercode:store.state.UserInfo.usercode })
+                }
             },
             // 点击每一个会议室
             handleClickMeetingRoom(item,$event){

@@ -5,6 +5,7 @@
 }
 html,body,#app{
     height: 100%;
+    overflow: hidden;
 }
 // 禁止文字选中
 body {
@@ -74,15 +75,66 @@ body {
 }
 // 抽屉式弹框的样式
 .drawer{
-    top: 20px!important;
-    left: 20px!important;
-    bottom: unset!important;
-    height: unset!important;
+    z-index: 1;
+    top: unset!important;
     right: unset!important;
+    left: 50%!important;
+    bottom: 0!important;
+    height: unset!important;
+    width: 62.5%!important;
+    transform: translateX(-50%);
+    transition: none!important;
     border-radius: 7px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
     padding:5px;
     .el-drawer__body{
         padding: unset;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .container{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            .row{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                line-height: 32px;
+                .col{
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    .title{
+                        font-size: 16px;
+                    }
+                    .content{
+                        font-size: 14px;
+                        .check_button{
+                            color: blue;
+                            cursor: pointer;
+                        }
+                    }
+                    ._content{
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-around;
+                        align-items: center;
+                        .line{
+                            display: flex;
+                            .title{
+                                font-size: 14px;
+                            }
+                            .content{
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         .pad{
             .el-form-item__label-wrap{
                 .el-form-item__label{

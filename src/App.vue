@@ -36,7 +36,7 @@ export default{
         SearchArray.forEach(item => {
             searchObj[item.split('=')[0]] = item.split('=')[1]
         })
-        
+        console.log(searchObj)
         // 判断是否有state以及code参数
         if(searchObj.state && searchObj.code){
             // 如果有这两个参数,则说明是从企业微信点击应用图标过来的，或者是扫二维码进入的
@@ -47,7 +47,6 @@ export default{
                     return alert('登录失败，请重新进入或联系相关负责人')
                 }
                 store.commit('setUserInfo',res.data)
-                // 判断是否有type、floor、seat_id这3个参数
                 if(searchObj.id){
                     store.commit('setScanQRcode',searchObj.id)
                 }
