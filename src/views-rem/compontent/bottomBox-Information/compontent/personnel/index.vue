@@ -54,12 +54,12 @@ export default {
         display: flex;
         align-items: baseline;
         .title{
-            flex: 2;
+            flex: 1;
             font-size: .3763rem;
             color: #f8f9fa;
         }
         .content{
-            flex: 3.5;
+            flex: 4.2;
             overflow: hidden;
             span{
                 position: relative;
