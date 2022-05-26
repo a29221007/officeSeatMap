@@ -12,7 +12,7 @@
         </div>
         <!-- 第三行 -->
         <div class="line"  v-if="$store.state.is_have_ckeck_persontFixedAssets">
-            <div class="title">个人固定资产信息：</div>
+            <div class="title">资产信息：</div>
             <!-- <div class="content"><span class="button" v-on:click="handleCheckFixedAssetsList($store.state.activeInfo.id)">查看</span></div> -->
             <div class="content"><span class="button" v-on:click="handleClickAssetsMessage">查看</span></div>
         </div>
@@ -55,12 +55,12 @@ export default {
         display: flex;
         align-items: baseline;
         .title{
-            flex: 2;
+            flex: 1;
             font-size: .3763rem;
             color: #f8f9fa;
         }
         .content{
-            flex: 3.5;
+            flex: 4.2;
             overflow: hidden;
             span{
                 position: relative;
