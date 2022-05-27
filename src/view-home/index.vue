@@ -20,7 +20,7 @@ export default {
     setup() {
         // 在App组件中初始化store中的状态
         const store = useStore()
-        store.commit('setCurrentFloor','three')
+        // store.commit('setCurrentFloor','three')
         store.dispatch('getSeatListOfthree')
         store.dispatch('getSeatListOfFour')
         store.dispatch('getSeatListOfShenZhen')

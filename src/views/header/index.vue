@@ -309,7 +309,7 @@ export default {
             }
         })
         const store = useStore()
-        // 切换地图区域的数据（目前只有北京地区的3楼4楼，以后说不定还有其他地区）
+        // 切换地图区域的数据
         const AllArea = [
             {id:0,name:'3楼',lable:'three'},
             {id:1,name:'4楼',lable:'four'},

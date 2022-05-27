@@ -47,9 +47,19 @@ export default{
                     return alert('登录失败，请重新进入或联系相关负责人')
                 }
                 store.commit('setUserInfo',res.data)
-                // 判断是否有type、floor、seat_id这3个参数
+                // 判断是否有 id 这个参数
                 if(searchObj.id){
                     store.commit('setScanQRcode',searchObj.id)
+                }else{
+                    let floor = ''
+                    if(res.data.floor == '3' && res.data.location == '1'){
+                        floor = 'three'
+                    }else if(res.data.floor == '4' && res.data.location == '1'){
+                        floor = 'four'
+                    }else if(res.data.floor == '7' && res.data.location == '2'){
+                        floor = 'shenzhen'
+                    }
+                    store.commit('setCurrentFloor',floor)
                 }
                 // 最后push到home页
                 router.push('/home')
@@ -64,6 +74,15 @@ export default{
                     return alert('登录失败，请重新进入或联系相关负责人')
                 }
                 store.commit('setUserInfo',res.data)
+                let floor = ''
+                if(res.data.floor == '3' && res.data.location == '1'){
+                    floor = 'three'
+                }else if(res.data.floor == '4' && res.data.location == '1'){
+                    floor = 'four'
+                }else if(res.data.floor == '7' && res.data.location == '2'){
+                    floor = 'shenzhen'
+                }
+                store.commit('setCurrentFloor',floor)
                 // 最后push到home页
                 router.push('/home')
             }).catch(error => {

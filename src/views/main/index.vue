@@ -28,7 +28,7 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item2.id">
                             <!-- 区域 -->
-                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="multipleAreaStyle(item,item2)" v-on:click="handleClickMeetingRoom(item)">
+                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="multipleAreaStyle(item,item2,index)" v-on:click="handleClickMeetingRoom(item)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
                                     <template v-if="item.floor == '3' || item.floor == '4'">
@@ -199,7 +199,7 @@ export default {
                 return styleObject
             },
             // 设置每一个区域的样式（多个区域）
-            multipleAreaStyle(item,item2){
+            multipleAreaStyle(item,item2,index){
                 let styleObject = {}
                 if((item.floor == '3' || item.floor == '4') && item.office == '1'){
                     styleObject = {
@@ -222,6 +222,10 @@ export default {
                         backgroundColor: item.backgroundcolor,
                         color:'#646464',
                         fontSize:'12px'
+                    }
+                    // 单独为深圳地区的 "其他" 区域，设置背景色
+                    if((item.code + index) === 'QY02020700310'){
+                        styleObject.backgroundColor = 'rgba(2, 122, 255, 0.05)'
                     }
                 }
                 return styleObject
@@ -1118,7 +1122,6 @@ export default {
         }
         // 其他 3
         #QY02020700310{
-            background-color: rgba(2, 122, 255, 0.05)!important;
             .title{
                 top: -20%;
             }
@@ -1212,6 +1215,14 @@ export default {
             .title{
                 display: flex;
                 flex-direction: column;
+            }
+        }
+        // 前台
+        #QY0202070032216{
+            .title{
+                top: -14px;
+                left: 42px;
+                transform: unset;
             }
         }
     }
