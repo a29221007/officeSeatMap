@@ -5,7 +5,7 @@ export const baseURL = 'http://maptest.longtubas.com:8091/api/' // 测试服
 // 创建axios的实例对象
 const instance = axios.create({
     baseURL,
-    timeout: 5000
+    timeout: 5000 
 })
 
 // instance 请求拦截
