@@ -152,6 +152,9 @@ export default {
                     beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
                     // 如果为座位
                     seatData.setCurrentSeat_id(item.seat_id)
+                    // 点击座位要将底部盒子升上来
+                    scaling = false
+                    MapBoxTapFn()
                     // 调用座位高亮的函数
                     searchSeat(item.seat_id)
                     BottomBoxRef.value.setSearchLegendContant('information')
