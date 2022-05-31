@@ -1,12 +1,11 @@
 <template>
     <div class="BarCodeNoPermission-container" v-on:click="$router.back()">
         <i class="iconfont oamap-unlock"></i>
-        <span>您当前权限查看（点击任意处返回）</span>
+        <span>您当前无权限查看（点击任意处返回）</span>
     </div>
 </template>
 
 <script>
-import { ref } from 'vue'
 export default {
     name:'BarCodeNoPermission',
     setup() {
