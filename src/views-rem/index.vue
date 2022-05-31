@@ -516,7 +516,14 @@ export default {
                 BottomBoxRef.value.setSearchLegendContant('information')
                 // 如果有flag参数，并且查询也没有报错的情况下，跳转到会议室预约记录展示页面
                 if(flag){
-                    router.push('/meetingRoomHistory')
+                    // 继续判断会议室是否有预约记录
+                    if(res.data.HistoryList.length){
+                        // 如果有则push到预约记录详情页
+                        router.push('/meetingRoomHistory')
+                    }else{
+                        // 如果没有，则push到无预约记录页面
+                        router.push('/meetingRoomFree')
+                    }
                 }
             }).catch( error => {
                 store.commit('setActiveInfo',{
