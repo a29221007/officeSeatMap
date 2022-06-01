@@ -13,7 +13,7 @@ function sortMeetingList(array){
     array.forEach((item, index) => {
         // 将时间的 年-月-日 分开
         const data = new Date(item.MDate)
-        item['year'] = data.getFullYear()
+        item['year'] = data.getFullYear() + '年'
         item['month_day'] = (data.getMonth() + 1) + '月' + (data.getDate()) + '日'
         item['is_hidden'] = false
         if(index === 0){

@@ -157,15 +157,18 @@
                     <!-- 标题 -->
                     <div class="title">预定信息：</div>
                     <!-- 内容 -->
-                    <div class="content _content">
-                        <div class="line">
-                            <div class="title">当前预定：</div>
-                            <div :class="{'jump':is_curentMeeting_active,'content':true}" v-on:click="handleClickJumpWX(currentInfo.current.USERID)">{{is_curentMeeting_active ? currentInfo.current.USERNAME : '无'}}</div>
-                        </div>
-                        <div class="line" v-if="is_curentMeeting_active">
-                            <div class="title">预定时间：</div>
-                            <div class="content">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</div>
-                        </div>
+                    <div :class="{'content':true, '_content':is_curentMeeting_active}">
+                        <template v-if="is_curentMeeting_active">
+                            <div class="line">
+                                <div class="title">当前预定：</div>
+                                <div :class="{'jump':is_curentMeeting_active,'content':true}" v-on:click="handleClickJumpWX(currentInfo.current.USERID)">{{is_curentMeeting_active ? currentInfo.current.USERNAME : '无'}}</div>
+                            </div>
+                            <div class="line" v-if="is_curentMeeting_active">
+                                <div class="title">预定时间：</div>
+                                <div class="content">{{currentInfo.current.MDate + ' ' + currentInfo.current.STARTTIME + '-' + currentInfo.current.ENDTIME }}</div>
+                            </div>
+                        </template>
+                        <template v-else>无</template>
                     </div>
                 </div>
             </div>
