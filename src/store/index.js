@@ -4113,6 +4113,8 @@ export default createStore({
                 context.commit('setPersontFixedAssetsList',res.data)
             }catch(error){
                 endToast()
+                // 获取个人固资信息失败后，无论当前用户是否有权限查看，都将查看按钮隐藏
+                context.commit('setIs_have_ckeck_persontFixedAssets',false)
                 errorMessage('获取个人固资失败',error)
             }
         }
