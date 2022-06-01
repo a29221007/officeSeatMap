@@ -1,7 +1,7 @@
 /**
  * 对会议室预定记录的数据按时间顺序排序，以及对时间是否做隐藏进行判断
- * 参数为，会议室预定记录数据集合
- * 返回值，为处理好的数据集合
+ * 参数为会议室预定记录数据集合
+ * 返回值为处理好的数据集合
 */
 
 function sortMeetingList(array){
@@ -13,7 +13,7 @@ function sortMeetingList(array){
     array.forEach((item, index) => {
         // 将时间的 年-月-日 分开
         const data = new Date(item.MDate)
-        item['year'] = data.getFullYear()
+        item['year'] = data.getFullYear() + '年'
         item['month_day'] = (data.getMonth() + 1) + '月' + (data.getDate()) + '日'
         item['is_hidden'] = false
         if(index === 0){
