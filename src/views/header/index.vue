@@ -382,6 +382,10 @@ export default {
                             scaleSeat(el)
                             drawerData.is_show = true
                             drawerData.currentInfo = item
+                            if(item.type === '0'){
+                                // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                                store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
+                            }
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             ElMessageBox.confirm(
@@ -398,6 +402,10 @@ export default {
                                 handleClickFloor(pushFloor)
                                 drawerData.is_show = true
                                 drawerData.currentInfo = item
+                                if(item.type === '0'){
+                                    // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                                    store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
+                                }
                                 nextTick(() => {
                                     let el = document.getElementById(item.seat_id)
                                     emitter.emit('SearchSeat',item.seat_id)

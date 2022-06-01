@@ -133,6 +133,10 @@ export default {
                             store.commit('setActiveInfo',item)
                             upDataCurrentSeat_id(seat_id)
                             searchSeat(seat_id)
+                            if(item.type === '0'){
+                                // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                                store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
+                            }
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             Dialog.confirm({
@@ -144,6 +148,10 @@ export default {
                                 // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                 emit('setSearchLegendContant','information')
                                 store.commit('setActiveInfo',item)
+                                if(item.type === '0'){
+                                    // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                                    store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
+                                }
                                 nextTick(() => {
                                     upDataCurrentSeat_id(seat_id)
                                     searchSeat(seat_id)
