@@ -7,6 +7,12 @@
                 <span :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<span class="separator" v-if="item.id !== AllArea.length - 1"> / </span></span>
             </div>
             <el-autocomplete v-model="searchState" value-key='name' popper-class='autocomplete' :prefix-icon="Search" :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:clear="handleClearInput">
+                <!-- 搜索时确定范围按钮 -->
+                <template #append>
+                    <div class="selectFloor">
+                        <div :class="{'active':item.lable === currentSearchFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickSlectFloor(item.lable)">{{item.name}}</div>
+                    </div>
+                </template>
                 <!-- 自定义搜索建议列表模板(当有搜索建议时) -->
                 <template #default="{ item }" v-if="is_none_sugges">
                     <div class="autoCompleteTemplate" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
@@ -325,16 +331,36 @@ export default {
             // 切换楼层（或地区）时，将地图初始化
             initMap()
         }
+        // 切换搜索范围的处理函数
+        function handleClickSlectFloor(floor){
+            if(floor === searchData.currentSearchFloor) return
+            searchData.currentSearchFloor = floor
+            searchData.querySearch(searchData.searchState, callbackFn)
+        }
+        // 保存搜索建议列表的 callback 回调函数，用于切换搜索范围时使用
+        let callbackFn = null
         // 定义模糊搜索框的相关数据与方法
         const searchData = reactive({
+            // 选中的搜索范围
+            currentSearchFloor:store.state.currentFloor,
             // 模糊搜索的关键字
             searchState:'',
             // 是否有匹配项
             is_none_sugges:true, // 默认是有匹配项
             // 搜索建议
             querySearch(queryString, callback) {
+                // 判断callback是否是null，如果为null，才去赋值
+                if(!callbackFn) callbackFn = callback
                 searchData.is_none_sugges = true
-                const results = store.getters.AllSeatList.filter(item => {
+                let searchArray = []
+                if(searchData.currentSearchFloor === 'three'){
+                    searchArray = store.getters.seatAndAreaListOfThree
+                }else if(searchData.currentSearchFloor === 'four'){
+                    searchArray = store.getters.seatAndAreaListOfFour
+                }else if(searchData.currentSearchFloor === 'shenzhen'){
+                    searchArray = store.getters.seatAndAreaListOfShenZhen
+                }
+                const results = searchArray.filter(item => {
                     return (item.name && item.name.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase())) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase())) || (item.code && item.code.toUpperCase().includes(queryString.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase()))
                 })
                 // 去除多个重复的项
@@ -383,6 +409,10 @@ export default {
                             scaleSeat(el)
                             drawerData.is_show = true
                             drawerData.currentInfo = item
+                            if(item.type === '0'){
+                                // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                                store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
+                            }
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             ElMessageBox.confirm(
@@ -406,6 +436,10 @@ export default {
                                 handleClickFloor(pushFloor)
                                 drawerData.is_show = true
                                 drawerData.currentInfo = item
+                                if(item.type === '0'){
+                                    // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                                    store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
+                                }
                                 nextTick(() => {
                                     let el = document.getElementById(item.seat_id)
                                     emitter.emit('SearchSeat',item.seat_id)
@@ -640,6 +674,7 @@ export default {
             ...toRefs(legendData),
             ...toRefs(drawerData),
             handleClickFloor,
+            handleClickSlectFloor,
             headerContainerRef,
             Search,
             FixedAssetsRef,
@@ -676,6 +711,20 @@ export default {
                     color: chocolate;
                     .separator{
                         color: #000;
+                    }
+                }
+            }
+        }
+        /deep/.el-input-group__append{
+            padding: 0 10px;
+            .selectFloor{
+                display: flex;
+                div{
+                    padding: 0 5px;
+                    margin: 0 3px;
+                    cursor: pointer;
+                    &.active{
+                        color: tomato;
                     }
                 }
             }

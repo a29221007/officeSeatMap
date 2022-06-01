@@ -1,11 +1,17 @@
 <template>
     <!-- 2、点击了搜索后，显示搜索框和搜索建议列表 -->
     <div class="search">
+        <!-- 搜索框 -->
         <div class="search-input">
             <i v-on:click="handleClickBack" class="iconfont oamap-zuojiantou"></i>
             <input ref="inputRef" class="ipt" v-model="inputValue" type="text" placeholder=" 搜索" v-on:input="handleInputSearch">
             <i v-if="inputValue" v-on:click="handleClickClear" class="iconfont oamap-qingchu"></i>
         </div>
+        <!-- 搜索范围切换 -->
+        <div class="search-floor-switch">
+            <div :class="{'active':item.lable === currentSelectFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickSelectFloor(item.lable)">{{item.name}}</div>
+        </div>
+        <!-- 搜索结果展示 -->
         <div class="querySearch" ref="querySearchRef" v-on:touchmove="querySearchMove">
             <template v-if="is_none_sugges">
                 <div class="querySearch-item" v-for="item in querySearchList" :key="item.id" v-on:click="handleClickQuerySearchItem(item)">
@@ -49,10 +55,18 @@ import searchArea from '@/views-rem/hook/searchArea.js'
 export default {
     name:'BottomBoxSearch',
     emits:['setSearchLegendContant'],
+    props:{
+        AllArea:{
+            type:Array,
+            required:true
+        }
+    },
     setup(prop,{ emit }) {
         const store = useStore()
         // 搜索框的数据和逻辑
         let searchInput = reactive({
+            // 当前搜索的范围
+            currentSelectFloor:store.state.currentFloor,
             // 搜索框的输入绑定值
             inputValue: '', // 默认为空
             // 搜索事件的防抖变量
@@ -67,8 +81,16 @@ export default {
                     if(!searchInput.inputValue){
                         return querySearch.querySearchList = []
                     }
+                    let searchArray = []
+                    if(searchInput.currentSelectFloor === 'three'){
+                        searchArray = store.getters.seatAndAreaListOfThree
+                    }else if(searchInput.currentSelectFloor === 'four'){
+                        searchArray = store.getters.seatAndAreaListOfFour
+                    }else if(searchInput.currentSelectFloor === 'shenzhen'){
+                        searchArray = store.getters.seatAndAreaListOfShenZhen
+                    }
                     // 写搜索的逻辑
-                    const results = store.getters.AllSeatList.filter(item => {
+                    const results = searchArray.filter(item => {
                         return (item.name && item.name.replace(/\s/g,"").toUpperCase().includes(searchInput.inputValue.toUpperCase())) || (item.seat_id && item.seat_id.includes(searchInput.inputValue.toUpperCase())) || (item.code && item.code.toUpperCase().includes(searchInput.inputValue.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(searchInput.inputValue.toUpperCase()))
                     })
                     // 去除多个重复的项
@@ -95,6 +117,7 @@ export default {
                         querySearch.querySearchList = array_seat
                     }else{
                         searchInput.is_none_sugges = false
+                        querySearch.querySearchList = []
                     }
                 },300)
             },
@@ -108,6 +131,12 @@ export default {
                 searchInput.inputValue = ''
                 querySearch.querySearchList = []
                 searchInput.is_none_sugges = true
+            },
+            // 点击切换搜索范围处理函数
+            handleClickSelectFloor(floor){
+                if(floor === searchInput.currentSelectFloor) return
+                searchInput.currentSelectFloor = floor
+                searchInput.handleInputSearch()
             }
         })
         let inputRef = ref(null)
@@ -133,6 +162,10 @@ export default {
                             store.commit('setActiveInfo',item)
                             upDataCurrentSeat_id(seat_id)
                             searchSeat(seat_id)
+                            if(item.type === '0'){
+                                // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                                store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
+                            }
                         }else{
                             // 如果不相同，则提示用户是否需要自动跳转到对应楼层（或地区）
                             Dialog.confirm({
@@ -144,6 +177,10 @@ export default {
                                 // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                 emit('setSearchLegendContant','information')
                                 store.commit('setActiveInfo',item)
+                                if(item.type === '0'){
+                                    // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
+                                    store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
+                                }
                                 nextTick(() => {
                                     upDataCurrentSeat_id(seat_id)
                                     searchSeat(seat_id)
@@ -233,7 +270,6 @@ export default {
         border-radius: 7px;
         display: flex;
         align-items: center;
-        margin-bottom: .2688rem;
         .oamap-zuojiantou,.oamap-qingchu{
             color: #f8f9fa;
             font-size: .4301rem;
@@ -249,6 +285,18 @@ export default {
             &::-webkit-input-placeholder{
                 color: #b1b2b4;
             }
+        }
+    }
+    .search-floor-switch{
+        color: #fff;
+        display: flex;
+        height: .7312rem;
+        align-items: center;
+        margin: .1075rem 0;
+        font-size: .4516rem;
+        justify-content: space-around;
+        div.active{
+            color: tomato;
         }
     }
     .querySearch{

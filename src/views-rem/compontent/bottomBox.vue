@@ -4,7 +4,7 @@
         <div class="arrow arrow-left"></div>
         <div class="arrow arrow-right"></div>
         <!-- 里面切换子组件 -->
-        <component ref="componentRef" v-on:setSearchLegendContant="setSearchLegendContant" :is="SearchLegendContant"></component>
+        <component ref="componentRef" v-on:setSearchLegendContant="setSearchLegendContant" :AllArea='AllArea' :is="SearchLegendContant"></component>
     </div>
     <!-- 下面切换楼层区域 -->
     <div ref="FloorSwitchRef" class="floor-switch" v-show="SearchLegendContant === 'init'">
