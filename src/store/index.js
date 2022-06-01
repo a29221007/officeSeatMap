@@ -204,6 +204,7 @@ export default createStore({
                 context.commit('setPersontFixedAssetsList',res.data)
             }catch(error){
                 endToast()
+                context.commit('setIs_have_ckeck_persontFixedAssets',false)
                 errorMessage('获取个人固资失败',error)
             }
         }
