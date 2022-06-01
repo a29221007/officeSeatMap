@@ -452,7 +452,8 @@ export default {
         #QY010103005268{
             .title{
                 top: unset;
-                bottom: -9px;
+                bottom: -33px;
+                left: 34px;
             }
         }
         // 法务部&公共关系与政府事务部
@@ -469,7 +470,7 @@ export default {
                 top: 7px;
             }
         }
-        // 平台技术部(it支持部)
+        // 用户体验部（音频音效）
         #QY010103004762{
             .title{
                 top: -2px;

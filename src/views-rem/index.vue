@@ -700,12 +700,17 @@ export default {
                 }
             }
         }
-        // 消防前室
+        // 平台技术部（it信息部）
         #QY010103005268{
             .title{
+                width: 100%;
+                height: 100%;
                 top: unset;
-                bottom: -0.2151rem;
-                left: .4301rem;
+                bottom: -0.8125rem;
+                left: .2875rem;
+                .subtitle{
+                    transform: translateY(-0.1452rem) scale(0.38, 0.38);
+                }
             }
         }
         // 法务部&公共关系与政府事务部
@@ -716,7 +721,7 @@ export default {
                 left: .7742rem;
             }
         }
-        // it支持部、冰柠工作室
+        // 用户体验部（音频音效）、冰柠工作室
         #QY010103004762,#QY010103003838{
             .title{
                 top: .0753rem;
