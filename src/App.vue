@@ -11,31 +11,34 @@
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { getUserInfo, getUserInfoFromOA } from '@/api/login.js'
-import eruda from 'eruda'
-eruda.init()
+// import eruda from 'eruda'
+// eruda.init()
 export default{
     name: 'App',
     setup() {
+
         const router = useRouter()
         const store = useStore()
         // 获取 search
         let search = window.location.search
         // 判断 进入的标识是否有值
         if(store.state.intoTheWay === 'OA'){
-            router.push('/home')
+            router.push('/home?time=' + Date.now())
             return 
         }
-        // 如果没有参数，则跳转到 login 页面
-        if(!search) {
-            router.push('/login')
-            return
-        }
+        
         // 如果有参数的话，解析参数,最终解析成键值对的对象类型
         let SearchArray = search.slice(1).split('&')
         let searchObj = {}
         SearchArray.forEach(item => {
             searchObj[item.split('=')[0]] = item.split('=')[1]
         })
+
+        // 如果没有参数，则跳转到 login 页面
+        if(!search || (Object.keys(searchObj).length == 1 && Object.keys(searchObj)[0] == 'time')) {
+            router.push('/login?time=' + Date.now())
+            return
+        }
         // 判断是否有state以及code参数
         if(searchObj.state && searchObj.code){
             // 如果有这两个参数,则说明是从企业微信点击应用图标过来的，或者是扫二维码进入的
@@ -50,7 +53,7 @@ export default{
                     store.commit('setScanQRcode',searchObj.id)
                 }
                 // 最后push到home页
-                router.push('/home')
+                router.push('/home?time=' + Date.now())
             }).catch(error => {
                 console.log('error',error)
             })
@@ -63,7 +66,7 @@ export default{
                 }
                 store.commit('setUserInfo',res.data)
                 // 最后push到home页
-                router.push('/home')
+                router.push('/home?time=' + Date.now())
             }).catch(error => {
                 console.log('error',error)
             })
