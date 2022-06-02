@@ -190,10 +190,6 @@ export default {
                     display: flex;
                     width: 100%;
                     align-items: baseline;
-                    .title{
-                        flex: 1;
-                        text-align: end;
-                    }
                     .content{
                         flex: 5.6;
                     }
