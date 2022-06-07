@@ -4,9 +4,9 @@
         <i class="iconfont oamap-north"></i>
         <!-- 放大缩小按钮 -->
         <div class="scale-btn">
-            <i v-on:click="MapBoxAmplification(0.7)" class="iconfont oamap-jiahao"></i>
+            <i v-on:click="MapBoxAmplification(0.2)" class="iconfont oamap-jiahao"></i>
             <i v-on:click="initMap('huifu')" class="iconfont oamap-huifu"></i>
-            <i v-on:click="MapBoxReduce(0.7)" class="iconfont oamap-jianhao"></i>
+            <i v-on:click="MapBoxReduce(0.2)" class="iconfont oamap-jianhao"></i>
         </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
@@ -296,10 +296,10 @@ export default {
             e.preventDefault()
             if (e.wheelDelta > 0) {
                 // 执行放大的逻辑
-                MapBoxAmplification(0.3)
+                MapBoxAmplification(0.1)
             } else {
                 // 指向缩小的逻辑
-                MapBoxReduce(0.25)
+                MapBoxReduce(0.1)
             }
         }
         // 监听鼠标滚轮滚动的事件-火狐浏览器
@@ -309,10 +309,10 @@ export default {
             //上下滚轮动作判断
             if (e.detail < 0) {
                 // 执行放大的逻辑
-                MapBoxAmplification(0.3)
+                MapBoxAmplification(0.1)
             } else {
                 // 指向缩小的逻辑
-                MapBoxReduce(0.25)
+                MapBoxReduce(0.1)
             }
         }
         // 定义初始的缩放值1
@@ -448,7 +448,7 @@ export default {
                 }
             }
         }
-        // 消防前室
+        // 平台技术部（it支持部）
         #QY010103005268{
             .title{
                 top: unset;
@@ -464,10 +464,10 @@ export default {
                 left: 72px;
             }
         }
-        // 冰柠工作室
+        // 热江3D&余烬风暴美术
         #QY010103003838{
             .title{
-                top: 7px;
+                top: 18px;
             }
         }
         // 用户体验部（音频音效）
@@ -476,25 +476,40 @@ export default {
                 top: -2px;
             }
         }
-        // 冰柠（AX项目组）
-        #QY010103003737{
+        // 热江3D&我叫MT-1
+        #QY010103006037{
             .title{
                 display: flex;
                 flex-direction: row-reverse;
                 align-items: center;
-                right: -11px;
+                right:7px;
                 left: unset;
                 span{
                     width: 2px;
                     white-space:unset;
                 }
-                .name{
-                    margin-left: 8px;
-                }
             }
         }
-        // 冰柠工作室（EOS项目组）、（余烬风暴项目组）、平台技术部(it信息部)、平台技术部(QA部)
-        #QY010103003939,#QY010103004040,#QY010103003131,#QY010103003030{
+        // 热江3D&我叫MT-2（该区域的标题暂时删除）
+        // #QY01010300601{
+        //     .title{
+        //         top: 75%;
+        //         left: 37%;
+        //         span{
+        //             width: 2px;
+        //             white-space:unset;
+        //         }
+        //     }
+        // }
+        // 热江3D&我叫MT-3
+        #QY01010300600{
+            .title{
+                top: unset;
+                bottom: -12px;
+            }
+        }
+        // 热江项目组-1、余烬风暴项目组、平台技术部(it信息部)、平台技术部(QA部)
+        #QY010103002639,#QY010103004040,#QY010103003131,#QY010103003030{
             .title{
                 display: flex;
                 align-items: center;
@@ -505,6 +520,17 @@ export default {
                 }
                 .name{
                     margin-right: 8px;
+                }
+            }
+        }
+        // 热江项目组-2
+        #QY01010300260{
+            .title{
+                left: unset;
+                right: 25px;
+                span{
+                    width: 2px;
+                    white-space:unset;
                 }
             }
         }
@@ -551,19 +577,14 @@ export default {
                 }
             }
         }
-        // 一点咨询
+        // 用户体验部（本地化）
         #QY010103002424{
             .title{
                 top: unset;
-                bottom: -9px;
-            }
-        }
-        // 引擎平台部
-        #QY01010300220{
-            .title{
-                left: 79%;
-                top: unset;
-                bottom: -12px;
+                bottom: -28px;
+                .subtitle{
+                    transform: translateY(-8px) scale(0.65, 0.65);
+                }
             }
         }
         // 采购部&商务支持部
@@ -593,20 +614,20 @@ export default {
                 top: 13%;
             }
         }
-        // Frebird工作室(小)、运营部
-        #QY010103004352,#QY010103005376{
+        // 新SLG、运营部
+        #QY010103002252,#QY010103005376{
             .title{
                 top: unset;
                 bottom: -8px;
             }
         }
-        // Frebird工作室(大)
+        // 英雄无敌&新SLG
         #QY01010300430{
             .title{
                 top: 46%;
             }
         }
-        // 平行工作室-1
+        // 无神之界-1
         #QY010103004455{
             .title{
                 span{
@@ -616,7 +637,7 @@ export default {
                 }
             }
         }
-        // 平行工作室-2
+        // 无神之界-2
         #QY01010300440{
             .title{
                 left: unset;
@@ -629,15 +650,15 @@ export default {
                 }
             }
         }
-        // 陨星工作室-1
-        #QY010103004558{
+        // 无神之界-3
+        #QY010103004458{
             .title{
                 top: unset;
                 bottom: -6px;
             }
         }
-        // 陨星工作室-2
-        #QY010103004559{
+        // 无神之界-4
+        #QY010103004459{
             .title{
                 left: unset;
                 top: 51%;
@@ -649,7 +670,7 @@ export default {
                 }
             }
         }
-        // 陨星工作室-3
+        // 行政部
         #QY010103004560{
             .title{
                 left: unset;
@@ -687,22 +708,10 @@ export default {
                 top: 80%;
             }
         }
-        // 用户体验部
-        #QY01010300251{
+        // 阳光走廊
+        #QY0101030061174{
             .title{
-                top: 75%;
-                left: 37%;
-                span{
-                    width: 2px;
-                    white-space:unset;
-                }
-            }
-        }
-        // 行政部
-        #QY01010300260{
-            .title{
-                left: unset;
-                right: 20px;
+                left: 17%;
                 span{
                     width: 2px;
                     white-space:unset;
