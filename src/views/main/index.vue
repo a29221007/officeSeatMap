@@ -439,8 +439,8 @@ export default {
             }
         }
         // 单独的样式覆盖掉之前的公共样式（3层）
-        // 采购部库房、采购库房
-        #QY010103004661,#QY010103004865{
+        // 法务部旁边的采购库房
+        #QY010103004865{
             .title{
                 span{
                     width: 2px;
@@ -461,7 +461,10 @@ export default {
             .title{
                 top: unset;
                 bottom: -9px;
-                left: 72px;
+                left: 45px;
+                .name{
+                    transform: scale(0.5,0.9);
+                }
             }
         }
         // 热江3D&余烬风暴美术
@@ -491,16 +494,6 @@ export default {
             }
         }
         // 热江3D&我叫MT-2（该区域的标题暂时删除）
-        // #QY01010300601{
-        //     .title{
-        //         top: 75%;
-        //         left: 37%;
-        //         span{
-        //             width: 2px;
-        //             white-space:unset;
-        //         }
-        //     }
-        // }
         // 热江3D&我叫MT-3
         #QY01010300600{
             .title{
@@ -523,6 +516,14 @@ export default {
                 }
             }
         }
+        // 热江项目组-1
+        #QY010103002639{
+            .title{
+                .name{
+                    transform: scale(0.85,0.7);
+                }
+            }
+        }
         // 热江项目组-2
         #QY01010300260{
             .title{
@@ -534,16 +535,23 @@ export default {
                 }
             }
         }
+        // 余烬风暴项目组
+        #QY010103004040{
+            .title{
+                top: 0;
+            }
+        }
         // 平台技术部(it信息部)、平台技术部(QA部)
         #QY010103003131,#QY010103003030{
             .title{
                 left: 2px;
             }
         }
-        // 财务部
-        #QY010103003232{
+        // 财务部、人力资源部
+        #QY010103003232,#QY010103003435{
             .title{
-                top: 4px;
+                top: unset;
+                bottom: -5px;
             }
         }
         // 人力资源部、薪酬福利咨询处
@@ -569,14 +577,6 @@ export default {
                 transform: unset;
             }
         }
-        // 媒介市场行政仓库
-        #QY010103002323{
-            .title{
-                .name{
-                    transform: scale(0.75,0.8);
-                }
-            }
-        }
         // 用户体验部（本地化）
         #QY010103002424{
             .title{
@@ -587,54 +587,92 @@ export default {
                 }
             }
         }
-        // 采购部&商务支持部
-        #QY010103002141{
+        // 证券部
+        #QY010103002020{
             .title{
-                left: 0;
-                top: -36px;
-                transform: unset;
-                span{
-                    width: 2px;
-                    white-space:unset;
-                }
+                top: -10px;
                 .name{
-                    transform: scale(0.85, 0.5);
+                    transform: scale(0.6,0.9);
                 }
             }
         }
-        // 媒介部、采购部&商务支持部
-        #QY010103002020,#QY010103002121{
+        // 市场部-1
+        #QY01010300641{
             .title{
-                top: 64%;
+                top: 78%;
             }
         }
-        // 公司市场部、产品市场部、视觉创意部
-        #QY010103001616,#QY010103001717,#QY010103001818{
+        // 总裁办(小)、市场部-2、视觉创意部
+        #QY0101030019179,#QY010103006416,#QY010103001818{
             .title{
-                top: 13%;
+                top: 5px;
             }
         }
-        // 新SLG、运营部
-        #QY010103002252,#QY010103005376{
+        // 总裁办(小)
+        #QY0101030019179{
+            .title{
+                .name{
+                    transform: scale(0.6,0.9);
+                }
+            }
+        }
+        // 新SLG、市场部-3、运营部
+         #QY010103002252,#QY0101030064180,#QY010103005376{
             .title{
                 top: unset;
                 bottom: -8px;
             }
         }
-        // 英雄无敌&新SLG
-        #QY01010300430{
+        // 用户体验部（用研）、视觉创意部（视频组）
+        #QY0101030066181,#QY010103001717{
             .title{
-                top: 46%;
+                top: unset;
+                bottom: -32px;
+                .name{
+                    transform: scale(0.6,0.9);
+                }
+                .subtitle{
+                    transform: translateY(-5px) scale(0.5, 0.5);
+                }
+            }
+        }
+        // 媒介管理部、采购部
+        #QY01010300210,#QY0101030065178{
+            .title{
+                top: 65%;
+            }
+        }
+        // 媒介管理部
+        #QY01010300210{
+            .title{
+                .name{
+                    transform: scale(0.6,0.9);
+                }
+            }
+        }
+        // 英雄无敌&新SLG
+        #QY01010300431{
+            .title{
+                top: 40%;
+            }
+        }
+        // 引擎平台部
+        #QY0101030067182{
+            .title{
+                left: unset;
+                right: 4px;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
             }
         }
         // 无神之界-1
         #QY010103004455{
             .title{
-                span{
-                    width: 2px;
-                    white-space:unset;
-                    transform: scale(0.85, 0.7);
-                }
+                top: unset;
+                bottom: -7px;
+                left: 55%;
             }
         }
         // 无神之界-2
@@ -642,27 +680,7 @@ export default {
             .title{
                 left: unset;
                 top: 40%;
-                right: -15px;
-                span{
-                    width: 2px;
-                    white-space:unset;
-                    transform: scale(0.85, 0.7);
-                }
-            }
-        }
-        // 无神之界-3
-        #QY010103004458{
-            .title{
-                top: unset;
-                bottom: -6px;
-            }
-        }
-        // 无神之界-4
-        #QY010103004459{
-            .title{
-                left: unset;
-                top: 51%;
-                right: 2px;
+                right: -21px;
                 span{
                     width: 2px;
                     white-space:unset;
@@ -671,11 +689,22 @@ export default {
             }
         }
         // 行政部
-        #QY010103004560{
+        #QY0101030068183{
             .title{
-                left: unset;
-                top: 55%;
-                right: 8px;
+                top: unset;
+                bottom: -55px;
+                left: 24%;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                    transform: scale(0.85, 0.5);
+                }
+            }
+        }
+        // 用户体验设计部
+        #QY01010300450{
+            .title{
+                left: -2px;
                 span{
                     width: 2px;
                     white-space:unset;
@@ -708,8 +737,8 @@ export default {
                 top: 80%;
             }
         }
-        // 阳光走廊
-        #QY0101030061174{
+        // 阳光走廊(3层和4层的)
+        #QY0101030061174,#QY0101040066185{
             .title{
                 left: 17%;
                 span{
@@ -718,62 +747,55 @@ export default {
                 }
             }
         }
+        // 洗手台
+        #QY010103006277{
+            .title{
+                top: 54%;
+                left: 45%;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
+            }
+        }
         // 单独的样式覆盖掉之前的公共样式（4层）
-        // ATC + 引擎
+        // 空
         #QY010104000270{
             .title{
                 top: unset;
                 bottom: 0;
             }
         }
-        // 微传播（会议室-顶部）
-        #QY010104000371{
-            .title{
-                .name{
-                    transform: scale(0.7,0.9);
-                }
-                .subtitle{
-                    transform: scale(0.5,0.65);
-                }
-            }
-        }
-        // 奥尔坦西亚、金银岛
-        #QY010104000472,#QY01010400050{
+        // 奥尔坦西亚
+        #QY010104000472{
             .title{
                 .name{
                     transform: scale(0.45,0.9);
                 }
             }
         }
-        // 儒博会议室
+        // ROOBO会议室
         #QY010104000787{
             .title{
                 .name{
-                    transform: scale(0.7,0.9);
+                    transform: scale(0.45,0.9);
                 }
-            }
-        }
-        // 异界
-        #QY0101040029115{
-            .title{
-                top: 6%;
             }
         }
         // 微传播（部门）
         #QY0101040030116{
             .title{
-                top: 45%;
+                top: 55%;
             }
         }
         // 灵回诗社
         #QY0101040028114{
             .title{
                 top: 5%;
-                left: 35%;
             }
         }
-        // 蓝图救援中心、琥珀工作室、优格资本（部门）、卫生间-1
-        #QY0101040032118,#QY0101040031117,#QY0101040042131,#QY0101040061159{
+        // 商务部、盾勇项目组、优格资本（部门）
+        #QY0101040032118,#QY0101040031117,#QY0101040042131{
             .title{
                 left: 20%;
                 span{
@@ -782,44 +804,44 @@ export default {
                 }
             }
         }
-        // 琥珀工作室
+        // 盾勇项目组
         #QY0101040031117{
             .title{
                 left: 10%;
             }
         }
-        // Heyyo工作室
-        #QY0101040037123{
+        // 美术部-1、美术部-2
+        #QY0101040036123,#QY0101040036122{
             .title{
                 top: unset;
-                bottom: -2px;
+                bottom: -3px;
             }
         }
-        // 北斗工作室、发行技术部
-        #QY0101040039125,#QY0101040040126{
+        // 行政部、一点咨询
+        #QY0101040039125,#QY0101040070189{
             .title{
                 top: unset;
                 bottom: -9px;
             }
         }
-        // 龙图游戏（客服部）
-        #QY0101040038124{
+        // 发行技术部
+        #QY0101040040126{
             .title{
-                top: unset;
-                bottom: -20px;
-                .name{
-                    transform:translate(0px,5px) scale(0.85, 0.9)
+                left: 0;
+                span{
+                    width: 2px;
+                    white-space:unset;
                 }
             }
         }
-        // 商务部
-        #QY0101040036122{
+        // 客服部
+        #QY0101040038124{
             .title{
                 top: unset;
                 bottom: -5px;
             }
         }
-        // 创新中心（动画组）
+        // 创新中心（Heyyo工作室）
         #QY0101040035121{
             .title{
                 top: unset;
@@ -829,28 +851,78 @@ export default {
                 }
             }
         }
+        // 运营部（盾勇&苍骑）
+        #QY0101040034120{
+            .title{
+                top: unset;
+                bottom: -21px;
+                .name{
+                    transform:translate(0px,5px) scale(0.85, 0.9)
+                }
+            }
+        }
+        // 渠道部
+        #QY0101040033119{
+            .title{
+                top: 10px;
+                left: 65%;
+            }
+        }
+        // 发行技术部（产品部）
+        #QY0101040043132{
+            .title{
+                display: flex;
+                flex-direction: row-reverse;
+                align-items: center;
+                right: 9px;
+                left: unset;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
+                .name{
+                    margin-left: 8px;
+                    transform: scale(0.85, 0.6);
+                }
+                .subtitle{
+                    transform: scale(0.65,0.45);
+                }
+            }
+        }
+        // 空16
+        #QY0101040044133{
+            .title{
+                left: unset;
+                right: 29%;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
+            }
+        }
         // 格尔威森林
         #QY010104001696{
             .name{
                 transform:scale(0.65, 0.9)
             }
         }
-        // 儒博库房、监控室
-        #QY0101040047143,#QY0101040048144{
+        // 监控室
+        #QY0101040048144{
             .name{
                 transform:scale(0.5, 0.9)
             }
         }
-        // 未知部门-5
-        #QY01010400411{
-            .title{
-                top: 45%;
+        // ROOBO库房
+        #QY0101040047143{
+            .name{
+                transform:scale(0.35, 0.9)
             }
         }
-        // 未知部门-5
+        // ROOBO如布
         #QY01010400412{
             .title{
                 top: 48%;
+                left: 20%;
             }
         }
         // 直播间1
@@ -898,18 +970,28 @@ export default {
                 }
             }
         }
-        // 卫生间-2
-        #QY0101040061161{
+        // 4层女卫生间-1
+        #QY0101040068161{
             .title{
                 top: 10%;
                 left: 40%;
             }
         }
-        // 卫生间-3
+        // 4层男卫生间-1
         #QY0101040061160{
             .title{
                 top: 38%;
                 left: 40%;
+            }
+        }
+        // 4层洗手台
+        #QY0101040067159{
+            .title{
+                top: 55%;
+                span{
+                    width: 2px;
+                    white-space:unset;
+                }
             }
         }
         // 前台
