@@ -4,9 +4,9 @@
         <i class="iconfont oamap-north"></i>
         <!-- 放大缩小按钮 -->
         <div class="scale-btn">
-            <i v-on:click="MapBoxAmplification(0.7)" class="iconfont oamap-jiahao"></i>
+            <i v-on:click="MapBoxAmplification(0.2)" class="iconfont oamap-jiahao"></i>
             <i v-on:click="initMap('huifu')" class="iconfont oamap-huifu"></i>
-            <i v-on:click="MapBoxReduce(0.7)" class="iconfont oamap-jianhao"></i>
+            <i v-on:click="MapBoxReduce(0.2)" class="iconfont oamap-jianhao"></i>
         </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
@@ -366,10 +366,10 @@ export default {
             e.preventDefault()
             if (e.wheelDelta > 0) {
                 // 执行放大的逻辑
-                MapBoxAmplification(0.3)
+                MapBoxAmplification(0.1)
             } else {
                 // 指向缩小的逻辑
-                MapBoxReduce(0.25)
+                MapBoxReduce(0.1)
             }
         }
         // 监听鼠标滚轮滚动的事件-火狐浏览器
@@ -379,10 +379,10 @@ export default {
             //上下滚轮动作判断
             if (e.detail < 0) {
                 // 执行放大的逻辑
-                MapBoxAmplification(0.3)
+                MapBoxAmplification(0.1)
             } else {
                 // 指向缩小的逻辑
-                MapBoxReduce(0.25)
+                MapBoxReduce(0.1)
             }
         }
         // 定义初始的缩放值1
