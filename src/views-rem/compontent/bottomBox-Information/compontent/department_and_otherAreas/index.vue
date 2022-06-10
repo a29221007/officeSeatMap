@@ -5,7 +5,7 @@
             <!-- 第一列 -->
             <div class="col">
                 <div class="title">区域名称：</div>
-                <div class="content"><span class="scroll">{{$store.state.activeInfo.name + $store.state.activeInfo.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")}}</span></div>
+                <div class="content"><span class="scroll">{{$store.state.activeInfo.name + ($store.state.activeInfo.subtitle ? $store.state.activeInfo.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '')}}</span></div>
             </div>
         </div>
         <!-- 第一行 -->
