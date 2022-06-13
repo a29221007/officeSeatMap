@@ -691,7 +691,6 @@ export default {
             .title{
                 top: unset;
                 bottom: -8px;
-<<<<<<< HEAD
             }
         }
         // 用户体验部（用研）、视觉创意部（视频组）
@@ -727,43 +726,6 @@ export default {
                 top: 40%;
             }
         }
-=======
-            }
-        }
-        // 用户体验部（用研）、视觉创意部（视频组）
-        #QY0101030066181,#QY010103001717{
-            .title{
-                top: unset;
-                bottom: -32px;
-                .name{
-                    transform: scale(0.6,0.9);
-                }
-                .subtitle{
-                    transform: translateY(-5px) scale(0.5, 0.5);
-                }
-            }
-        }
-        // 媒介管理部、采购部
-        #QY01010300210,#QY0101030065178{
-            .title{
-                top: 65%;
-            }
-        }
-        // 媒介管理部
-        #QY01010300210{
-            .title{
-                .name{
-                    transform: scale(0.6,0.9);
-                }
-            }
-        }
-        // 英雄无敌&新SLG
-        #QY01010300431{
-            .title{
-                top: 40%;
-            }
-        }
->>>>>>> dev-rem-shenzhen
         // 引擎平台部
         #QY0101030067182{
             .title{
