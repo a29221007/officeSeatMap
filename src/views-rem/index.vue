@@ -1442,7 +1442,7 @@ export default {
             }
         }
         // 用户体验部
-        #QY0202070029213{
+        #QY0202070029219{
             .title{
                 top: -0.0625rem;
             }
@@ -1478,7 +1478,7 @@ export default {
             }
         }
         // 职能部门
-        #QY0202070028212{
+        #QY0202070028218{
             .title{
                 top: -0.1875rem;
                 left: -0.0875rem;
@@ -1517,7 +1517,7 @@ export default {
             }
         }
         // 零食柜
-        #QY0202070009193{
+        #QY0202070009199{
             .title{
                 top: unset;
                 bottom: -0.2125rem;
@@ -1525,7 +1525,7 @@ export default {
             }
         }
         // 1# 货梯
-        #QY0202070018202{
+        #QY0202070018208{
             .title{
                 top: .05rem;
                 left: -0.6rem;
@@ -1533,7 +1533,7 @@ export default {
             }
         }
         // 2# 货梯
-        #QY0202070019203{
+        #QY0202070019209{
             .title{
                 top: .5rem;
                 left: -0.6125rem;
@@ -1556,7 +1556,7 @@ export default {
             }
         }
         // 洗手台
-        #QY0202070023207{
+        #QY0202070023213{
             .title{
                 left: .875rem;
             }
@@ -1569,7 +1569,7 @@ export default {
             }
         }
         // 前台
-        #QY0202070032216{
+        #QY0202070032222{
             .title{
                 top: -0.175rem;
                 left: .4rem;
