@@ -7,6 +7,12 @@
                 <span :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<span class="separator" v-if="item.id !== AllArea.length - 1"> / </span></span>
             </div>
             <el-autocomplete v-model="searchState" value-key='name' popper-class='autocomplete' :prefix-icon="Search" :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:clear="handleClearInput">
+                <!-- 搜索时确定范围按钮 -->
+                <template #append>
+                    <div class="selectFloor">
+                        <div :class="{'active':item.lable === currentSearchFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickSlectFloor(item.lable)">{{item.name}}</div>
+                    </div>
+                </template>
                 <!-- 自定义搜索建议列表模板(当有搜索建议时) -->
                 <template #default="{ item }" v-if="is_none_sugges">
                     <div class="autoCompleteTemplate" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
@@ -312,10 +318,11 @@ export default {
             }
         })
         const store = useStore()
-        // 切换地图区域的数据（目前只有北京地区的3楼4楼，以后说不定还有其他地区）
+        // 切换地图区域的数据
         const AllArea = [
             {id:0,name:'3楼',lable:'three'},
-            {id:1,name:'4楼',lable:'four'}
+            {id:1,name:'4楼',lable:'four'},
+            {id:2,name:'深圳',lable:'shenzhen'}
         ]
         // 切换楼层（或地区）的处理函数
         function handleClickFloor(floor){
@@ -327,16 +334,36 @@ export default {
             // 切换楼层（或地区）时，将地图初始化
             initMap()
         }
+        // 切换搜索范围的处理函数
+        function handleClickSlectFloor(floor){
+            if(floor === searchData.currentSearchFloor) return
+            searchData.currentSearchFloor = floor
+            searchData.querySearch(searchData.searchState, callbackFn)
+        }
+        // 保存搜索建议列表的 callback 回调函数，用于切换搜索范围时使用
+        let callbackFn = null
         // 定义模糊搜索框的相关数据与方法
         const searchData = reactive({
+            // 选中的搜索范围
+            currentSearchFloor:store.state.currentFloor,
             // 模糊搜索的关键字
             searchState:'',
             // 是否有匹配项
             is_none_sugges:true, // 默认是有匹配项
             // 搜索建议
             querySearch(queryString, callback) {
+                // 判断callback是否是null，如果为null，才去赋值
+                if(!callbackFn) callbackFn = callback
                 searchData.is_none_sugges = true
-                const results = store.getters.AllSeatList.filter(item => {
+                let searchArray = []
+                if(searchData.currentSearchFloor === 'three'){
+                    searchArray = store.getters.seatAndAreaListOfThree
+                }else if(searchData.currentSearchFloor === 'four'){
+                    searchArray = store.getters.seatAndAreaListOfFour
+                }else if(searchData.currentSearchFloor === 'shenzhen'){
+                    searchArray = store.getters.seatAndAreaListOfShenZhen
+                }
+                const results = searchArray.filter(item => {
                     return (item.name && item.name.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase())) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase())) || (item.code && item.code.toUpperCase().includes(queryString.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase()))
                 })
                 // 去除多个重复的项
@@ -400,8 +427,15 @@ export default {
                                     type: 'info',
                                 }
                             ).then(() => {
-                                // 将要切换的楼层
-                                let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                                // 判断将要切换的楼层
+                                let pushFloor = null
+                                if(item.floor == 3 && item.office == '1'){
+                                    pushFloor = 'three'
+                                }else if(item.floor == 4 && item.office == '1'){
+                                    pushFloor = 'four'
+                                }else if(item.floor == 7 && item.office == '2'){
+                                    pushFloor = 'shenzhen'
+                                }
                                 handleClickFloor(pushFloor)
                                 drawerData.is_show = true
                                 drawerData.currentInfo = item
@@ -439,8 +473,15 @@ export default {
                                     type: 'info',
                                 }
                             ).then(() => {
-                                // 将要切换的楼层
-                                let pushFloor = store.getters.floor === 3 ? 'four' : 'three'
+                                // 判断将要切换的楼层
+                                let pushFloor = null
+                                if(item.floor == 3 && item.office == '1'){
+                                    pushFloor = 'three'
+                                }else if(item.floor == 4 && item.office == '1'){
+                                    pushFloor = 'four'
+                                }else if(item.floor == 7 && item.office == '2'){
+                                    pushFloor = 'shenzhen'
+                                }
                                 handleClickFloor(pushFloor)
                                 nextTick(() => {
                                     const obj = searchArea(item.code)
@@ -636,6 +677,7 @@ export default {
             ...toRefs(legendData),
             ...toRefs(drawerData),
             handleClickFloor,
+            handleClickSlectFloor,
             headerContainerRef,
             Search,
             FixedAssetsRef,
@@ -672,6 +714,20 @@ export default {
                     color: chocolate;
                     .separator{
                         color: #000;
+                    }
+                }
+            }
+        }
+        /deep/.el-input-group__append{
+            padding: 0 10px;
+            .selectFloor{
+                display: flex;
+                div{
+                    padding: 0 5px;
+                    margin: 0 3px;
+                    cursor: pointer;
+                    &.active{
+                        color: tomato;
                     }
                 }
             }

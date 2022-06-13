@@ -25,14 +25,13 @@ export default{
             router.push('/home?time=' + Date.now())
             return 
         }
-        
         // 如果有参数的话，解析参数,最终解析成键值对的对象类型
         let SearchArray = search.slice(1).split('&')
         let searchObj = {}
         SearchArray.forEach(item => {
             searchObj[item.split('=')[0]] = item.split('=')[1]
         })
-
+        
         // 如果没有参数，则跳转到 login 页面
         if(!search || (Object.keys(searchObj).length == 1 && Object.keys(searchObj)[0] == 'time')) {
             router.push('/login?time=' + Date.now())
@@ -48,8 +47,21 @@ export default{
                     return alert('登录失败，请重新进入或联系相关负责人')
                 }
                 store.commit('setUserInfo',res.data)
+                // 判断是否有 id 这个参数
                 if(searchObj.id){
                     store.commit('setScanQRcode',searchObj.id)
+                }else{
+                    let floor = ''
+                    if(res.data.floor == '3' && res.data.location == '1'){
+                        floor = 'three'
+                    }else if(res.data.floor == '4' && res.data.location == '1'){
+                        floor = 'four'
+                    }else if(res.data.floor == '7' && res.data.location == '2'){
+                        floor = 'shenzhen'
+                    }else{
+                        floor = 'three'
+                    }
+                    store.commit('setCurrentFloor',floor)
                 }
                 // 最后push到home页
                 router.push('/home?time=' + Date.now())
@@ -64,6 +76,17 @@ export default{
                     return alert('登录失败，请重新进入或联系相关负责人')
                 }
                 store.commit('setUserInfo',res.data)
+                let floor = ''
+                if(res.data.floor == '3' && res.data.location == '1'){
+                    floor = 'three'
+                }else if(res.data.floor == '4' && res.data.location == '1'){
+                    floor = 'four'
+                }else if(res.data.floor == '7' && res.data.location == '2'){
+                    floor = 'shenzhen'
+                }else{
+                    floor = 'three'
+                }
+                store.commit('setCurrentFloor',floor)
                 // 最后push到home页
                 router.push('/home?time=' + Date.now())
             }).catch(error => {
