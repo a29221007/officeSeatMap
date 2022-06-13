@@ -1218,7 +1218,7 @@ export default {
             }
         }
         // 职能部门
-        #QY0202070028212{
+        #QY0202070028218{
             .title{
                 top: -14%;
                 left: -3px;
