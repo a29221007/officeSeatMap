@@ -336,8 +336,12 @@ export default {
         }
         // 切换搜索范围的处理函数
         function handleClickSlectFloor(floor){
+            // 判断当前点击与选中的一致时，return出去
             if(floor === searchData.currentSearchFloor) return
             searchData.currentSearchFloor = floor
+            // 如果 callback 为 false 时，说明用户还没有进行搜索，则return出去
+            if(!callbackFn) return
+            // if(!searchData.is_none_sugges) return
             searchData.querySearch(searchData.searchState, callbackFn)
         }
         // 保存搜索建议列表的 callback 回调函数，用于切换搜索范围时使用
