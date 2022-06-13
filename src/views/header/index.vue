@@ -37,7 +37,7 @@
                 </template>
                 <!-- 自定义搜索建议列表模板（当无搜索建议时） -->
                 <template #default v-else>
-                    <div class="is_none_sugges">暂无匹配项</div>
+                    <div class="is_none_sugges">当前楼层无匹配项，切换其他区域试试吧</div>
                 </template>
             </el-autocomplete>
         </div>
