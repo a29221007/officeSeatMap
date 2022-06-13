@@ -13,7 +13,7 @@ import { useStore } from 'vuex'
 import { getUserInfo, getUserInfoFromOA } from '@/api/login.js'
 // import eruda from 'eruda'
 // eruda.init()
-export default{
+export default{ 
     name: 'App',
     setup() {
         const router = useRouter()
