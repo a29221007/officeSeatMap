@@ -161,7 +161,7 @@ export default {
                     BottomBoxRef.value.setSearchLegendContant('information')
                     if(item.type !== '0') return endToast()
                     // 调用获取个人固资列表的函数
-                    store.dispatch('getPersontFixedAssetsList',{b_usercode:item.id,v_usercode:store.state.UserInfo.usercode}).then(() => {
+                    store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id,v_usercode:store.state.UserInfo.usercode }).then(() => {
                         if(store.state.is_have_ckeck_persontFixedAssets) {
                             // 跳转到固资信息页面
                             router.push('/fixedAssets')
