@@ -58,8 +58,8 @@ export default createStore({
         scanBarcodeInfoObject: getItem('scanBarcodeInfoObject') || {},
         // 通过 OA 进入项目或者通过企业微信进入项目标识
         intoTheWay: getItem('intoTheWay') || null,
-        // 是否显示公共支持联系人
-        is_show_public_contact_person:true, // 默认是false
+        // 是否显示公共支持联系人信息
+        is_show_public_contact_person: false, // 默认是false
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -161,6 +161,12 @@ export default createStore({
         setIntoTheWay(state, data) {
             state.intoTheWay = data
             setItem('intoTheWay',state.intoTheWay)
+        },
+
+        // 设置是否显示公共联系人信息
+        setIs_show_public_contact_person(state, data){
+            state.is_show_public_contact_person = data
+            setItem('is_show_public_contact_person',state.is_show_public_contact_person)
         }
     },
     actions: {

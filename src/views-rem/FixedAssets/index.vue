@@ -33,58 +33,95 @@
             </div>
         </div>
         <!-- 中部展示个人固资信息 -->
-        <div class="FixedAssets">
+        <div class="_FixedAssets">
             <!-- 列表头部 -->
             <div class="FixedAssetsListHeader">
                 <div>固定资产编号</div>
                 <div>固定资产名称</div>
             </div>
             <!-- 列表主体 -->
-            <van-list class="FixedAssetsListContent" v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onLoad">
+            <van-list :class="{'FixedAssetsListContent':true,'active':$store.state.is_show_public_contact_person}" v-model:loading="loading" :finished="finished" :finished-text="finishedText" @load="onLoad">
                 <template v-if="$store.state.PersontFixedAssetsList.FixedChildList.length !== 0">
                     <div class="list-content">
                         <div class="list-item" v-for="item in list" :key="item.id">
                             <div>{{item.FixedCode}}</div>
                             <div>{{item.FixedName}}</div>
                         </div>
-                        <!-- <div class="list-item" v-for="item in list" :key="item.id">
-                            <div>{{item.FixedCode}}</div>
-                            <div>{{item.FixedName}}</div>
-                        </div>
-                        <div class="list-item" v-for="item in list" :key="item.id">
-                            <div>{{item.FixedCode}}</div>
-                            <div>{{item.FixedName}}</div>
-                        </div>
-                        <div class="list-item" v-for="item in list" :key="item.id">
-                            <div>{{item.FixedCode}}</div>
-                            <div>{{item.FixedName}}</div>
-                        </div>
-                        <div class="list-item" v-for="item in list" :key="item.id">
-                            <div>{{item.FixedCode}}</div>
-                            <div>{{item.FixedName}}</div>
-                        </div>
-                        <div class="list-item" v-for="item in list" :key="item.id">
-                            <div>{{item.FixedCode}}</div>
-                            <div>{{item.FixedName}}</div>
-                        </div>
-                        <div class="list-item" v-for="item in list" :key="item.id">
-                            <div>{{item.FixedCode}}</div>
-                            <div>{{item.FixedName}}</div>
-                        </div> -->
                     </div>
                 </template>
                 <template v-else>
-                    <div class="center">该员工无固资信息</div>
+                    <div class="list-item center">该员工无固资信息</div>
                 </template>
             </van-list>
         </div>
         <!-- 底部公共联系人信息 -->
-
+        <div class="public_contact" v-if="$store.state.is_show_public_contact_person">
+            <div class="title">公共支持联系人</div>
+            <div class="person">
+                <!-- 第一行 -->
+                <div>
+                    <!-- 左 -->
+                    <div>
+                        <div class="title">行政</div>
+                        <div class="content">蔡芬 高雅楠</div>
+                    </div>
+                    <!-- 右 -->
+                    <div>
+                        <div class="title">培训</div>
+                        <div class="content">员工服务-培训服务号</div>
+                    </div>
+                </div>
+                <!-- 第二行 -->
+                <div>
+                    <!-- 左 -->
+                    <div>
+                        <div class="title">财务</div>
+                        <div class="content">孟林 倪苹 </div>
+                    </div>
+                    <!-- 右 -->
+                    <div>
+                        <div class="title">员工信息</div>
+                        <div class="content">崔明岳 王锐</div>
+                    </div>
+                </div>
+                <!-- 第三行 -->
+                <div>
+                    <!-- 左 -->
+                    <div>
+                        <div class="title">考勤休假</div>
+                        <div class="content">陈丽琴</div>
+                    </div>
+                    <!-- 右 -->
+                    <div>
+                        <div class="title">公共设施维修</div>
+                        <div class="content">王立军 王玉田</div>
+                    </div>
+                </div>
+                <!-- 第四行 -->
+                <div>
+                    <!-- 左 -->
+                    <div>
+                        <div class="title">薪酬工资</div>
+                        <div class="content">李柏金</div>
+                    </div>
+                    <!-- 右 -->
+                    <div>
+                        <div class="title">社保公积金</div>
+                        <div class="content">闫冬雪 中智onsite</div>
+                    </div>
+                </div>
+                <!-- 第五行 -->
+                <div>
+                    <div class="title">IT</div>
+                    <div class="content">员工服务-IT服务号(北京)</div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-import { ref, reactive, toRefs } from 'vue'
+import { ref, reactive, toRefs, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 export default {
     name:'FixedAssets',
@@ -154,6 +191,10 @@ export default {
             currentPage:1,
             pageSize:20
         }
+        // 当组件销毁时，隐藏公共联系人
+        onBeforeUnmount(() => {
+            store.commit('setIs_show_public_contact_person',false)
+        })
         return {
             searchValue,
             onSearch,
@@ -166,6 +207,7 @@ export default {
 
 <style lang="less" scoped>
 .FixedAssets{
+    position: relative;
     width: 100%;
     height: 100%;
     display: flex;
@@ -256,14 +298,14 @@ export default {
             }
         }
     }
-    .FixedAssets{
+    ._FixedAssets{
         flex: 1;
-        overflow: auto;
-        // display: flex;
-        // flex-direction: column;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
         width: 100%;
         background-color: #F1F1F1;
-        padding: .2147rem .3226rem 0;
+        padding: .2147rem .3226rem .2147rem;
         .FixedAssetsListHeader{
             width: 100%;
             height: 1.0538rem;
@@ -289,36 +331,120 @@ export default {
             }
         }
         .FixedAssetsListContent{
-            // flex: 1;
-            // overflow: auto;
+            flex: 1;
+            overflow: auto;
             .list-content{
                 width: 100%;
                 background-color: #fff;
                 padding:0 .4269rem;
                 border-bottom-left-radius: .2688rem;
                 border-bottom-right-radius: .2688rem;
-                .list-item{
-                    width: 100%;
-                    height: 1.1882rem;
+            }
+            .list-item{
+                width: 100%;
+                height: 1.1882rem;
+                display: flex;
+                align-items: center;
+                color: #403636;
+                font-size: .3737rem;
+                border-top: 1px solid #E6E6E6;
+                &>div{
+                    &:first-child{
+                        flex: 1;
+                    }
+                    &:last-child{
+                        flex: 1.245;
+                    }
+                }
+                &:first-child{
+                    border-top: none;
+                }
+                &.center{
+                    text-align: center;
+                    background-color: #fff;
+                    border-bottom-left-radius: .2688rem;
+                    border-bottom-right-radius: .2688rem;
+                    justify-content: center;
+                }
+            }
+            &.active{
+                padding-bottom: 4.4624rem;
+            }
+        }
+    }
+    .public_contact{
+        position: absolute;
+        bottom: 0;
+        background-color: #fff;
+        width: 100%;
+        height: 4.4624rem;
+        padding: 0 .6129rem 0 .5323rem;
+        border-top: 1px solid #CCCCCC;
+        display: flex;
+        flex-direction: column;
+        &>.title{
+            color: #403636;
+            font-size: .3742rem;
+            font-weight: 500;
+            height: .5355rem;
+            line-height: .5355rem;
+            margin: .3065rem 0 .2151rem 0;
+        }
+        .person{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: .3226rem;
+            &>div{
+                height: .5355rem;
+                line-height: .5355rem;
+                // 前四项的样式
+                &:nth-child(-n +4){
                     display: flex;
                     align-items: center;
-                    color: #403636;
-                    font-size: .3737rem;
-                    border-top: 1px solid #E6E6E6;
                     &>div{
+                        display: flex;
                         &:first-child{
-                            flex: 1;
+                            .title{
+                                width: 1.2806rem;
+                                margin-right: .1871rem;
+                                white-space: nowrap;
+                            }
+                            .content{
+                                width: 2.0247rem;
+                                margin-right: .2151rem;
+                                white-space: nowrap;
+                            }
                         }
                         &:last-child{
-                            flex: 1.245;
+                            .title{
+                                width: 1.914rem;
+                                white-space: nowrap;
+                                margin-right: .1871rem;
+                            }
+                            .content{
+                                white-space: nowrap;
+                            }
                         }
                     }
-                    &:first-child{
-                        border-top: none;
+                }
+                // 最后一项
+                &:last-child{
+                    display: flex;
+                    align-items: center;
+                    .title{
+                        width: 1.2806rem;
+                        margin-right: .1871rem;
+                        white-space: nowrap;
                     }
-                    &.center{
-                        text-align: center;
-                    }
+                }
+                // 设置他们公共的字体颜色
+                .title{
+                    color: #403636;
+                }
+                .content{
+                    color: #8C8686;
                 }
             }
         }

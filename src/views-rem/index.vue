@@ -163,6 +163,8 @@ export default {
                     // 调用获取个人固资列表的函数
                     store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id,v_usercode:store.state.UserInfo.usercode }).then(() => {
                         if(store.state.is_have_ckeck_persontFixedAssets) {
+                            // 通过扫码进入则显示公共联系人
+                            store.commit('setIs_show_public_contact_person',true)
                             // 跳转到固资信息页面
                             router.push('/fixedAssets')
                         }
