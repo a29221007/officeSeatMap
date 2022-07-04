@@ -13,7 +13,7 @@
                 <template v-if="item.type === 1 || item.type === 2 || item.type === 3">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 区域 -->
-                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="oneAreaStyle(item)" v-on:click="handleClickMeetingRoom(item)">
+                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)" v-on:click="handleClickMeetingRoom(item)">
                             <div class="title">
                                 <span class="name">{{item.name}}</span>
                                 <template v-if="item.floor == '3' || item.floor == '4'">
@@ -28,7 +28,7 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item2.id">
                             <!-- 区域 -->
-                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code}]" :style="multipleAreaStyle(item,item2,index)" v-on:click="handleClickMeetingRoom(item)">
+                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)" v-on:click="handleClickMeetingRoom(item)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
                                     <template v-if="item.floor == '3' || item.floor == '4'">
@@ -142,6 +142,10 @@ export default {
                 }
                 // 2、判断当前是否有选中的图例
                 if(store.state.currentLegend){
+                    // 当选中会议室图例时，对会议室所有的进行高亮显示
+                    if(store.state.currentLegend === 1){
+                        seatData.currentAreaCode = currentFloorSeatList.filter(item => item.type === 1).map(item => item.code).join()
+                    }
                     // 3、如果有选中的图例
                     return currentFloorSeatList.filter((item) => {
                         return item.type === store.state.currentLegend || item.type === 2 || item.type === 3
@@ -394,7 +398,6 @@ export default {
             sacleY = store.state.scale[1]
             // 将座位和区域高亮取消
             if(value) return // 如果value有值，则return出去，不取消高亮状态
-            seatData.current = 0
             seatData.currentAreaCode = ''
         })
         // 地图放大的

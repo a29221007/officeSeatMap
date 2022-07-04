@@ -7,11 +7,11 @@
                 <template v-if="item.type === 1 || item.type === 2 || item.type === 3">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 区域 -->
-                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode === item.code},'area']" :style="oneAreaStyle(item)" v-on:click="handleClickMeetingRoom(item,$event)">
+                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)},'area']" :style="oneAreaStyle(item)" v-on:click="handleClickMeetingRoom(item,$event)">
                             <div class="title">
                                 <span class="name">{{item.name}}</span>
                                 <template v-if="item.floor == '3' || item.floor == '4'">
-                                    <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
+                                    <span v-if="item.subtitle && item.subtitle !== '（3层）' && item.subtitle !== '（4层）' && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
                                 </template>
                                 <template v-else>
                                     <span v-if="item.subtitle && item.subtitle !== '（深圳）'" class="subtitle">{{item.subtitle}}</span>
@@ -22,11 +22,11 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item2.id">
                             <!-- 区域 -->
-                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode === item.code},'area']" :style="multipleAreaStyle(item,item2,index)" v-on:click="handleClickMeetingRoom(item,$event)">
+                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)},'area']" :style="multipleAreaStyle(item,item2,index)" v-on:click="handleClickMeetingRoom(item,$event)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
                                     <template v-if="item.floor == '3' || item.floor == '4'">
-                                        <span v-if="item.subtitle && item.type !== 3 && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
+                                        <span v-if="item.subtitle && item.subtitle !== '（3层）' && item.subtitle !== '（4层）' && item.subtitle !== '（部门）' && item.subtitle !== '（会议室）'" class="subtitle">{{item.subtitle}}</span>
                                     </template>
                                     <template v-else>
                                         <span v-if="item.subtitle && item.subtitle !== '深圳'" class="subtitle">{{item.subtitle}}</span>
@@ -163,8 +163,10 @@ export default {
                     // 调用获取个人固资列表的函数
                     store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id,v_usercode:store.state.UserInfo.usercode }).then(() => {
                         if(store.state.is_have_ckeck_persontFixedAssets) {
-                            // 通过扫码进入则显示公共联系人
-                            store.commit('setIs_show_public_contact_person',true)
+                            // 通过扫码进入北京办公区域则显示公共联系人，其他的不显示
+                            if(item.office == '1'){
+                                store.commit('setIs_show_public_contact_person',true)
+                            }
                             // 跳转到固资信息页面
                             router.push('/fixedAssets')
                         }
@@ -389,6 +391,10 @@ export default {
                 }
                 // 2、判断当前是否有选中的图例
                 if(store.state.currentLegend){
+                    // 当选中会议室图例时，对会议室所有的进行高亮显示
+                    if(store.state.currentLegend === 1){
+                        seatData.currentAreaCode = currentFloorSeatList.filter(item => item.type === 1).map(item => item.code).join()
+                    }
                     // 3、如果有选中的图例
                     return currentFloorSeatList.filter((item) => {
                         return item.type === store.state.currentLegend || item.type === 2 || item.type === 3
