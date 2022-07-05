@@ -693,6 +693,7 @@ export default {
             img{
                 height: 32px;
                 width: 32px;
+                margin-right: 5px;
             }
         }
         .legendItemActive{
