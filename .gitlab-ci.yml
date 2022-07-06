@@ -7,8 +7,8 @@ stages:
 dev job:
   stage: deploy
   script:
-    - echo "new_oa_map_dev-rem"
-    - git checkout dev-rem
+    - echo "new_oa_map_dev"
+    - git checkout dev
     - git pull
     - npm install && CI=false npm run build
     - npm prune --production
@@ -17,3 +17,16 @@ dev job:
     - dev-rem
   tags:
     - "new_oa_map_dev"
+master job:
+  stage: deploy
+  script:
+    - echo "new_oa_map_master"
+    - git checkout master
+    - git pull
+    - npm install && CI=false npm run build
+    - npm prune --production
+    - rsync -rvz --no-owner --no-group --no-perms --progress --exclude=".*" --delete $CI_PROJECT_DIR/ /data/map/new_oa_map
+  only:
+    - master
+  tags:
+    - "new_oa_map_master"
