@@ -94,6 +94,8 @@ export default {
                         // 4个纵坐标也是一样的
                     const flag2_X = Math.max(part_item.width, depart_item.width) < (MAX_X - MIN_X) < (part_item.width + depart_item.width)
                     const flag2_Y = Math.max(part_item.height, depart_item.height) < (MAX_Y - MIN_Y) < (part_item.height + depart_item.height)
+                    const flag3_X = Math.abs(X3 - X1) + Math.abs(X2 - X4) + Math.min(part_item.width, depart_item.width) === Math.max(part_item.width, depart_item.width)
+                    const flag3_Y = Math.abs(Y3 - Y1) + Math.abs(Y2 - Y4) + Math.min(part_item.height, depart_item.height) === Math.max(part_item.height, depart_item.height)
                     if(flag2_X && flag2_Y){
                         // 在这种情况下，又要分别判断片区和部门的关系
                         if((X3 > X1) && (Y3 < Y1)){
@@ -129,6 +131,8 @@ export default {
                                 coordinate:{top:Y3,left:X1,width:X4 - X1,height:Y2 - Y3}
                             })
                         }
+                    }else if(flag3_Y && flag2_X){
+                        // 
                     }
 
 
