@@ -10,9 +10,27 @@
         </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
-                <template v-if="item.type === 1 || item.type === 2 || item.type === 3">
+                <!-- 片区 -->
+                <template v-if="item.diff && item.diff === 2">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
-                        <!-- 区域 -->
+                        <!-- 由单个组成 -->
+                        <div :id="'part' + item.id" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
+                            <div class="title">{{item.name}}</div>
+                        </div>
+                    </template>
+                    <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
+                        <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
+                            <!-- 有多个组成 -->
+                            <div :id="'part' + item.id + index" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
+                                <div class="title" v-if="item2.show_area_name">{{item.name}}</div>
+                            </div>
+                        </template>
+                    </template>
+                </template>
+                <!-- 部门、会议室、其他区域 -->
+                <template v-if="item.diff && item.diff === 1">
+                    <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
+                        <!-- 由单个矩形组成 -->
                         <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)" v-on:click="handleClickMeetingRoom(item)">
                             <div class="title">
                                 <span class="name">{{item.name}}</span>
@@ -26,8 +44,8 @@
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
-                        <template v-for="(item2,index) in item.coordinate" :key="item2.id">
-                            <!-- 区域 -->
+                        <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
+                            <!-- 由多个矩形组成 -->
                             <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)" v-on:click="handleClickMeetingRoom(item)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
@@ -42,8 +60,8 @@
                         </template>
                     </template>
                 </template>
+                <!-- 座位 -->
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
-                    <!-- 座位 -->
                     <div class="seat" :id="item.seat_id" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
                     </div>
                 </template>
@@ -55,7 +73,7 @@
 </template>
 
 <script>
-import {ref,computed,onMounted,onBeforeUnmount, reactive, toRefs, inject} from 'vue'
+import {ref,computed,onMounted,onBeforeUnmount, reactive, toRefs, inject,onBeforeMount} from 'vue'
 import { useStore } from 'vuex'
 // 导入获取鼠标在盒子内的坐标函数
 import getMouseX_Y from '@/utils/getmouseX_Y.js'
@@ -118,8 +136,6 @@ export default {
                 currentSeat_id = 0
             }
         }
-
-
         // 当前地图的信息（包括人员、座位、区域、会议室等）
         let seatData = reactive({
             // 人员信息座位集合
