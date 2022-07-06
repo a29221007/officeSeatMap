@@ -27,7 +27,6 @@ export default {
         }).then(() => {
             return store.dispatch('getAreaListOfFour')
         }).then(() => {
-            console.log('max',Math.max(10,10))
             // 3楼片区
             let partList = []
             // 3楼部门区域
@@ -48,7 +47,6 @@ export default {
             // 对部门的数据结构改造
             store.state.areaListOfThree.filter(item => item.diff === 1 && item.type === 2).forEach(item => {
                 if(Object.prototype.toString.call(item.coordinate) === '[object Array]'){
-                    console.log(item)
                     const {code,diff,floor,location,name,office} = item
                     item.coordinate.forEach(item2 => {
                         departmentList.push({
@@ -67,17 +65,72 @@ export default {
                 depart_code:'',
                 "片区内的坐标":{"top":0,"left":0,"width":0,height:''}
             }]
+            let newArray = []
             // 外层循环片
             partList.forEach(part_item => {
                 // 内层循环部门
                 departmentList.forEach(depart_item => {
                     // 判断当前的片和当前的部门关系
-                    // 1、4个X坐标,前两个是片区的两个横坐标，后两个是部门的两个横坐标
+                    // 1、4个X坐标,前两个是片区的横坐标，后两个是部门的横坐标
                     const X1 = part_item.coordinate.left
                     const X2 = part_item.coordinate.left + part_item.width
                     const X3 = depart_item.coordinate.left
                     const X4 = depart_item.coordinate.left + depart_item.width
-                    // 、两个区域分离，这种情况不统计
+                    const MAX_X = Math.max(X1,X2,X3,X4)
+                    const MIN_X = Math.min(X1,X2,X3,X4)
+                    // 2、4个Y坐标，前两个是片区得纵坐标，后两个是部门得纵坐标
+                    const Y1 = part_item.coordinate.top
+                    const Y2 = part_item.coordinate.top + part_item.height
+                    const Y3 = depart_item.coordinate.top
+                    const Y4 = depart_item.coordinate.top + depart_item.height
+                    const MAX_Y = Math.max(Y1,Y2,Y3,Y4)
+                    const MIN_Y = Math.min(Y1,Y2,Y3,Y4)
+                    // 第一种情况、两个区域距离大于等于0，这种情况不统计
+                    const flag1_X = (MAX_X - MIN_X) >= (part_item.width + depart_item.width)
+                    const flag1_Y = (MAX_Y - MIN_Y) >= (part_item.height + depart_item.height)
+                    if(flag1_X && flag1_Y){ return }
+                    // 第二种情况，两个区域没有得边没有重合得部分，只能在某一角
+                        // 判断规则，4个横坐标最大值和最小值的差，比两个宽度之和小，比宽度大的一边大
+                        // 4个纵坐标也是一样的
+                    const flag2_X = Math.max(part_item.width, depart_item.width) < (MAX_X - MIN_X) < (part_item.width + depart_item.width)
+                    const flag2_Y = Math.max(part_item.height, depart_item.height) < (MAX_Y - MIN_Y) < (part_item.height + depart_item.height)
+                    if(flag2_X && flag2_Y){
+                        // 在这种情况下，又要分别判断片区和部门的关系
+                        if((X3 > X1) && (Y3 < Y1)){
+                            // 第三种情况，部门在片区的右上角
+                            newArray.push({
+                                part_code:part_item.code,
+                                part_name:part_item.name,
+                                depart_code:depart_item.code,
+                                coordinate:{top:Y1,left:X3,width:X2 - X3,height:Y4 - Y1}
+                            })
+                        }else if((X3 > X1) && (Y3 > Y1)){
+                            // 第四种情况,部门在片区的右下角
+                            newArray.push({
+                                part_code:part_item.code,
+                                part_name:part_item.name,
+                                depart_code:depart_item.code,
+                                coordinate:{top:Y3,left:X3,width:X2 - X3,height:Y2 - Y3}
+                            })
+                        }else if((X1 > X3) && (Y1 > Y3)){
+                            // 第五中情况，部门在片区的左上角
+                            newArray.push({
+                                part_code:part_item.code,
+                                part_name:part_item.name,
+                                depart_code:depart_item.code,
+                                coordinate:{top:Y1,left:X1,width:X4 - X1,height:Y4 - Y1}
+                            })
+                        }else if((X1 > X3) && (Y1 < Y3)){
+                            // 第六种情况，部门在片区的左下角
+                            newArray.push({
+                                part_code:part_item.code,
+                                part_name:part_item.name,
+                                depart_code:depart_item.code,
+                                coordinate:{top:Y3,left:X1,width:X4 - X1,height:Y2 - Y3}
+                            })
+                        }
+                    }
+
 
                 })
             })
