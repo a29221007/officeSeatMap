@@ -14,14 +14,14 @@
                 <template v-if="item.diff && item.diff === 2">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 由单个组成 -->
-                        <div :id="'part' + item.id" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
+                        <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
                             <div class="title">{{item.name}}</div>
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
                             <!-- 有多个组成 -->
-                            <div :id="'part' + item.id + index" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
+                            <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
                                 <div class="title" v-if="item2.show_area_name">{{item.name}}</div>
                             </div>
                         </template>
@@ -498,6 +498,9 @@ export default {
         background-repeat: no-repeat;
         // 给盒子设置上一个过渡的默认值
         transition: all 1s;
+        .part{
+            z-index: -1;
+        }
         .seat{
             position: absolute;
             width: 8px;
