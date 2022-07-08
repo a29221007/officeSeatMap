@@ -772,7 +772,7 @@ export default {
             }
         }
         // 用户体验设计部
-        #QY01010300450{
+        #QY010103004560{ 
             .title{
                 left: -2px;
                 span{
