@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="goback" v-on:click="$router.push('/home')">返 回</div>
+        <div class="goback" v-on:click="$router.back()">返 回</div>
     </div>
 </template>
 
