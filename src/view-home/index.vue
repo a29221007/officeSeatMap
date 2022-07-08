@@ -18,7 +18,6 @@ export default {
         MLayOut
     },
     setup() {
-        console.log(11,1<2<3)
         // 在App组件中初始化store中的状态
         const store = useStore()
         store.dispatch('getSeatListOfthree').then(() => {
@@ -58,8 +57,6 @@ export default {
                     departmentList.push(item)
                 }
             })
-            console.log(partList)
-            console.log(departmentList)
             let newArray = []
             // 外层循环片
             partList.forEach(part_item => {
