@@ -29,11 +29,11 @@ export default {
         login().then(res => {
             let obj1 = formatURL(res.data)
             let obj2 = formatURL(decodeURIComponent(obj1.redirect_uri + ''))
-            if(obj2.is_outer_net === '0'){
                 window.location.href = res.data
-            }else {
-                router.push('/outerNet')
-            }
+            // if(obj2.is_outer_net === '0'){
+            // }else {
+            //     router.push('/outerNet')
+            // }
         })
     }
 }
