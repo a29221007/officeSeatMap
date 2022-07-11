@@ -7,9 +7,6 @@ export const baseURL = 'https://map.longtubas.com/api/' // 正式服
 const instance = axios.create({
     baseURL,
     timeout: 5000,
-    // headers: {
-    //     'Cache-Control': 'no-cache'
-    // },
 })
 
 // instance 请求拦截
