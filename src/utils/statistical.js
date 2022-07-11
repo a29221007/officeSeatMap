@@ -2,9 +2,10 @@
  * 统计片区、部门、座位的占用情况
  * 参数一：areaList，区域数据（里面包括片区和部门区域）
  * 参数二：seatList，座位数据
+ * 参数三：floor, 楼层
 */
 
-function statistical(areaList,seatList){
+function statistical(areaList, seatList, floor){
     // 片区数据
     let partList = []
     // 部门区域
@@ -318,13 +319,52 @@ function statistical(areaList,seatList){
     })
     // 继续循环 newArray 数组
     newArray.forEach(partAndDepartItem => {
+        const array = []
         seatList.forEach(seatItem => {
-            // 当前 partAndDepartItem 中部门在片区内的有效范围
-            const min_X = partAndDepartItem.coordinate.left
-            const max_X = (partAndDepartItem.coordinate.left + partAndDepartItem.coordinate.width)
-            const min_Y = partAndDepartItem.coordinate.top
+            // 计算当前部门在片区内的有效范围，拆成了一小块一小块
+            // 有效范围的X起点
+            let partAndDepart_min_X = partAndDepartItem.coordinate.left
+            // 有效范围的X终点
+            let partAndDepart_max_X = partAndDepartItem.coordinate.left + partAndDepartItem.coordinate.width
+            // 有效范围的Y起点
+            let partAndDepart_min_Y = partAndDepartItem.coordinate.top
+            // 有效范围的Y终点
+            let partAndDepart_max_Y = partAndDepartItem.coordinate.top + partAndDepartItem.coordinate.height
+
+            // 计算当前座位的起点
+            // 座位的x
+            let seat_x = null
+            // 座位的y
+            let seat_y = null
+            // 分情况判断地区楼层
+            if(floor === 3 || floor === 4){
+                // X起点换算
+                partAndDepart_min_X = partAndDepart_min_X / 1777 * 930
+                // X终点换算
+                partAndDepart_max_X = partAndDepart_max_X / 1777 * 930
+                // Y起点换算
+                partAndDepart_min_Y = partAndDepart_min_Y / 1612 * 843
+                // Y终点换算
+                partAndDepart_max_Y = partAndDepart_max_Y / 1612 * 843
+
+                // 座位X坐标换算
+                seat_x = seatItem.gCol * 9.6 + 35
+                // 座位Y坐标换算
+                seat_y = seatItem.gRow * 9.64 + 23
+            }else if(floor === 7){
+                seat_x = seatItem.gRow
+                seat_y = seatItem.gCol
+            }
+            // 判断条件：判断座位的起点在有效范围区间内
+            const flag_x = (seat_x >= partAndDepart_min_X) && (seat_x < partAndDepart_max_X)
+            const flag_y = (seat_y >= partAndDepart_min_Y) && (seat_y < partAndDepart_max_Y)
+            if(flag_x && flag_y){
+                array.push(seatItem)
+            }
         })
+        partAndDepartItem.includeSeat = array
     })
+    // 
     console.log(newArray)
 }
 

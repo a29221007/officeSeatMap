@@ -28,7 +28,7 @@ export default {
         }).then(() => {
             return store.dispatch('getAreaListOfFour')
         }).then(() => {
-            statistical(store.state.areaListOfThree,store.state.seatListOfthree)
+            statistical(store.state.areaListOfThree,store.state.seatListOfthree,3)
         })
         store.dispatch('getSeatListOfShenZhen')
         store.dispatch('getAreaListOfShenZhen')
