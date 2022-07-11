@@ -79,6 +79,16 @@ const routes = [
         },
         component: () => import(/* webpackChunkName: "home" */ '@/views-rem/BarCodeInfo/BarCodeNoPermission'),
     },
+    {
+        path:'/outerNet',
+        name:'outerNet',
+        meta:{
+            keepAlive:false,
+            title:'访问出错了'
+        },
+        component: () => import(/* webpackChunkName: "home" */ '@/outerNet.vue'),
+    },
+
 ]
 
 const router = createRouter({
