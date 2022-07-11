@@ -1,11 +1,15 @@
 // 封装axios
 import axios from 'axios'
 // export const baseURL = 'http://maptest.longtubas.com:8091/api/' // 测试服
-export const baseURL = 'https://mapbackend.longtubas.com/api/' // 正式服
+// export const baseURL = 'https://mapbackend.longtubas.com/api/' // 正式服
+export const baseURL = 'https://map.longtubas.com/api/' // 正式服
 // 创建axios的实例对象
 const instance = axios.create({
     baseURL,
-    timeout: 5000 
+    timeout: 5000,
+    // headers: {
+    //     'Cache-Control': 'no-cache'
+    // },
 })
 
 // instance 请求拦截
