@@ -160,7 +160,7 @@ export default {
                 if(store.state.currentLegend){
                     // 当选中会议室图例时，对会议室所有的进行高亮显示
                     if(store.state.currentLegend === 1){
-                        seatData.currentAreaCode = currentFloorSeatList.filter(item => item.type === 1).map(item => item.code).join()
+                        // seatData.currentAreaCode = currentFloorSeatList.filter(item => item.type === 1).map(item => item.code).join()
                     }
                     // 3、如果有选中的图例
                     return currentFloorSeatList.filter((item) => {

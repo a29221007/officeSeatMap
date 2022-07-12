@@ -223,7 +223,7 @@ function statistical(areaList, seatList, floor){
                     // 部门y周方向处于片区内部，X轴是相交
                     // 继续判断部门在片区的左边还是右边
                     if(X3 > X1){
-                        // 4.1部门在片区的右边
+                        // 5.1部门在片区的右边
                         newArray.push({
                             part_code:part_item.code,
                             part_name:part_item.name,
@@ -231,7 +231,7 @@ function statistical(areaList, seatList, floor){
                             coordinate:{top:Y3,left:X3,width:X2 - X3,height:depart_item.coordinate.height}
                         })
                     }else if(X1 > X3){
-                        // 4.2部门在片区的左边
+                        // 5.2部门在片区的左边
                         newArray.push({
                             part_code:part_item.code,
                             part_name:part_item.name,
@@ -243,7 +243,7 @@ function statistical(areaList, seatList, floor){
                     // 这种情况X轴重合，y轴相交
                     // 继续判断部门在片区的上边还是下边
                     if(Y1 > Y3){
-                        // 4.3部门在片区的上边
+                        // 5.3部门在片区的上边
                         newArray.push({
                             part_code:part_item.code,
                             part_name:part_item.name,
@@ -251,7 +251,7 @@ function statistical(areaList, seatList, floor){
                             coordinate:{top:Y1,left:X1,width:part_item.coordinate.width,height:Y4 - Y1}
                         })
                     }else if(Y1 < Y3){
-                        // 4.4部门在片区的下边
+                        // 5.4部门在片区的下边
                         newArray.push({
                             part_code:part_item.code,
                             part_name:part_item.name,
@@ -260,7 +260,7 @@ function statistical(areaList, seatList, floor){
                         })
                     }
                 }else if(flag3_X && flag3_Y){
-                    // 4.5这种情况部门完全在片区，有效范围就是部门区域大小
+                    // 5.5这种情况部门完全在片区，有效范围就是部门区域大小
                     newArray.push({
                         part_code:part_item.code,
                         part_name:part_item.name,
@@ -283,7 +283,7 @@ function statistical(areaList, seatList, floor){
                             coordinate:{top:Y1,left:X3,width:X2 - X3,height:part_item.coordinate.height}
                         })
                     }else if(X1 > X3){
-                        // 4.2部门在片区的左边
+                        // 6.2部门在片区的左边
                         newArray.push({
                             part_code:part_item.code,
                             part_name:part_item.name,
@@ -295,7 +295,7 @@ function statistical(areaList, seatList, floor){
                     // 这种情况X轴重合，y轴相交
                     // 继续判断部门在片区的上边还是下边
                     if(Y1 > Y3){
-                        // 4.3部门在片区的上边
+                        // 6.3部门在片区的上边
                         newArray.push({
                             part_code:part_item.code,
                             part_name:part_item.name,
@@ -303,7 +303,7 @@ function statistical(areaList, seatList, floor){
                             coordinate:{top:Y1,left:X1,width:part_item.coordinate.width,height:Y4 - Y1}
                         })
                     }else if(Y1 < Y3){
-                        // 4.4部门在片区的下边
+                        // 6.4部门在片区的下边
                         newArray.push({
                             part_code:part_item.code,
                             part_name:part_item.name,
@@ -312,7 +312,7 @@ function statistical(areaList, seatList, floor){
                         })
                     }
                 }else if(flag3_X && flag3_Y){
-                    // 4.5这种情况部门完全在片区，有效范围就是部门区域大小
+                    // 6.5这种情况部门完全在片区，有效范围就是部门区域大小
                     newArray.push({
                         part_code:part_item.code,
                         part_name:part_item.name,
@@ -399,6 +399,7 @@ function statistical(areaList, seatList, floor){
         item['currentDepartSeatOf0-1'] = item.includeSeat.filter(item => item.type === '0-1').length
     })
     console.log(result)
+    return result
 }
 
 export default statistical

@@ -28,10 +28,14 @@ export default {
         }).then(() => {
             return store.dispatch('getAreaListOfFour')
         }).then(() => {
-            statistical(store.state.areaListOfThree,store.state.seatListOfthree,3)
+            return store.dispatch('getSeatListOfShenZhen')
+        }).then(() => {
+            return store.dispatch('getAreaListOfShenZhen')
+        }).then(() => {
+            // statistical(store.state.areaListOfThree,store.state.seatListOfthree,3)
+            // statistical(store.state.areaListOfThree,store.state.seatListOfthree,3)
+            // statistical(store.state.areaListOfShenZhen,store.state.seatListOfShenZhen,7)
         })
-        store.dispatch('getSeatListOfShenZhen')
-        store.dispatch('getAreaListOfShenZhen')
         // 获取当前浏览器可视区的大小
         const obj = getClient()
         // 依赖注入

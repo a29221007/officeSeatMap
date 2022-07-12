@@ -24,7 +24,7 @@ export default createStore({
         // 当前选中的图例(此项不做本地缓存)
         currentLegend:'', // 默认是空字符串
         // 当前的地图的初始缩放系数
-        scale:getItem('scale') || [1,1], // 默认是1
+        scale: getItem('scale') || [1,1], // 默认是1
         areaListOfThree: [],
         // 4层的区域信息
         areaListOfFour: [],
