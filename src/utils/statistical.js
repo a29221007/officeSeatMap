@@ -10,6 +10,8 @@ function statistical(areaList, seatList, floor){
     let partList = []
     // 部门区域
     let departmentList = []
+    // 部门的code和部门名称的对应关系
+    let department_code_name = {}
     // 对片区的数据结构改造
     areaList.filter(item => item.diff === 2).forEach(item => {
         if(Object.prototype.toString.call(item.coordinate) === '[object Array]'){
@@ -25,6 +27,10 @@ function statistical(areaList, seatList, floor){
     })
     // 对部门的数据结构改造
     areaList.filter(item => item.diff === 1 && item.type === 2).forEach(item => {
+        // 对部门名字进行汇总
+        if(item.name !== ''){
+            department_code_name[item.code] = item.name + (item.subtitle ? item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '')
+        }
         if(Object.prototype.toString.call(item.coordinate) === '[object Array]'){
             const {code,diff,floor,location,name,office} = item
             item.coordinate.forEach(item2 => {
@@ -317,7 +323,7 @@ function statistical(areaList, seatList, floor){
             }
         })
     })
-    // 继续循环 newArray 数组
+    // 循环 newArray 数组，计算每一个有效范围的座位总数
     newArray.forEach(partAndDepartItem => {
         const array = []
         seatList.forEach(seatItem => {
@@ -364,8 +370,35 @@ function statistical(areaList, seatList, floor){
         })
         partAndDepartItem.includeSeat = array
     })
-    // 
-    console.log(newArray)
+    // 将相同的分区相同的部门合并到一起
+    let result = newArray.reduce((previousValue,currentValue) => {
+        // 给每一个部门添加名称
+        currentValue['depart_name'] = department_code_name[currentValue.depart_code]
+        const flag_item = previousValue.find(item => (item.part_code === currentValue.part_code) && (item.depart_code === currentValue.depart_code))
+        if(flag_item){
+            // 如果找到了,则将当前的相关座位合并起来
+            flag_item.includeSeat = flag_item.includeSeat.concat(currentValue.includeSeat)
+        }else{
+            previousValue.push(currentValue)
+        }
+        return previousValue
+    },[])
+    // 计算每一个分区内每一个部门的座位占用情况
+    result.forEach(item => {
+        // 1、计算分区总的工位数
+        item['currentPartTotalSeat'] = result.filter(item1 => item1.part_code === item.part_code).reduce((previousValue,currentValue) => {
+            return previousValue += currentValue.includeSeat.length
+        },0)
+        // 2、计算当前部门总的工位数
+        item['currentDepartTotalSeat'] = item.includeSeat.length
+        // 3、计算当前部门员工工位数
+        item['currentDepartSeatOf0'] = item.includeSeat.filter(item => item.type === '0').length
+        // 4、计算当前部门设备工位数
+        item['currentDepartSeatOf0-2'] = item.includeSeat.filter(item => item.type === '0-2').length
+        // 5、计算当前部门空闲工位数
+        item['currentDepartSeatOf0-1'] = item.includeSeat.filter(item => item.type === '0-1').length
+    })
+    console.log(result)
 }
 
 export default statistical
