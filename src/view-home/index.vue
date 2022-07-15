@@ -32,14 +32,19 @@ export default {
         }).then(() => {
             return store.dispatch('getAreaListOfShenZhen')
         }).then(() => {
-            // statistical(store.state.areaListOfThree,store.state.seatListOfthree,3)
-            // statistical(store.state.areaListOfThree,store.state.seatListOfthree,3)
-            // statistical(store.state.areaListOfShenZhen,store.state.seatListOfShenZhen,7)
+            const array = statistical(store.state.areaListOfThree,store.state.seatListOfthree,3).concat(statistical(store.state.areaListOfFour,store.state.seatListOfFour,4))
+            array.forEach(item => {
+                if(!partTotaleObject[item.part_code]){
+                    partTotaleObject[item.part_code] = item.currentPartTotalSeat
+                }
+            })
         })
+        const partTotaleObject = {}
         // 获取当前浏览器可视区的大小
         const obj = getClient()
         // 依赖注入
         provide('clent',obj)
+        provide('partTotaleObject',partTotaleObject)
         // 判断是pc端还是移动端的变量
         const is_PC = ref('MLayOut')
         let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)

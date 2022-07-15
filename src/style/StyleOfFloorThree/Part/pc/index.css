@@ -1,0 +1,100 @@
+.column {
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part1 .title {
+  top: unset;
+  bottom: -20%;
+}
+.threePartStyle-PC #part2 .title {
+  top: 37%;
+  left: 37%;
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part3 .title {
+  left: 37%;
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part4 .title {
+  left: 28%;
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part5 .title {
+  top: 43%;
+}
+.threePartStyle-PC #part6 .title {
+  top: unset;
+  bottom: -30%;
+  left: 54%;
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part71 .title {
+  top: 12%;
+  left: 27%;
+}
+.threePartStyle-PC #part8 .title {
+  top: -13%;
+  left: 45%;
+}
+.threePartStyle-PC #part9 .title {
+  top: 56%;
+}
+.threePartStyle-PC #part10 .title {
+  left: unset;
+  right: -14%;
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part11 .title {
+  top: 5%;
+}
+.threePartStyle-PC #part12 .title {
+  top: unset;
+  bottom: -29%;
+}
+.threePartStyle-PC #part13 .title {
+  top: -7%;
+  left: 5%;
+  transform: scale(0.8, 0.8);
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part14 .title {
+  top: unset;
+  bottom: -10%;
+}
+.threePartStyle-PC #part15 .title {
+  left: unset;
+  right: -18%;
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part16 .title {
+  top: unset;
+  bottom: -20%;
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part170 .title {
+  left: 53%;
+  display: flex;
+  flex-direction: column;
+}
+.threePartStyle-PC #part18 .title {
+  top: 14%;
+  left: 55%;
+}
+.threePartStyle-PC #part19 .title {
+  top: 5%;
+}
+.threePartStyle-PC #part20 .title {
+  top: unset;
+  bottom: -52%;
+  left: 19%;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,81 @@
+.column {
+  display: flex;
+  flex-direction: column;
+}
+.FourPartStyle-PC #part21 .title {
+  top: 65%;
+  left: 93%;
+  display: flex;
+  flex-direction: column;
+}
+.FourPartStyle-PC #part22 .title {
+  top: unset;
+  bottom: -25%;
+}
+.FourPartStyle-PC #part23 .title {
+  top: 13%;
+  left: 38%;
+}
+.FourPartStyle-PC #part24 .title {
+  display: flex;
+  align-items: center;
+  top: 9%;
+  transform: translate(-50%, -50%) scale(0.8, 0.6);
+}
+.FourPartStyle-PC #part25 .title {
+  top: 62%;
+  left: 34%;
+}
+.FourPartStyle-PC #part26 .title {
+  left: -20%;
+  display: flex;
+  flex-direction: column;
+}
+.FourPartStyle-PC #part27 .title {
+  left: unset;
+  right: -22%;
+  display: flex;
+  flex-direction: column;
+}
+.FourPartStyle-PC #part280 .title {
+  left: 60%;
+}
+.FourPartStyle-PC #part29 .title {
+  top: 0;
+}
+.FourPartStyle-PC #part30 .title {
+  top: 65%;
+}
+.FourPartStyle-PC #part31 .title {
+  top: 0;
+}
+.FourPartStyle-PC #part32 .title {
+  top: 20%;
+}
+.FourPartStyle-PC #part33 .title {
+  top: 8%;
+}
+.FourPartStyle-PC #part34 .title {
+  top: unset;
+  bottom: -7%;
+}
+.FourPartStyle-PC #part351 .title {
+  top: -10%;
+}
+.FourPartStyle-PC #part37 .title {
+  display: flex;
+  align-items: baseline;
+  top: unset;
+  bottom: -10%;
+}
+.FourPartStyle-PC #part36 .title {
+  top: unset;
+  bottom: 0%;
+  left: 38%;
+}
+.FourPartStyle-PC #part38 .title {
+  display: flex;
+  align-items: baseline;
+  top: 8%;
+  left: 30%;
+}

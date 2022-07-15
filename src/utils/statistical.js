@@ -398,7 +398,6 @@ function statistical(areaList, seatList, floor){
         // 5、计算当前部门空闲工位数
         item['currentDepartSeatOf0-1'] = item.includeSeat.filter(item => item.type === '0-1').length
     })
-    console.log(result)
     return result
 }
 
