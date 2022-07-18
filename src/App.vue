@@ -72,8 +72,9 @@ export default{
             store.commit('setIntoTheWay','OA')
             // 如果有这三个参数，则说明是从 OA 进来的，要掉接口来获取用户信息
             getUserInfoFromOA(searchObj).then((res) => {
+                console.log('res',res)
                 if(res.code !== 0) {
-                    return alert('登录失败，请重新进入或联系相关负责人')
+                    return alert('登录失败，请重新进入或联系相关负责人33')
                 }
                 store.commit('setUserInfo',res.data)
                 let floor = ''
