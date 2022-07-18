@@ -337,7 +337,7 @@ export default {
             querySearch(queryString, callback) {
                 searchData.is_none_sugges = true
                 const results = store.getters.AllSeatList.filter(item => {
-                    return (item.name && item.name.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase())) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase())) || (item.code && item.code.toUpperCase().includes(queryString.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase()))
+                    return (item.name && item.name.toString().replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase())) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase())) || (item.code && item.code.toUpperCase().includes(queryString.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase()))
                 })
                 // 去除多个重复的项
                 // 保存关于座位的(这里面的值都是唯一的)
