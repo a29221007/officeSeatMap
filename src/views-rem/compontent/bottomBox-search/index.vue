@@ -137,6 +137,7 @@ export default {
                 if(floor === searchInput.currentSelectFloor) return
                 searchInput.currentSelectFloor = floor
                 searchInput.handleInputSearch()
+                document.querySelector('.search .querySearch').scrollTop = 0
             }
         })
         let inputRef = ref(null)

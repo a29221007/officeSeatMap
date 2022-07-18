@@ -343,6 +343,7 @@ export default {
             if(!callbackFn) return
             // if(!searchData.is_none_sugges) return
             searchData.querySearch(searchData.searchState, callbackFn)
+            document.querySelector('.autocomplete .el-autocomplete-suggestion__wrap').scrollTop = 0
         }
         // 保存搜索建议列表的 callback 回调函数，用于切换搜索范围时使用
         let callbackFn = null
