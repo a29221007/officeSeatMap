@@ -69,12 +69,10 @@ export default{
                 console.log('error',error)
             })
         }else if(searchObj.OpenAddress && searchObj.usercode && searchObj.token && searchObj.time){
-            store.commit('setIntoTheWay','OA')
             // 如果有这三个参数，则说明是从 OA 进来的，要掉接口来获取用户信息
             getUserInfoFromOA(searchObj).then((res) => {
-                console.log('res',res)
                 if(res.code !== 0) {
-                    return alert('登录失败，请重新进入或联系相关负责人33')
+                    return alert(res.message)
                 }
                 store.commit('setUserInfo',res.data)
                 let floor = ''
@@ -88,6 +86,8 @@ export default{
                     floor = 'three'
                 }
                 store.commit('setCurrentFloor',floor)
+                // 成功进入项目后，再设置这个进入方式的字段
+                store.commit('setIntoTheWay','OA')
                 // 最后push到home页
                 router.push('/home?time=' + Date.now())
             }).catch(error => {
