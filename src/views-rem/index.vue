@@ -744,6 +744,7 @@ export default {
 @import '../style/StyleOfFloorFour/Area/mobile/index.less';
 @import '../style/StyleOfFloorShenZhen/Area/mobile/index.less';
 @import '../style/StyleOfFloorThree/Part/mobile/index.less';
+@import '../style/StyleOfFloorFour/Part/mobile/index.less';
 // 设置版心的样式
 .body-container{
     min-width: 320px;
@@ -804,7 +805,8 @@ export default {
         .ShenZhenAreaStyle-mobile;
         // 引入3层移动端的分区样式
         .threePartStyle-mobile;
-        // 引入4层
+        // 引入4层移动端的分区样式
+        .fourPartStyle-mobile;
     }
 }
 </style>
