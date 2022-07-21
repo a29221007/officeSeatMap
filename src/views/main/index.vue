@@ -250,12 +250,15 @@ export default {
                 backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`,
             }
         })
+         // 当前的元素
+        let currentElement = null
         // 鼠标点击每一个座位的事件处理函数
         function handleClickSeat(seatItem,$event){
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
             if(seatItem.seat_id === currentSeat_id){
+                currentElement = null
                 // 如果相同，则清除当前元素的定时器
                 clearCurrentElementInterval()
                 // 向兄弟组件header发布一个自定义事件form，参数为空字符串
@@ -268,6 +271,7 @@ export default {
                 emitter.emit('form',seatItem)
             }
             scaleSeat($event.target)
+            currentElement = $event.target
             // 将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacleX = 3
             sacleY = 3
@@ -284,6 +288,7 @@ export default {
             if(type !== 1) return
             // 座位的高亮清除定时器
             clearCurrentElementInterval()
+            currentElement = null
             // 判断当前点击的和已经选中的值，是否相同
             if(seatData.currentAreaCode === code){
                 // 如果点前点击的和选中的一致，则取消高亮状态
@@ -351,7 +356,18 @@ export default {
                         scalex = Math.min(scalex,scaley)
                         scaley = Math.min(scalex,scaley)
                     }
+                    
+                    MapBoxRef.value.style.top = 'unset'
+                    MapBoxRef.value.style.left = 'unset'
+                    MapBoxRef.value.style.transformOrigin = `50% 50%`
                     MapBoxRef.value.style.transform = `scale(${scalex},${scaley})`
+                    if(currentElement){
+                        scaleSeat(currentElement)
+                    }else if(seatData.currentAreaCode){
+                        const { scaleX, scaleY } = searchArea(seatData.currentAreaCode)
+                        sacleX = scaleX
+                        sacleY = scaleY
+                    }
                     store.commit('setScale',[scalex,scaley])
                 },300)
             })
