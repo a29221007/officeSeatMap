@@ -304,6 +304,8 @@ export default {
         // 定义鼠标在地图内的坐标
         let x = null
         let y = null
+        // 窗体发生变化时，用于防抖计时器id
+        let resizeTimer = null
         onMounted(() => {
             /**
              * 0.625和0.872是开发时，当时的盒子的宽高除以当时浏览器可视区的宽高，计算出来的比例
@@ -332,6 +334,27 @@ export default {
             }
             MapBoxRef.value.style.transform = `scale(${scalex},${scaley})`
             store.commit('setScale',[scalex,scaley])
+
+            window.addEventListener('resize',function (e){
+                clearTimeout(resizeTimer)
+                resizeTimer = this.setTimeout(() => {
+                    // 手动设置MapContainerRef盒子的宽高
+                    MapContainerRef.value.style.width = e.target.innerWidth * 0.625 + 'px'
+                    MapContainerRef.value.style.height = e.target.innerHeight * 0.872 + 'px'
+                    // 手动设置MapBoxRef盒子的缩放比例，根据父盒子的大小（1200 ，845）
+                    // scalex: MapContainerRef盒子实际的宽度 / MapContainerRef原来的盒子宽度
+                    // scaley: MapContainerRef盒子的实际高度 / MapContainerRef运来盒子的高度
+                    let scalex = (e.target.innerWidth * 0.625) / 1200
+                    let scaley = (e.target.innerHeight * 0.872) / 845
+                    // 判断两个缩放系数的差值大小，如果两个比例差值的绝对值大于0.2，则将 scalex 和 scaley 值以最小的为准
+                    if(Math.abs(scalex - scaley) > 0.2){
+                        scalex = Math.min(scalex,scaley)
+                        scaley = Math.min(scalex,scaley)
+                    }
+                    MapBoxRef.value.style.transform = `scale(${scalex},${scaley})`
+                    store.commit('setScale',[scalex,scaley])
+                },300)
+            })
         })
         // 鼠标按下事件的处理程序
         function mouseDown(e) {
