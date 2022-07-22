@@ -75,10 +75,14 @@ export default {
             is_none_sugges: true, // 默认是true，有匹配项
             // 输入框的input事件，触发的函数
             handleInputSearch(){
+                if(searchInput.inputValue){
+                    beginToast('loading','搜索中',0,'.querySearch')
+                }
                 searchInput.is_none_sugges = true
                 clearTimeout(searchInput.searchTimer)
                 searchInput.searchTimer = setTimeout(() => {
                     if(!searchInput.inputValue){
+                        endToast()
                         return querySearch.querySearchList = []
                     }
                     let searchArray = []
@@ -119,6 +123,7 @@ export default {
                         searchInput.is_none_sugges = false
                         querySearch.querySearchList = []
                     }
+                    endToast()
                 },300)
             },
             // 点击输入框的返回箭头
