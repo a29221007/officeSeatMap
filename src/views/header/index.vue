@@ -389,7 +389,7 @@ export default {
                 results.forEach(item => {
                     if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                         array_seat.push(item)
-                    }else{
+                    }else if(item.diff === 1){
                         array_area.push(item)
                     }
                 })
