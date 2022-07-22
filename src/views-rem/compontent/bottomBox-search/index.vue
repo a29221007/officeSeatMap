@@ -174,7 +174,16 @@ export default {
                                 message:`查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
                             }).then(() => {
                                 // 用户如果确认跳转
-                                store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
+                                // 判断将要切换的楼层
+                                let pushFloor = null
+                                if(item.floor == 3 && item.office == '1'){
+                                    pushFloor = 'three'
+                                }else if(item.floor == 4 && item.office == '1'){
+                                    pushFloor = 'four'
+                                }else if(item.floor == 7 && item.office == '2'){
+                                    pushFloor = 'shenzhen'
+                                }
+                                store.commit('setCurrentFloor',pushFloor)
                                 // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                 emit('setSearchLegendContant','information')
                                 store.commit('setActiveInfo',item)
@@ -211,7 +220,16 @@ export default {
                                 message:`查找的区域信息不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
                             }).then(() => {
                                 // 用户如果确认跳转
-                                store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
+                                // 判断将要切换的楼层
+                                let pushFloor = null
+                                if(item.floor == 3 && item.office == '1'){
+                                    pushFloor = 'three'
+                                }else if(item.floor == 4 && item.office == '1'){
+                                    pushFloor = 'four'
+                                }else if(item.floor == 7 && item.office == '2'){
+                                    pushFloor = 'shenzhen'
+                                }
+                                store.commit('setCurrentFloor',pushFloor)
                                 nextTick(() => {
                                     beginToast('success','切换成功',2000)
                                     if(item.type === 1){
