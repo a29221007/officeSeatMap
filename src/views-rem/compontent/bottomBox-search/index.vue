@@ -270,6 +270,7 @@ export default {
         // 卸载阶段
         onBeforeUnmount(() => {
             clearTimeout(searchInput.searchTimer)
+            beginToast('loading','',1,'body')
         })
         return {
             ...toRefs(searchInput),
