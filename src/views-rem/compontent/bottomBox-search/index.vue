@@ -48,6 +48,7 @@ import { reactive, toRefs, nextTick, inject, ref, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { Dialog } from 'vant'
 import { beginToast, endToast } from '@/views-rem/hook/toast.js'
+import { Toast } from 'vant'
 // 座位设置高亮的公共方法
 import searchSeat from '@/views-rem/hook/searchSeat.js'
 // 区域设置高亮的公共方法
@@ -79,6 +80,7 @@ export default {
                     beginToast('loading','搜索中',0,'.querySearch')
                 }
                 searchInput.is_none_sugges = true
+                console.log(searchInput.inputValue)
                 clearTimeout(searchInput.searchTimer)
                 searchInput.searchTimer = setTimeout(() => {
                     if(!searchInput.inputValue){
@@ -270,6 +272,7 @@ export default {
         // 卸载阶段
         onBeforeUnmount(() => {
             clearTimeout(searchInput.searchTimer)
+            beginToast('loading','',1,'body')
         })
         return {
             ...toRefs(searchInput),
