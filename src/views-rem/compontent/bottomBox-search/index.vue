@@ -1,11 +1,17 @@
 <template>
     <!-- 2、点击了搜索后，显示搜索框和搜索建议列表 -->
     <div class="search">
+        <!-- 搜索框 -->
         <div class="search-input">
             <i v-on:click="handleClickBack" class="iconfont oamap-zuojiantou"></i>
             <input ref="inputRef" class="ipt" v-model="inputValue" type="text" placeholder=" 搜索" v-on:input="handleInputSearch">
             <i v-if="inputValue" v-on:click="handleClickClear" class="iconfont oamap-qingchu"></i>
         </div>
+        <!-- 搜索范围切换 -->
+        <div class="search-floor-switch">
+            <div :class="{'active':item.lable === currentSelectFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickSelectFloor(item.lable)">{{item.name}}</div>
+        </div>
+        <!-- 搜索结果展示 -->
         <div class="querySearch" ref="querySearchRef" v-on:touchmove="querySearchMove">
             <template v-if="is_none_sugges">
                 <div class="querySearch-item" v-for="item in querySearchList" :key="item.id" v-on:click="handleClickQuerySearchItem(item)">
@@ -31,7 +37,7 @@
                 </div>
             </template>
             <template v-else>
-                <div class="is_none_sugges">暂无匹配项</div>
+                <div class="is_none_sugges">当前楼层无匹配项，切换其他区域试试吧</div>
             </template>
         </div>
     </div>
@@ -49,10 +55,18 @@ import searchArea from '@/views-rem/hook/searchArea.js'
 export default {
     name:'BottomBoxSearch',
     emits:['setSearchLegendContant'],
+    props:{
+        AllArea:{
+            type:Array,
+            required:true
+        }
+    },
     setup(prop,{ emit }) {
         const store = useStore()
         // 搜索框的数据和逻辑
         let searchInput = reactive({
+            // 当前搜索的范围
+            currentSelectFloor:store.state.currentFloor,
             // 搜索框的输入绑定值
             inputValue: '', // 默认为空
             // 搜索事件的防抖变量
@@ -61,14 +75,30 @@ export default {
             is_none_sugges: true, // 默认是true，有匹配项
             // 输入框的input事件，触发的函数
             handleInputSearch(){
+                if(searchInput.inputValue){
+                    beginToast('loading','搜索中',0,'.querySearch')
+                }
                 searchInput.is_none_sugges = true
                 clearTimeout(searchInput.searchTimer)
                 searchInput.searchTimer = setTimeout(() => {
                     if(!searchInput.inputValue){
+                        endToast()
                         return querySearch.querySearchList = []
                     }
+                    let searchArray = []
+                    if(searchInput.currentSelectFloor === 'three'){
+                        searchArray = store.getters.seatAndAreaListOfThree
+                    }else if(searchInput.currentSelectFloor === 'four'){
+                        searchArray = store.getters.seatAndAreaListOfFour
+                    }else if(searchInput.currentSelectFloor === 'shenzhen'){
+                        searchArray = store.getters.seatAndAreaListOfShenZhen
+                    }
                     // 写搜索的逻辑
+<<<<<<< HEAD
                     const results = store.getters.AllSeatList.filter(item => {
+=======
+                    const results = searchArray.filter(item => {
+>>>>>>> dev-rem
                         return (item.name && item.name.toString().replace(/\s/g,"").toUpperCase().includes(searchInput.inputValue.toUpperCase())) || (item.seat_id && item.seat_id.includes(searchInput.inputValue.toUpperCase())) || (item.code && item.code.toUpperCase().includes(searchInput.inputValue.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(searchInput.inputValue.toUpperCase()))
                     })
                     // 去除多个重复的项
@@ -79,7 +109,7 @@ export default {
                     results.forEach(item => {
                         if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                             array_seat.push(item)
-                        }else{
+                        }else if(item.diff === 1){
                             array_area.push(item)
                         }
                     })
@@ -95,7 +125,9 @@ export default {
                         querySearch.querySearchList = array_seat
                     }else{
                         searchInput.is_none_sugges = false
+                        querySearch.querySearchList = []
                     }
+                    endToast()
                 },300)
             },
             // 点击输入框的返回箭头
@@ -108,6 +140,13 @@ export default {
                 searchInput.inputValue = ''
                 querySearch.querySearchList = []
                 searchInput.is_none_sugges = true
+            },
+            // 点击切换搜索范围处理函数
+            handleClickSelectFloor(floor){
+                if(floor === searchInput.currentSelectFloor) return
+                searchInput.currentSelectFloor = floor
+                searchInput.handleInputSearch()
+                document.querySelector('.search .querySearch').scrollTop = 0
             }
         })
         let inputRef = ref(null)
@@ -144,7 +183,16 @@ export default {
                                 message:`查找的员工座位不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
                             }).then(() => {
                                 // 用户如果确认跳转
-                                store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
+                                // 判断将要切换的楼层
+                                let pushFloor = null
+                                if(item.floor == 3 && item.office == '1'){
+                                    pushFloor = 'three'
+                                }else if(item.floor == 4 && item.office == '1'){
+                                    pushFloor = 'four'
+                                }else if(item.floor == 7 && item.office == '2'){
+                                    pushFloor = 'shenzhen'
+                                }
+                                store.commit('setCurrentFloor',pushFloor)
                                 // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                 emit('setSearchLegendContant','information')
                                 store.commit('setActiveInfo',item)
@@ -181,7 +229,16 @@ export default {
                                 message:`查找的区域信息不在当前区域,是否要自动跳转到对应区域（${item.floor}楼）`,
                             }).then(() => {
                                 // 用户如果确认跳转
-                                store.commit('setCurrentFloor',store.getters.floor === 3 ? 'four' : 'three')
+                                // 判断将要切换的楼层
+                                let pushFloor = null
+                                if(item.floor == 3 && item.office == '1'){
+                                    pushFloor = 'three'
+                                }else if(item.floor == 4 && item.office == '1'){
+                                    pushFloor = 'four'
+                                }else if(item.floor == 7 && item.office == '2'){
+                                    pushFloor = 'shenzhen'
+                                }
+                                store.commit('setCurrentFloor',pushFloor)
                                 nextTick(() => {
                                     beginToast('success','切换成功',2000)
                                     if(item.type === 1){
@@ -217,6 +274,7 @@ export default {
         // 卸载阶段
         onBeforeUnmount(() => {
             clearTimeout(searchInput.searchTimer)
+            beginToast('loading','',1,'body')
         })
         return {
             ...toRefs(searchInput),
@@ -241,7 +299,6 @@ export default {
         border-radius: 7px;
         display: flex;
         align-items: center;
-        margin-bottom: .2688rem;
         .oamap-zuojiantou,.oamap-qingchu{
             color: #f8f9fa;
             font-size: .4301rem;
@@ -257,6 +314,18 @@ export default {
             &::-webkit-input-placeholder{
                 color: #b1b2b4;
             }
+        }
+    }
+    .search-floor-switch{
+        color: #fff;
+        display: flex;
+        height: .7312rem;
+        align-items: center;
+        margin: .1075rem 0;
+        font-size: .4516rem;
+        justify-content: space-around;
+        div.active{
+            color: tomato;
         }
     }
     .querySearch{

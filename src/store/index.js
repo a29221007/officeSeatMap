@@ -9,8 +9,7 @@ import { getAreaList } from '@/api/getArea.js'
 import { errorMessage } from '@/utils/message.js'
 // 导入结束提示框的方法
 import { endToast, beginToast } from '@/views-rem/hook/toast.js'
-import router from '@/router'
-// 导入获取个人固资的api-移动端
+// 导入获取个人固资的api
 import { getFixedassets } from '@/api/getFixedassets.js'
 export default createStore({
     state: {
@@ -20,15 +19,17 @@ export default createStore({
         seatListOfthree: [],
         // 4层的座位信息
         seatListOfFour: [],
+        // 深圳地区座位信息
+        seatListOfShenZhen: [],
         // 当前选中的图例(此项不做本地缓存)
         currentLegend:'', // 默认是空字符串
         // 当前的地图的初始缩放系数
         scale:getItem('scale') || [1,1], // 默认是1
-
-        // 3层的区域信息
         areaListOfThree: [],
         // 4层的区域信息
         areaListOfFour: [],
+        // 深圳地区的区域信息
+        areaListOfShenZhen: [],
         // ---------------------------------------------
         // 移动端中的数据，当前选中的项
         activeInfo: getItem('activeInfo'),
@@ -72,6 +73,10 @@ export default createStore({
         setSeatListOfFour(state,data) {
             state.seatListOfFour = data
         },
+        // 设置深圳地区的座位信息
+        setSeatListOfShenZhen(state,data) {
+            state.seatListOfShenZhen = data
+        },
         // 设置currentLegend图例
         setCurrentLegend(state,data) {
             // 判断currentLegend的值与传递过来的data是否相同，相同的话，就是取消，不相同就是设置
@@ -90,6 +95,10 @@ export default createStore({
         // 设置4层的区域信息列表
         setAreaListOfFour(state,data){
             state.areaListOfFour = data
+        },
+        // 设置深圳地区的区域信息列表
+        setAreaListOfShenZhen(state,data){
+            state.areaListOfShenZhen = data
         },
 
 
@@ -156,7 +165,7 @@ export default createStore({
         // 获取3层的座位信息
         async getSeatListOfthree(context) {
             try{
-                const {data} = await getSeatList(3)
+                const {data} = await getSeatList(3,1)
                 context.commit('setSeatListOfthree',data)
             }catch(error){
                 endToast()
@@ -166,8 +175,18 @@ export default createStore({
         // 获取4层的座位信息
         async getSeatListOfFour(context) {
             try{
-                const {data} = await getSeatList(4)
+                const {data} = await getSeatList(4,1)
                 context.commit('setSeatListOfFour',data)
+            }catch(error){
+                endToast()
+                errorMessage(error)
+            }
+        },
+        // 获取深圳地区的座位信息
+        async getSeatListOfShenZhen(context) {
+            try{
+                const { data } = await getSeatList(7, 2)
+                context.commit('setSeatListOfShenZhen',data)
             }catch(error){
                 endToast()
                 errorMessage(error)
@@ -176,7 +195,7 @@ export default createStore({
         // 获取3层的区域信息
         async getAreaListOfThree(context){
             try{
-                const {data} = await getAreaList(3)
+                const {data} = await getAreaList(3,1)
                 context.commit('setAreaListOfThree',data)
             }catch(error){
                 endToast()
@@ -186,8 +205,18 @@ export default createStore({
         // 获取4层的区域信息
         async getAreaListOfFour(context){
             try{
-                const {data} = await getAreaList(4)
+                const {data} = await getAreaList(4,1)
                 context.commit('setAreaListOfFour',data)
+            }catch(error){
+                endToast()
+                errorMessage(error)
+            }
+        },
+        // 获取深圳地区的区域信息
+        async getAreaListOfShenZhen(context) {
+            try{
+                const {data} = await getAreaList(7,2)
+                context.commit('setAreaListOfShenZhen',data)
             }catch(error){
                 endToast()
                 errorMessage(error)
@@ -204,27 +233,39 @@ export default createStore({
                 context.commit('setPersontFixedAssetsList',res.data)
             }catch(error){
                 endToast()
+                // 获取个人固资信息失败后，无论当前用户是否有权限查看，都将查看按钮隐藏
                 context.commit('setIs_have_ckeck_persontFixedAssets',false)
                 errorMessage('获取个人固资失败',error)
             }
         }
+
     },
     getters: {
         // 3层的座位人员信息和区域会议室信息集合
-        seatAndAreaListOfThree(state){
+        seatAndAreaListOfThree(state) {
             return state.seatListOfthree && state.seatListOfthree.concat(state.areaListOfThree)
         },
         // 4层的座位人员信息和区域会议室信息集合
         seatAndAreaListOfFour(state){
             return state.seatListOfFour && state.seatListOfFour.concat(state.areaListOfFour)
         },
+        // 深圳地区的人员信息和区域会议室信息集合
+        seatAndAreaListOfShenZhen(state) {
+            return state.seatListOfShenZhen && state.seatListOfShenZhen.concat(state.areaListOfShenZhen)
+        },
         // 全部座位人员以及区域信息集合
         AllSeatList(state,getter){
-            return getter.seatAndAreaListOfThree && getter.seatAndAreaListOfThree.concat(getter.seatAndAreaListOfFour)
+            return getter.seatAndAreaListOfThree && getter.seatAndAreaListOfThree.concat(getter.seatAndAreaListOfFour,getter.seatAndAreaListOfShenZhen)
         },
         // 根据currentFloor得到当前的楼层（或地区）的数值
         floor(state) {
-            return state.currentFloor === 'three' ? 3 : 4
+            if (state.currentFloor === 'three') {
+                return 3
+            } else if(state.currentFloor === 'four') {
+                return 4
+            } else if(state.currentFloor === 'shenzhen') {
+                return 7
+            }
         }
     }
 })

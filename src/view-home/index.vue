@@ -20,11 +20,13 @@ export default {
     setup() {
         // 在App组件中初始化store中的状态
         const store = useStore()
-        store.commit('setCurrentFloor','three')
+        // store.commit('setCurrentFloor','three')
         store.dispatch('getSeatListOfthree')
         store.dispatch('getSeatListOfFour')
+        store.dispatch('getSeatListOfShenZhen')
         store.dispatch('getAreaListOfThree')
         store.dispatch('getAreaListOfFour')
+        store.dispatch('getAreaListOfShenZhen')
         // 获取当前浏览器可视区的大小
         const obj = getClient()
         // 依赖注入
