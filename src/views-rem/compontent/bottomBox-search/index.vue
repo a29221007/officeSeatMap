@@ -94,11 +94,7 @@ export default {
                         searchArray = store.getters.seatAndAreaListOfShenZhen
                     }
                     // 写搜索的逻辑
-<<<<<<< HEAD
-                    const results = store.getters.AllSeatList.filter(item => {
-=======
                     const results = searchArray.filter(item => {
->>>>>>> dev-rem
                         return (item.name && item.name.toString().replace(/\s/g,"").toUpperCase().includes(searchInput.inputValue.toUpperCase())) || (item.seat_id && item.seat_id.includes(searchInput.inputValue.toUpperCase())) || (item.code && item.code.toUpperCase().includes(searchInput.inputValue.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(searchInput.inputValue.toUpperCase()))
                     })
                     // 去除多个重复的项

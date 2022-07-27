@@ -811,11 +811,7 @@ export default {
             }
         }
         // 用户体验设计部
-<<<<<<< HEAD
-        #QY010103004560{
-=======
         #QY010103004560{ 
->>>>>>> dev-rem
             .title{
                 left: -2px;
                 span{
