@@ -24,7 +24,7 @@
                         <!-- 第二行显示该座位所在部门 -->
                         <div class="twoLine"><span class="title">部门：</span><span class="content">{{item.depart || '暂无数据'}}</span></div>
                     </div>
-                    <div class="autoCompleteTemplate" v-if="item.type === 1 || item.type === 2 || item.type === 3">
+                    <div class="autoCompleteTemplate" v-if="item.diff === 1 || item.diff === 2">
                         <!-- 第一行左边显示姓名，右边显示座位号 -->
                         <div class="oneLine">
                             <span><span class="title">区域名称：</span><span class="content">{{item.name + (item.subtitle ? item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '') || '暂无数据'}}</span></span>

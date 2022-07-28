@@ -88,7 +88,6 @@ const routes = [
         },
         component: () => import(/* webpackChunkName: "home" */ '@/outerNet.vue'),
     },
-
 ]
 
 const router = createRouter({

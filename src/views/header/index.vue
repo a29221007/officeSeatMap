@@ -24,7 +24,7 @@
                         <!-- 第二行显示该座位所在部门 -->
                         <div class="twoLine"><span class="title">部门：</span><span class="content">{{item.depart || '暂无数据'}}</span></div>
                     </div>
-                    <div class="autoCompleteTemplate" v-if="item.type === 1 || item.type === 2 || item.type === 3">
+                    <div class="autoCompleteTemplate" v-if="item.diff === 1 || item.diff === 2">
                         <!-- 第一行左边显示姓名，右边显示座位号 -->
                         <div class="oneLine">
                             <span><span class="title">区域名称：</span><span class="content">{{item.name + (item.subtitle ? item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '') || '暂无数据'}}</span></span>
@@ -290,8 +290,7 @@ export default {
         })
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
-        const headerContainerRef = ref(null)
-        // 窗体发生变化时，用于防抖计时器id
+        const headerContainerRef = ref(null)// 窗体发生变化时，用于防抖计时器id
         let resizeTimer = null
         // 组件挂载时
         onMounted(() => {
@@ -309,7 +308,6 @@ export default {
                 },300)
             })
         })
-        
         // 监听兄弟组件Main发布的自定义事件from，将弹框显示
         emitter.on('form', data => {
             if(data){
