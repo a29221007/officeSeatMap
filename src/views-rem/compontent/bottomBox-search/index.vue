@@ -91,7 +91,7 @@ export default {
                     }else if(searchInput.currentSelectFloor === 'four'){
                         searchArray = store.getters.seatAndAreaListOfFour
                     }else if(searchInput.currentSelectFloor === 'shenzhen'){
-                        searchArray = store.getters.seatAndAreaListOfShenZhen
+                        searchArray = store.getters.seatAndAreaListOfShenZhen.filter(item => item.diff !== 2)
                     }
                     // 写搜索的逻辑
                     const results = searchArray.filter(item => {
@@ -105,7 +105,7 @@ export default {
                     results.forEach(item => {
                         if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                             array_seat.push(item)
-                        }else if(item.diff === 1){
+                        }else{
                             array_area.push(item)
                         }
                     })

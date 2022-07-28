@@ -374,7 +374,8 @@ export default {
                 }else if(searchData.currentSearchFloor === 'four'){
                     searchArray = store.getters.seatAndAreaListOfFour
                 }else if(searchData.currentSearchFloor === 'shenzhen'){
-                    searchArray = store.getters.seatAndAreaListOfShenZhen
+                    // 去除深圳的分区数据
+                    searchArray = store.getters.seatAndAreaListOfShenZhen.filter(item => item.diff !== 2)
                 }
                 const results = searchArray.filter(item => {
                     return (item.name && item.name.toString().replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase())) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase())) || (item.code && item.code.toUpperCase().includes(queryString.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase()))
@@ -387,7 +388,7 @@ export default {
                 results.forEach(item => {
                     if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                         array_seat.push(item)
-                    }else if(item.diff === 1){
+                    }else{
                         array_area.push(item)
                     }
                 })
@@ -508,7 +509,7 @@ export default {
                                 infoMessage(`您可以手动切换到${item.floor}楼查找`)
                             })
                         }
-                        searchData.searchState = item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")
+                        searchData.searchState = item.name + (item.subtitle ? item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '')
                     }
                 })
             },
