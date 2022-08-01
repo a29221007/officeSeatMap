@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "30984143",
+      "name": "桌子22-01",
+      "font_class": "zhuozi22-01",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
       "icon_id": "30981184",
       "name": "座位",
       "font_class": "zuowei",
