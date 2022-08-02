@@ -369,7 +369,7 @@ export default {
                 for(let key in obj){
                     array_seat.push(obj[key][0])
                 }
-                if(results.length !== 0){
+                if(array_seat.length !== 0){
                     callback(array_seat)
                 }else{
                     callback([{name:''}])
