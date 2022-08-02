@@ -357,7 +357,7 @@ export default {
                 results.forEach(item => {
                     if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                         array_seat.push(item)
-                    }else{
+                    }else if(item.diff == 1){
                         array_area.push(item)
                     }
                 })
@@ -369,7 +369,7 @@ export default {
                 for(let key in obj){
                     array_seat.push(obj[key][0])
                 }
-                if(results.length !== 0){
+                if(array_seat.length !== 0){
                     callback(array_seat)
                 }else{
                     callback([{name:''}])

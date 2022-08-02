@@ -11,10 +11,10 @@
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
                 <!-- 办公分区 -->
-                <template v-if="item.diff && item.diff === 2 && item.floor !== 7">
-                    <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
+                <!-- <template v-if="item.diff && item.diff === 2 && item.floor !== 7">
+                    <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'"> -->
                         <!-- 由单个组成 -->
-                        <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
+                        <!-- <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
                             <div class="title">
                                 <span>{{item.name}}</span>
                                 <span>({{partTotaleObject[item.code]}})</span>
@@ -22,9 +22,9 @@
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
-                        <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
+                        <template v-for="(item2,index) in item.coordinate" :key="item.id + index"> -->
                             <!-- 有多个组成 -->
-                            <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
+                            <!-- <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span>{{item.name}}</span>
                                     <span>({{partTotaleObject[item.code]}})</span>
@@ -32,7 +32,7 @@
                             </div>
                         </template>
                     </template>
-                </template>
+                </template> -->
                 <!-- 部门、会议室、其他区域 -->
                 <template v-if="item.diff && item.diff === 1">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
