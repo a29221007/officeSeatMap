@@ -7,10 +7,6 @@
             <input ref="inputRef" class="ipt" v-model="inputValue" type="text" placeholder=" 搜索" v-on:input="handleInputSearch">
             <i v-if="inputValue" v-on:click="handleClickClear" class="iconfont oamap-qingchu"></i>
         </div>
-        <!-- 搜索范围切换 -->
-        <div class="search-floor-switch">
-            <div :class="{'active':item.lable === currentSelectFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickSelectFloor(item.lable)">{{item.name}}</div>
-        </div>
         <!-- 搜索结果展示 -->
         <div class="querySearch" ref="querySearchRef" v-on:touchmove="querySearchMove">
             <template v-if="is_none_sugges">
@@ -37,7 +33,7 @@
                 </div>
             </template>
             <template v-else>
-                <div class="is_none_sugges">当前楼层无匹配项，切换其他区域试试吧</div>
+                <div class="is_none_sugges">暂无匹配项</div>
             </template>
         </div>
     </div>
@@ -65,8 +61,6 @@ export default {
         const store = useStore()
         // 搜索框的数据和逻辑
         let searchInput = reactive({
-            // 当前搜索的范围
-            currentSelectFloor:store.state.currentFloor,
             // 搜索框的输入绑定值
             inputValue: '', // 默认为空
             // 搜索事件的防抖变量
@@ -85,14 +79,7 @@ export default {
                         endToast()
                         return querySearch.querySearchList = []
                     }
-                    let searchArray = []
-                    if(searchInput.currentSelectFloor === 'three'){
-                        searchArray = store.getters.seatAndAreaListOfThree
-                    }else if(searchInput.currentSelectFloor === 'four'){
-                        searchArray = store.getters.seatAndAreaListOfFour
-                    }else if(searchInput.currentSelectFloor === 'shenzhen'){
-                        searchArray = store.getters.seatAndAreaListOfShenZhen.filter(item => item.diff !== 2)
-                    }
+                    let searchArray = store.getters.AllSeatList
                     // 写搜索的逻辑
                     const results = searchArray.filter(item => {
                         return (item.name && item.name.toString().replace(/\s/g,"").toUpperCase().includes(searchInput.inputValue.toUpperCase())) || (item.seat_id && item.seat_id.includes(searchInput.inputValue.toUpperCase())) || (item.code && item.code.toUpperCase().includes(searchInput.inputValue.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(searchInput.inputValue.toUpperCase()))
@@ -136,13 +123,6 @@ export default {
                 searchInput.inputValue = ''
                 querySearch.querySearchList = []
                 searchInput.is_none_sugges = true
-            },
-            // 点击切换搜索范围处理函数
-            handleClickSelectFloor(floor){
-                if(floor === searchInput.currentSelectFloor) return
-                searchInput.currentSelectFloor = floor
-                searchInput.handleInputSearch()
-                document.querySelector('.search .querySearch').scrollTop = 0
             }
         })
         let inputRef = ref(null)

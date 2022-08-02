@@ -249,17 +249,17 @@ export default createStore({
 
     },
     getters: {
-        // 3层的座位人员信息和区域会议室信息集合
+        // 3层的座位人员信息和区域会议室信息集合(包括分区数据)
         seatAndAreaListOfThree(state) {
             return state.seatListOfthree && state.seatListOfthree.concat(state.areaListOfThree)
         },
-        // 4层的座位人员信息和区域会议室信息集合
+        // 4层的座位人员信息和区域会议室信息集合（包括分区数据）
         seatAndAreaListOfFour(state){
             return state.seatListOfFour && state.seatListOfFour.concat(state.areaListOfFour)
         },
-        // 深圳地区的人员信息和区域会议室信息集合
+        // 深圳地区的人员信息和区域会议室信息集合（不包括分区数据，将分区数据移除）
         seatAndAreaListOfShenZhen(state) {
-            return state.seatListOfShenZhen && state.seatListOfShenZhen.concat(state.areaListOfShenZhen)
+            return state.seatListOfShenZhen && state.seatListOfShenZhen.concat(state.areaListOfShenZhen.filter(item => item.diff !== 2))
         },
         // 全部座位人员以及区域信息集合
         AllSeatList(state,getter){
