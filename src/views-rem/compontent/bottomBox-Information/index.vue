@@ -60,7 +60,7 @@ export default {
             }else if(store.state.activeInfo.type === 1){
                 // 会议室
                 compontentNameValue = 'MeetingRoom'
-            }else if(store.state.activeInfo.type === 2 || store.state.activeInfo.type === 3){
+            }else if(store.state.activeInfo.type === 2 || store.state.activeInfo.type === 3 || store.state.activeInfo.diff === 2){
                 // 部门和其他区域
                 compontentNameValue = 'DepartmentAndOtherAreas'
             }
@@ -83,7 +83,7 @@ export default {
                 // 空座
                 obj.title = '空座'
                 obj.code = ''
-            }else if(store.state.activeInfo.type === 2 || store.state.activeInfo.type === 3){
+            }else if(store.state.activeInfo.type === 2 || store.state.activeInfo.type === 3 || store.state.activeInfo.diff === 2){
                 // 区域信息
                 obj.title = '已选区域'
                 obj.code = ''

@@ -8,20 +8,12 @@
                 <div class="content"><span class="scroll">{{$store.state.activeInfo.name + ($store.state.activeInfo.subtitle ? $store.state.activeInfo.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '')}}</span></div>
             </div>
         </div>
-        <!-- 第一行 -->
+        <!-- 第二行 -->
         <div class="line">
             <!-- 第一列 -->
             <div class="col">
                 <div class="title">区域编号：</div>
                 <div class="content"><span class="scroll">{{$store.state.activeInfo.code}}</span></div>
-            </div>
-        </div>
-        <!-- 第一行 -->
-        <div class="line">
-            <!-- 第一列 -->
-            <div class="col">
-                <div class="title">区域背景色：</div>
-                <div class="content"><span class="scroll">{{$store.state.activeInfo.backgroundcolor}}</span></div>
             </div>
         </div>
     </div>

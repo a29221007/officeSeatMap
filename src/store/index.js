@@ -24,7 +24,7 @@ export default createStore({
         // 当前选中的图例(此项不做本地缓存)
         currentLegend:'', // 默认是空字符串
         // 当前的地图的初始缩放系数
-        scale:getItem('scale') || [1,1], // 默认是1
+        scale: getItem('scale') || [1,1], // 默认是1
         areaListOfThree: [],
         // 4层的区域信息
         areaListOfFour: [],
@@ -58,6 +58,8 @@ export default createStore({
         scanBarcodeInfoObject: getItem('scanBarcodeInfoObject') || {},
         // 通过 OA 进入项目或者通过企业微信进入项目标识
         intoTheWay: getItem('intoTheWay') || null,
+        // 是否显示公共支持联系人信息
+        is_show_public_contact_person: false, // 默认是false
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -159,6 +161,12 @@ export default createStore({
         setIntoTheWay(state, data) {
             state.intoTheWay = data
             setItem('intoTheWay',state.intoTheWay)
+        },
+
+        // 设置是否显示公共联系人信息
+        setIs_show_public_contact_person(state, data){
+            state.is_show_public_contact_person = data
+            setItem('is_show_public_contact_person',state.is_show_public_contact_person)
         }
     },
     actions: {
@@ -241,17 +249,17 @@ export default createStore({
 
     },
     getters: {
-        // 3层的座位人员信息和区域会议室信息集合
+        // 3层的座位人员信息和区域会议室信息集合(包括分区数据)
         seatAndAreaListOfThree(state) {
             return state.seatListOfthree && state.seatListOfthree.concat(state.areaListOfThree)
         },
-        // 4层的座位人员信息和区域会议室信息集合
+        // 4层的座位人员信息和区域会议室信息集合（包括分区数据）
         seatAndAreaListOfFour(state){
             return state.seatListOfFour && state.seatListOfFour.concat(state.areaListOfFour)
         },
-        // 深圳地区的人员信息和区域会议室信息集合
+        // 深圳地区的人员信息和区域会议室信息集合（不包括分区数据，将分区数据移除）
         seatAndAreaListOfShenZhen(state) {
-            return state.seatListOfShenZhen && state.seatListOfShenZhen.concat(state.areaListOfShenZhen)
+            return state.seatListOfShenZhen && state.seatListOfShenZhen.concat(state.areaListOfShenZhen.filter(item => item.diff !== 2))
         },
         // 全部座位人员以及区域信息集合
         AllSeatList(state,getter){

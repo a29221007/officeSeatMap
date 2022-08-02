@@ -11,6 +11,7 @@ import MLayOut from '../views-rem'
 // 导入获取浏览器可视区的宽高
 import getClient from '../utils/getClient.js'
 import { useStore } from 'vuex'
+import statistical from '@/utils/statistical.js'
 export default {
     name:'App',
     components:{
@@ -20,17 +21,30 @@ export default {
     setup() {
         // 在App组件中初始化store中的状态
         const store = useStore()
-        // store.commit('setCurrentFloor','three')
-        store.dispatch('getSeatListOfthree')
-        store.dispatch('getSeatListOfFour')
-        store.dispatch('getSeatListOfShenZhen')
-        store.dispatch('getAreaListOfThree')
-        store.dispatch('getAreaListOfFour')
-        store.dispatch('getAreaListOfShenZhen')
+        store.dispatch('getSeatListOfthree').then(() => {
+            return store.dispatch('getSeatListOfFour')
+        }).then(() => {
+            return store.dispatch('getAreaListOfThree')
+        }).then(() => {
+            return store.dispatch('getAreaListOfFour')
+        }).then(() => {
+            return store.dispatch('getSeatListOfShenZhen')
+        }).then(() => {
+            return store.dispatch('getAreaListOfShenZhen')
+        }).then(() => {
+            const array = statistical(store.state.areaListOfThree,store.state.seatListOfthree,3).concat(statistical(store.state.areaListOfFour,store.state.seatListOfFour,4))
+            array.forEach(item => {
+                if(!partTotaleObject.value[item.part_code]){
+                    partTotaleObject.value[item.part_code] = item.currentPartTotalSeat
+                }
+            })
+        })
+        const partTotaleObject = ref({})
         // 获取当前浏览器可视区的大小
         const obj = getClient()
         // 依赖注入
         provide('clent',obj)
+        provide('partTotaleObject',partTotaleObject.value)
         // 判断是pc端还是移动端的变量
         const is_PC = ref('MLayOut')
         let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)

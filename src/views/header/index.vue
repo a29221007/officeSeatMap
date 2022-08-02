@@ -7,12 +7,6 @@
                 <span :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<span class="separator" v-if="item.id !== AllArea.length - 1"> / </span></span>
             </div>
             <el-autocomplete v-model="searchState" value-key='name' popper-class='autocomplete' :prefix-icon="Search" :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:clear="handleClearInput">
-                <!-- 搜索时确定范围按钮 -->
-                <template #append>
-                    <div class="selectFloor">
-                        <div :class="{'active':item.lable === currentSearchFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickSlectFloor(item.lable)">{{item.name}}</div>
-                    </div>
-                </template>
                 <!-- 自定义搜索建议列表模板(当有搜索建议时) -->
                 <template #default="{ item }" v-if="is_none_sugges">
                     <div class="autoCompleteTemplate" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
@@ -24,7 +18,7 @@
                         <!-- 第二行显示该座位所在部门 -->
                         <div class="twoLine"><span class="title">部门：</span><span class="content">{{item.depart || '暂无数据'}}</span></div>
                     </div>
-                    <div class="autoCompleteTemplate" v-if="item.type === 1 || item.type === 2 || item.type === 3">
+                    <div class="autoCompleteTemplate" v-if="item.diff === 1 || item.diff === 2">
                         <!-- 第一行左边显示姓名，右边显示座位号 -->
                         <div class="oneLine">
                             <span><span class="title">区域名称：</span><span class="content">{{item.name + (item.subtitle ? item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '') || '暂无数据'}}</span></span>
@@ -37,7 +31,7 @@
                 </template>
                 <!-- 自定义搜索建议列表模板（当无搜索建议时） -->
                 <template #default v-else>
-                    <div class="is_none_sugges">当前楼层无匹配项，切换其他区域试试吧</div>
+                    <div class="is_none_sugges">暂无匹配项</div>
                 </template>
             </el-autocomplete>
         </div>
@@ -290,8 +284,7 @@ export default {
         })
         // 获取浏览器可视区宽高的依赖注入
         const obj = inject('clent')
-        const headerContainerRef = ref(null)
-        // 窗体发生变化时，用于防抖计时器id
+        const headerContainerRef = ref(null)// 窗体发生变化时，用于防抖计时器id
         let resizeTimer = null
         // 组件挂载时
         onMounted(() => {
@@ -309,7 +302,6 @@ export default {
                 },300)
             })
         })
-        
         // 监听兄弟组件Main发布的自定义事件from，将弹框显示
         emitter.on('form', data => {
             if(data){
@@ -344,40 +336,16 @@ export default {
             // 切换楼层（或地区）时，将地图初始化
             initMap()
         }
-        // 切换搜索范围的处理函数
-        function handleClickSlectFloor(floor){
-            // 判断当前点击与选中的一致时，return出去
-            if(floor === searchData.currentSearchFloor) return
-            searchData.currentSearchFloor = floor
-            // 如果 callback 为 false 时，说明用户还没有进行搜索，则return出去
-            if(!callbackFn) return
-            // if(!searchData.is_none_sugges) return
-            searchData.querySearch(searchData.searchState, callbackFn)
-            document.querySelector('.autocomplete .el-autocomplete-suggestion__wrap').scrollTop = 0
-        }
-        // 保存搜索建议列表的 callback 回调函数，用于切换搜索范围时使用
-        let callbackFn = null
         // 定义模糊搜索框的相关数据与方法
         const searchData = reactive({
-            // 选中的搜索范围
-            currentSearchFloor:store.state.currentFloor,
             // 模糊搜索的关键字
             searchState:'',
             // 是否有匹配项
             is_none_sugges:true, // 默认是有匹配项
             // 搜索建议
             querySearch(queryString, callback) {
-                // 判断callback是否是null，如果为null，才去赋值
-                if(!callbackFn) callbackFn = callback
                 searchData.is_none_sugges = true
-                let searchArray = []
-                if(searchData.currentSearchFloor === 'three'){
-                    searchArray = store.getters.seatAndAreaListOfThree
-                }else if(searchData.currentSearchFloor === 'four'){
-                    searchArray = store.getters.seatAndAreaListOfFour
-                }else if(searchData.currentSearchFloor === 'shenzhen'){
-                    searchArray = store.getters.seatAndAreaListOfShenZhen
-                }
+                let searchArray = store.getters.AllSeatList
                 const results = searchArray.filter(item => {
                     return (item.name && item.name.toString().replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase())) || (item.seat_id && item.seat_id.includes(queryString.toUpperCase())) || (item.code && item.code.toUpperCase().includes(queryString.toUpperCase())) || (item.subtitle && item.subtitle.replace(/\s/g,"").toUpperCase().includes(queryString.toUpperCase()))
                 })
@@ -389,7 +357,7 @@ export default {
                 results.forEach(item => {
                     if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                         array_seat.push(item)
-                    }else if(item.diff === 1){
+                    }else if(item.diff == 1){
                         array_area.push(item)
                     }
                 })
@@ -401,7 +369,7 @@ export default {
                 for(let key in obj){
                     array_seat.push(obj[key][0])
                 }
-                if(results.length !== 0){
+                if(array_seat.length !== 0){
                     callback(array_seat)
                 }else{
                     callback([{name:''}])
@@ -510,7 +478,7 @@ export default {
                                 infoMessage(`您可以手动切换到${item.floor}楼查找`)
                             })
                         }
-                        searchData.searchState = item.name + item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"")
+                        searchData.searchState = item.name + (item.subtitle ? item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '')
                     }
                 })
             },
@@ -692,7 +660,6 @@ export default {
             ...toRefs(legendData),
             ...toRefs(drawerData),
             handleClickFloor,
-            handleClickSlectFloor,
             headerContainerRef,
             Search,
             FixedAssetsRef,
@@ -729,20 +696,6 @@ export default {
                     color: chocolate;
                     .separator{
                         color: #000;
-                    }
-                }
-            }
-        }
-        /deep/.el-input-group__append{
-            padding: 0 10px;
-            .selectFloor{
-                display: flex;
-                div{
-                    padding: 0 5px;
-                    margin: 0 3px;
-                    cursor: pointer;
-                    &.active{
-                        color: tomato;
                     }
                 }
             }
