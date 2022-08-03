@@ -68,8 +68,16 @@
                 </template>
                 <!-- 座位 -->
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
-                    <div class="seat" :id="item.seat_id" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
-                    </div>
+                    <!-- 3层用新的桌椅试试 -->
+                    <!-- <template v-if="item.floor == 3 && item.gRowNew && item.gColNew">
+                        <i class="iconfont oamap-zhuanqu55" :id="item.seat_id" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
+                        </i>
+                    </template> -->
+                    <!-- 其他地区还用旧的 -->
+                    <!-- <template v-else>
+                    </template> -->
+                        <div class="seat" :id="item.seat_id" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
+                        </div>
                 </template>
             </template>
             <!-- 鼠标经过每一个座位的提示框 -->
@@ -184,18 +192,58 @@ export default {
             // 设置每一个座位的样式
             seatItemStyle(seatItem) {
                 let styleObject = {}
-                if((seatItem.floor == '3' || seatItem.floor == '4') && seatItem.office == '1'){
+                if( seatItem.floor == '3' && seatItem.office == '1'){
+                    // 如果是3层
+                    // if(seatItem.gRowNew && seatItem.gColNew){
+                    //     // 确定旋转的角度
+                    //     let RotationAngle = 0 // 默认旋转的是0度。即默认朝向是南
+                    //     switch(seatItem.toward){
+                    //         // 如果朝南，则旋转0度
+                    //         case 'south':
+                    //             RotationAngle = 0;
+                    //         break;
+                    //         // 如果朝西，则旋转90度
+                    //         case 'west':
+                    //             RotationAngle = 90;
+                    //         break;
+                    //         // 如果朝北，则旋转180度
+                    //         case 'north':
+                    //             RotationAngle = 180;
+                    //         break;
+                    //         case 'east':
+                    //             RotationAngle = 270;
+                    //         break;
+                    //     }
+                    //     styleObject = {
+                    //         top: (seatItem.gColNew / 1612) * 843 +'px',
+                    //         left: (seatItem.gRowNew / 1777)  * 930 +'px',
+                    //         transform:`rotateZ(${RotationAngle}deg)`
+                    //     }
+                    // }else{
+                    //     styleObject = {
+                    //         top:seatItem.gRow * 9.64 + 23 +'px',
+                    //         left:seatItem.gCol * 9.6 + 35 +'px',
+                    //     }
+                    //     styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
+                    // }
                     styleObject = {
                         top:seatItem.gRow * 9.64 + 23 +'px',
                         left:seatItem.gCol * 9.6 + 35 +'px',
                     }
+                    styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
+                }else if(seatItem.floor == '4' && seatItem.office == '1'){
+                    styleObject = {
+                        top:seatItem.gRow * 9.64 + 23 +'px',
+                        left:seatItem.gCol * 9.6 + 35 +'px',
+                    }
+                    styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                 }else if(seatItem.floor == '7' && seatItem.office == '2'){
                     styleObject = {
                         top: (seatItem.gCol / 571) * 843 +'px',
                         left: (seatItem.gRow / 1287)  * 930 +'px',
                     }
+                    styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                 }
-                styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                 return styleObject
             },
             // 设置每一个区域的样式（单个区域）
@@ -561,6 +609,11 @@ export default {
             background-size: contain;
             background-repeat: no-repeat;
             z-index: 5;
+        }
+        .oamap-zhuanqu55{
+            position: absolute;
+            z-index: 5;
+            font-size: 18px;
         }
         // 区域选中的高亮样式
         .active-area{
