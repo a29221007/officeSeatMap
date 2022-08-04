@@ -68,7 +68,7 @@
                 </template>
                 <!-- 座位 -->
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
-                    <div class="seat" :id="item.seat_id" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
+                    <div class="seat" :id="item.seat_id" v-on:click="handleClickSeat(item,$event.target)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
                     </div>
                 </template>
             </template>
@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import {ref,computed,onMounted,onBeforeUnmount, reactive, toRefs, inject,onBeforeMount} from 'vue'
+import {ref,computed,onMounted,onBeforeUnmount, reactive, toRefs, inject, watch, nextTick} from 'vue'
 import { useStore } from 'vuex'
 // 导入获取鼠标在盒子内的坐标函数
 import getMouseX_Y from '@/utils/getmouseX_Y.js'
@@ -90,9 +90,10 @@ import initMap from '@/utils/initMap.js'
 
 // 导入座位高亮的逻辑
 import scaleSeat from '@/utils/scaleSeat.js'
-
 // 导入区域高亮的逻辑
 import searchArea from '@/utils/searchArea.js'
+// 导入消息提示框组件
+import { successMessage, infoMessage, errorMessage } from '@/utils/message.js'
 export default {
     name:'Main',
     setup(){
@@ -281,7 +282,7 @@ export default {
         // 当前的元素
         let currentElement = null
         // 鼠标点击每一个座位的事件处理函数
-        function handleClickSeat(seatItem,$event){
+        function handleClickSeat(seatItem,target){
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
@@ -294,12 +295,12 @@ export default {
             }else{
                 beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
                 beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
-                beforeSeatAnimateElement = $event.target
+                beforeSeatAnimateElement = target
                 currentSeat_id = seatItem.seat_id
                 emitter.emit('form',seatItem)
             }
-            scaleSeat($event.target)
-            currentElement = $event.target
+            scaleSeat(target)
+            currentElement = target
             // 将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacleX = 3
             sacleY = 3
@@ -367,7 +368,7 @@ export default {
             }
             MapBoxRef.value.style.transform = `scale(${scalex},${scaley})`
             store.commit('setScale',[scalex,scaley])
-
+            // 监听窗口变化
             window.addEventListener('resize',function (e){
                 clearTimeout(resizeTimer)
                 resizeTimer = this.setTimeout(() => {
@@ -399,6 +400,31 @@ export default {
                     store.commit('setScale',[scalex,scaley])
                 },300)
             })
+        })
+        watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour,() => store.state.seatListOfShenZhen, () => store.state.areaListOfThree, () => store.state.areaListOfFour, () => store.state.areaListOfShenZhen],() => {
+            if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.seatListOfShenZhen.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length && store.state.areaListOfShenZhen.length){
+                // 进入页面自动选中当前用户座位
+                let currentUserItem = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
+                if(currentUserItem){
+                    // 设置楼层
+                    let floor = ''
+                    if(currentUserItem.floor == '3' && currentUserItem.office == '1'){
+                        floor = 'three'
+                    }else if(currentUserItem.floor == '4' && currentUserItem.office == '1'){
+                        floor = 'four'
+                    }else if(currentUserItem.floor == '7' && currentUserItem.office == '2'){
+                        floor = 'shenzhen'
+                    }
+                    store.commit('setCurrentFloor',floor)
+                    nextTick(() => {
+                        // 如果找到了当前用户座位的 currentUserItem，则调用 handleClickSeat 函数
+                        handleClickSeat(currentUserItem,document.getElementById(currentUserItem.seat_id))
+                    })
+                }else{
+                    // 没有找到的话用户座位的 scanCodeFn,则提示用户
+                    infoMessage('没有找到您的座位，请与管理员联系')
+                }
+            }
         })
         // 鼠标按下事件的处理程序
         function mouseDown(e) {
