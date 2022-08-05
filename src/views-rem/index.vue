@@ -211,7 +211,7 @@ export default {
                     title: '测试标题', // 分享标题
                     desc: '测试描述', // 分享描述
                     link: 'http://maptest.longtubas.com/home', // 分享链接；在微信上分享时，该链接的域名必须与企业某个应用的可信域名一致
-                    imgUrl: '/public/legend-image/icon_meeting.png', // 分享图标
+                    imgUrl: '/legend-image/icon_meeting.png', // 分享图标
                     success: function () {
                         // 用户确认分享后执行的回调函数
                         alert('分享成功')
