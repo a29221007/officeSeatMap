@@ -214,11 +214,11 @@ export default {
                     imgUrl: '/legend-image/icon_meeting.png', // 分享图标
                     success: function () {
                         // 用户确认分享后执行的回调函数
-                        alert('分享成功')
+                        // alert('分享成功')
                     },
                     cancel: function () {
                         // 用户取消分享后执行的回调函数
-                        alert('取消成功')
+                        // alert('取消成功')
                     }
                 });
             })
