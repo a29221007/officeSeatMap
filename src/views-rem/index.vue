@@ -98,6 +98,7 @@ import sortMeetingList from '@/views-rem/hook/sortArray.js'
 import { getQrConfig } from '@/api/jumpWX.js'
 // 导入根据条形码获取固资信息的api
 import { getAssetInfoByQR } from '@/api/getAssetInfo.js'
+import image from '../../public/legend-image/icon_meeting.png'
 export default {
     name:'MHome',
     components:{
@@ -211,7 +212,7 @@ export default {
                     title: '测试标题', // 分享标题
                     desc: '测试描述', // 分享描述
                     link: 'http://maptest.longtubas.com/home', // 分享链接；在微信上分享时，该链接的域名必须与企业某个应用的可信域名一致
-                    imgUrl: '/legend-image/icon_meeting.png', // 分享图标
+                    imgUrl: image, // 分享图标
                     success: function () {
                         // 用户确认分享后执行的回调函数
                         // alert('分享成功') 
