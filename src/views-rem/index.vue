@@ -9,14 +9,14 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 由单个组成 -->
                         <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
-                            <div class="title">{{item.name}}({{partTotaleObject[item.code]}})</div>
+                            <div class="title">{{item.name === '前台' ? '' : item.name}}({{partTotaleObject[item.code]}})</div>
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
                             <!-- 有多个组成 -->
                             <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
-                                <div class="title" v-if="item2.show_area_name">{{item.name}}({{partTotaleObject[item.code]}})</div>
+                                <div class="title" v-if="item2.show_area_name">{{item.name === '前台' ? '' : item.name}}({{partTotaleObject[item.code]}})</div>
                             </div>
                         </template>
                     </template>
@@ -768,6 +768,11 @@ export default {
         .area,.part{
             font-size: 8px;
         }
+        .part{
+            .title{
+                color: rgba(0, 0, 0, 0.2);
+            }
+        }
         .seat{
             position: absolute;
             z-index: 5;
@@ -786,6 +791,7 @@ export default {
             top: 50%;
             transform: translate(-50%,-50%);
             text-align: center;
+            z-index: 2;
             span{
                 display: inline-block;
                 white-space:nowrap;
