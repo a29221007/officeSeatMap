@@ -202,7 +202,8 @@
   top: 30%;
 }
 .threeAreaStyle-PC #QY010103005986 .title {
-  top: 80%;
+  top: unset;
+  bottom: -138%;
 }
 .threeAreaStyle-PC #QY0101030061174 .title,
 .threeAreaStyle-PC #QY0101040066185 .title {
