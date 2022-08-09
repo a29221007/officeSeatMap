@@ -68,9 +68,9 @@
   top: unset;
   bottom: -10%;
 }
-.FourPartStyle-PC #part36 .title {
+.FourPartStyle-PC #part361 .title {
   top: unset;
-  bottom: 0%;
+  bottom: -5%;
   left: 38%;
 }
 .FourPartStyle-PC #part38 .title {
@@ -78,4 +78,9 @@
   align-items: baseline;
   top: 8%;
   left: 30%;
+}
+.FourPartStyle-PC #part41 .title {
+  top: 59%;
+  left: unset;
+  right: -22%;
 }

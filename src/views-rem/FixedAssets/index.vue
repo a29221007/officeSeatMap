@@ -55,68 +55,68 @@
             </van-list>
         </div>
         <!-- 底部公共联系人信息 -->
-        <!-- <div class="public_contact" v-if="$store.state.is_show_public_contact_person">
+        <div class="public_contact" v-if="$store.state.is_show_public_contact_person">
             <div class="title">公共支持联系人</div>
-            <div class="person"> -->
+            <div class="person">
                 <!-- 第一行 -->
-                <!-- <div> -->
+                <div>
                     <!-- 左 -->
-                    <!-- <div>
+                    <div>
                         <div class="title">行政</div>
                         <div class="content">蔡芬 高雅楠</div>
-                    </div> -->
+                    </div>
                     <!-- 右 -->
-                    <!-- <div>
+                    <div>
                         <div class="title">培训</div>
                         <div class="content">员工服务-培训服务号</div>
                     </div>
-                </div> -->
+                </div>
                 <!-- 第二行 -->
-                <!-- <div> -->
+                <div>
                     <!-- 左 -->
-                    <!-- <div>
+                    <div>
                         <div class="title">财务</div>
                         <div class="content">孟林 倪苹 </div>
-                    </div> -->
+                    </div>
                     <!-- 右 -->
-                    <!-- <div>
+                    <div>
                         <div class="title">员工信息</div>
                         <div class="content">崔明岳 王锐</div>
                     </div>
-                </div> -->
+                </div>
                 <!-- 第三行 -->
-                <!-- <div> -->
+                <div>
                     <!-- 左 -->
-                    <!-- <div>
+                    <div>
                         <div class="title">考勤休假</div>
                         <div class="content">陈丽琴</div>
-                    </div> -->
+                    </div>
                     <!-- 右 -->
-                    <!-- <div>
+                    <div>
                         <div class="title">公共设施维修</div>
                         <div class="content">王立军 王玉田</div>
                     </div>
-                </div> -->
+                </div>
                 <!-- 第四行 -->
-                <!-- <div> -->
+                <div>
                     <!-- 左 -->
-                    <!-- <div>
+                    <div>
                         <div class="title">薪酬工资</div>
                         <div class="content">李柏金</div>
-                    </div> -->
+                    </div>
                     <!-- 右 -->
-                    <!-- <div>
+                    <div>
                         <div class="title">社保公积金</div>
                         <div class="content">闫冬雪 中智onsite</div>
                     </div>
-                </div> -->
+                </div>
                 <!-- 第五行 -->
-                <!-- <div>
+                <div>
                     <div class="title">IT</div>
                     <div class="content">员工服务-IT服务号(北京)</div>
                 </div>
             </div>
-        </div> -->
+        </div>
     </div>
 </template>
 
@@ -368,7 +368,7 @@ export default {
                 }
             }
             &.active{
-                // padding-bottom: 4.4624rem;
+                padding-bottom: 4.4624rem;
             }
         }
     }

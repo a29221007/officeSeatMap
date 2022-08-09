@@ -357,7 +357,7 @@ export default {
                 results.forEach(item => {
                     if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                         array_seat.push(item)
-                    }else if(item.diff == 1){
+                    }else{
                         array_area.push(item)
                     }
                 })

@@ -152,9 +152,9 @@
   left: 40%;
 }
 .FourAreaStyle-mobile #QY0101040065165 .title {
-  top: 70%;
-  left: unset;
-  right: -0.4301rem;
+  top: unset;
+  bottom: -230%;
+  left: 0;
 }
 .FourAreaStyle-mobile #QY0101040067159 .title {
   top: 55%;
