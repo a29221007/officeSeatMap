@@ -9,14 +9,14 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 由单个组成 -->
                         <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
-                            <div class="title">{{item.name}}({{partTotaleObject[item.code]}})</div>
+                            <div class="title">{{item.name === '前台' ? '' : item.name}}({{partTotaleObject[item.code]}})</div>
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
                             <!-- 有多个组成 -->
                             <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
-                                <div class="title" v-if="item2.show_area_name">{{item.name}}({{partTotaleObject[item.code]}})</div>
+                                <div class="title" v-if="item2.show_area_name">{{item.name === '前台' ? '' : item.name}}({{partTotaleObject[item.code]}})</div>
                             </div>
                         </template>
                     </template>
@@ -98,6 +98,7 @@ import sortMeetingList from '@/views-rem/hook/sortArray.js'
 import { getQrConfig } from '@/api/jumpWX.js'
 // 导入根据条形码获取固资信息的api
 import { getAssetInfoByQR } from '@/api/getAssetInfo.js'
+import image from '../../public/legend-image/icon_meeting.png'
 export default {
     name:'MHome',
     components:{
@@ -227,7 +228,7 @@ export default {
             const url = window.location.href
             getQrConfig(url).then(res => {
                 const { appId, timestamp, nonceStr, signature } = res.data
-                wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
+                wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage'] })
             })
         })
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
@@ -791,6 +792,11 @@ export default {
         .area,.part{
             font-size: 8px;
         }
+        .part{
+            .title{
+                color: rgba(0, 0, 0, 0.2);
+            }
+        }
         .seat{
             position: absolute;
             z-index: 5;
@@ -809,6 +815,7 @@ export default {
             top: 50%;
             transform: translate(-50%,-50%);
             text-align: center;
+            z-index: 2;
             span{
                 display: inline-block;
                 white-space:nowrap;

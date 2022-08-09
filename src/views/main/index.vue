@@ -16,7 +16,7 @@
                         <!-- 由单个组成 -->
                         <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
                             <div class="title">
-                                <span>{{item.name}}</span>
+                                <span>{{item.name === '前台' ? '' : item.name}}</span>
                                 <span>({{partTotaleObject[item.code]}})</span>
                             </div>
                         </div>
@@ -26,7 +26,7 @@
                             <!-- 有多个组成 -->
                             <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
                                 <div class="title" v-if="item2.show_area_name">
-                                    <span>{{item.name}}</span>
+                                    <span>{{item.name === '前台' ? '' : item.name}}</span>
                                     <span>({{partTotaleObject[item.code]}})</span>
                                 </div>
                             </div>
@@ -544,6 +544,12 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    // 禁止选中地图区域文字
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
     .oamap-north {
         position: absolute;
         z-index: 3;
@@ -579,6 +585,9 @@ export default {
         transition: all 1s;
         .part{
             z-index: 2;
+            .title{
+                color: rgba(0, 0, 0, 0.2);
+            }
         }
         .seat{
             position: absolute;
