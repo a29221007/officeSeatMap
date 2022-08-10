@@ -270,7 +270,7 @@ export default {
                         timestamp, // 必填，生成签名的时间戳
                         nonceStr, // 必填，生成签名的随机串
                         signature,// 必填，签名，见附录-JS-SDK使用权限签名算法
-                        jsApiList: ['openDefaultBrowser'], //必填，传入需要使用的接口名称
+                        jsApiList: ['openDefaultBrowser', 'closeWindow'], //必填，传入需要使用的接口名称
                         fail: function(res) {
                             if(res.errMsg.indexOf('function not exist') > -1){
                                 return errorMessage('版本过低请升级')
