@@ -259,7 +259,7 @@ export default {
             const url = window.location.href
             getQrConfig(url).then(res => {
                 const { appId, timestamp, nonceStr, signature } = res.data
-                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
+                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke', 'closeWindow'] })
             }).then(() => {
                 if(store.state.intoTheWay !== 'weixin') return
                 getAgentConfig(url).then(res => {
@@ -500,6 +500,7 @@ export default {
             ],
             // 点击某一个图例触发的函数
             handleClickLegend(type) {
+                wx.closeWindow()
                 store.commit('setCurrentLegend',type)
                 // 将弹框关闭
                 drawerData.is_show = false
