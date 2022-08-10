@@ -259,7 +259,7 @@ export default {
             const url = window.location.href
             getQrConfig(url).then(res => {
                 const { appId, timestamp, nonceStr, signature } = res.data
-                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke', 'closeWindow'] })
+                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke'] })
             }).then(() => {
                 if(store.state.intoTheWay !== 'weixin') return
                 getAgentConfig(url).then(res => {
@@ -270,7 +270,7 @@ export default {
                         timestamp, // 必填，生成签名的时间戳
                         nonceStr, // 必填，生成签名的随机串
                         signature,// 必填，签名，见附录-JS-SDK使用权限签名算法
-                        jsApiList: ['openDefaultBrowser', 'closeWindow'], //必填，传入需要使用的接口名称
+                        jsApiList: ['openDefaultBrowser'], //必填，传入需要使用的接口名称
                         fail: function(res) {
                             if(res.errMsg.indexOf('function not exist') > -1){
                                 return errorMessage('版本过低请升级')
@@ -500,7 +500,6 @@ export default {
             ],
             // 点击某一个图例触发的函数
             handleClickLegend(type) {
-                wx.closeWindow()
                 store.commit('setCurrentLegend',type)
                 // 将弹框关闭
                 drawerData.is_show = false
