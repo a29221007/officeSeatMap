@@ -69,15 +69,17 @@
                 <!-- 座位 -->
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                     <!-- 3层用新的桌椅试试 -->
-                    <!-- <template v-if="item.floor == 3 && item.gRowNew && item.gColNew">
-                        <i class="iconfont oamap-zhuanqu55" :id="item.seat_id" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
-                        </i>
-                    </template> -->
-                    <!-- 其他地区还用旧的 -->
-                    <!-- <template v-else>
-                    </template> -->
-                        <div class="seat" :id="item.seat_id" v-on:click="handleClickSeat(item,$event)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
+                    <template v-if="item.floor == 3 && item.gRowNew && item.gColNew">
+                        <div :class="newSeatClassFn(item)" :id="item.seat_id" :style="seatStyle(item)" v-on:click="handleClickSeat(item,$event.currentTarget)" v-on:mouseenter="seatMouseenter(item,$event.currentTarget)" v-on:mouseleave="seatMouseleave">
+                            <div class="desk"></div>
+                            <div class="chair"></div>
                         </div>
+                    </template>
+                    <!-- 其他地区还用旧的 -->
+                    <template v-else>
+                        <div class="seat" :id="item.seat_id" v-on:click="handleClickSeat(item,$event.currentTarget)" :style="seatStyle(item)" v-on:mouseenter="seatMouseenter(item,$event.currentTarget)" v-on:mouseleave="seatMouseleave">
+                        </div>
+                    </template>
                 </template>
             </template>
             <!-- 鼠标经过每一个座位的提示框 -->
@@ -117,7 +119,7 @@ export default {
             currentSeat_id = seat_id
             beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
             beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
-            beforeSeatAnimateElement = document.getElementById(seat_id)
+            beforeSeatAnimateElement = document.getElementById(seat_id).lastElementChild || document.getElementById(seat_id)
             // 将区域的高亮取消
             seatData.currentAreaCode = ''
             // 同步搜索变量
@@ -144,7 +146,7 @@ export default {
         // 清除当前元素的动画定时器函数
         function clearCurrentElementInterval(){
             // 1、获取当前的元素实例 DOM
-            let curentElement = document.getElementById(currentSeat_id)
+            let curentElement = document.getElementById(currentSeat_id).lastElementChild || document.getElementById(currentSeat_id)
             if(curentElement){
                 // 2、如果有 curentElement 这个DOM实例，则清除定时器
                 clearInterval(curentElement.timer)
@@ -190,47 +192,22 @@ export default {
             // 当前选中的区域
             currentAreaCode:'',
             // 设置每一个座位的样式
-            seatItemStyle(seatItem) {
+            seatStyle(seatItem) {
                 let styleObject = {}
                 if( seatItem.floor == '3' && seatItem.office == '1'){
                     // 如果是3层
-                    // if(seatItem.gRowNew && seatItem.gColNew){
-                    //     // 确定旋转的角度
-                    //     let RotationAngle = 0 // 默认旋转的是0度。即默认朝向是南
-                    //     switch(seatItem.toward){
-                    //         // 如果朝南，则旋转0度
-                    //         case 'south':
-                    //             RotationAngle = 0;
-                    //         break;
-                    //         // 如果朝西，则旋转90度
-                    //         case 'west':
-                    //             RotationAngle = 90;
-                    //         break;
-                    //         // 如果朝北，则旋转180度
-                    //         case 'north':
-                    //             RotationAngle = 180;
-                    //         break;
-                    //         case 'east':
-                    //             RotationAngle = 270;
-                    //         break;
-                    //     }
-                    //     styleObject = {
-                    //         top: (seatItem.gColNew / 1612) * 843 +'px',
-                    //         left: (seatItem.gRowNew / 1777)  * 930 +'px',
-                    //         transform:`rotateZ(${RotationAngle}deg)`
-                    //     }
-                    // }else{
-                    //     styleObject = {
-                    //         top:seatItem.gRow * 9.64 + 23 +'px',
-                    //         left:seatItem.gCol * 9.6 + 35 +'px',
-                    //     }
-                    //     styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
-                    // }
-                    styleObject = {
-                        top:seatItem.gRow * 9.64 + 23 +'px',
-                        left:seatItem.gCol * 9.6 + 35 +'px',
+                    if(seatItem.gRowNew && seatItem.gColNew){
+                        styleObject = {
+                            top: (seatItem.gColNew / 1612) * 843 +'px',
+                            left: (seatItem.gRowNew / 1777)  * 930 +'px',
+                        }
+                    }else{
+                        styleObject = {
+                            top:seatItem.gRow * 9.64 + 23 +'px',
+                            left:seatItem.gCol * 9.6 + 35 +'px',
+                        }
+                        styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                     }
-                    styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                 }else if(seatItem.floor == '4' && seatItem.office == '1'){
                     styleObject = {
                         top:seatItem.gRow * 9.64 + 23 +'px',
@@ -245,6 +222,10 @@ export default {
                     styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                 }
                 return styleObject
+            },
+            // 动态设置座位盒子的类名
+            newSeatClassFn(seatItem){
+                return `new-seat-${seatItem.toward}`
             },
             // 设置每一个区域的样式（单个区域）
             oneAreaStyle(item){
@@ -307,9 +288,9 @@ export default {
                 return styleObject
             },
             // 鼠标进入每一个座位的处理程序
-            seatMouseenter(seatItem,$event) {
-                tooltipRef.value.style.top = $event.target.offsetTop - 34 + 'px'
-                tooltipRef.value.style.left = $event.target.offsetLeft - 14 + 'px'
+            seatMouseenter(seatItem,element) {
+                tooltipRef.value.style.top = element.offsetTop - 34 + 'px'
+                tooltipRef.value.style.left = element.offsetLeft - 14 + 'px'
                 is_show_tooltip.value = true
                 tooltipText.value = seatItem.seat_id
             },
@@ -329,7 +310,7 @@ export default {
         // 当前的元素
         let currentElement = null
         // 鼠标点击每一个座位的事件处理函数
-        function handleClickSeat(seatItem,$event){
+        function handleClickSeat(seatItem,element){
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
@@ -342,12 +323,12 @@ export default {
             }else{
                 beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
                 beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
-                beforeSeatAnimateElement = $event.target
+                beforeSeatAnimateElement = element.lastElementChild || element
                 currentSeat_id = seatItem.seat_id
                 emitter.emit('form',seatItem)
             }
-            scaleSeat($event.target)
-            currentElement = $event.target
+            scaleSeat(element)
+            currentElement = element.lastElementChild || element
             // 将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacleX = 3
             sacleY = 3
@@ -606,7 +587,7 @@ export default {
         // 给盒子设置上一个过渡的默认值
         transition: all 1s;
         .part{
-            z-index: 2;
+            z-index: -2;
             .title{
                 color: rgba(0, 0, 0, 0.2);
             }
@@ -619,10 +600,92 @@ export default {
             background-repeat: no-repeat;
             z-index: 5;
         }
-        .oamap-zhuanqu55{
+        // 东
+        .new-seat-east{
             position: absolute;
             z-index: 5;
-            font-size: 18px;
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            .desk{
+                width: 4px;
+                height: 12px;
+                background: url('../../../public/legend-image/desk-column.png') no-repeat;
+                background-size: 100% 100%;
+                border-radius: 1px;
+            }
+            .chair{
+                width: 7px;
+                height: 7px;
+                background: url('../../../public/legend-image/yizi.png') no-repeat;
+                background-size: 100% 100%;
+                transform: rotateZ(180deg);
+            }
+        }
+        // 南
+        .new-seat-south{
+            position: absolute;
+            z-index: 5;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            .desk{
+                width: 12px;
+                height: 4px;
+                background: url('../../../public/legend-image/desk-row.png') no-repeat;
+                background-size: 100% 100%;
+                border-radius: 1px;
+            }
+            .chair{
+                width: 7px;
+                height: 7px;
+                background: url('../../../public/legend-image/yizi.png') no-repeat;
+                background-size: 100% 100%;
+                transform: rotateZ(270deg);
+            }
+        }
+        // 西
+        .new-seat-west{
+            position: absolute;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            .desk{
+                width: 4px;
+                height: 12px;
+                border-radius: 1px;
+                background: url('../../../public/legend-image/desk-column.png') no-repeat;
+                background-size: 100% 100%;
+            }
+            .chair{
+                width: 7px;
+                height: 7px;
+                background: url('../../../public/legend-image/yizi.png') no-repeat;
+                background-size: 100% 100%;
+                transform: rotateZ(0deg);
+            }
+        }
+        // 北
+        .new-seat-north{
+            position: absolute;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .desk{
+                width: 12px;
+                height: 4px;
+                border-radius: 1px;
+                background: url('../../../public/legend-image/desk-row.png') no-repeat;
+                background-size: 100% 100%;
+            }
+            .chair{
+                width: 7px;
+                height: 7px;
+                background: url('../../../public/legend-image/yizi.png') no-repeat;
+                background-size: 100% 100%;
+                transform: rotateZ(90deg);
+            }
         }
         // 区域选中的高亮样式
         .active-area{

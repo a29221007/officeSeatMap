@@ -16,7 +16,7 @@ import seatZoom from './seatScale.js'
 
 
 function scaleSeatFn($event) {
-    seatZoom($event)
+    seatZoom($event.lastElementChild || $event)
     let MapBoxRef = document.querySelector('.map-box')
     let MapContainerRef = document.querySelector('.map-container')
     // MapBoxRef.style.transition = 'all 1s'
