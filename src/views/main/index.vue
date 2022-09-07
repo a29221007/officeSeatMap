@@ -69,7 +69,7 @@
                 <!-- 座位 -->
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                     <!-- 3层用新的桌椅试试 -->
-                    <template v-if="item.floor == 3 && item.gRowNew && item.gColNew">
+                    <template v-if="item.gRowNew && item.gColNew">
                         <div :class="newSeatClassFn(item)" :id="item.seat_id" :style="seatStyle(item)" v-on:click="handleClickSeat(item,$event.currentTarget)" v-on:mouseenter="seatMouseenter(item,$event.currentTarget)" v-on:mouseleave="seatMouseleave">
                             <div class="desk"></div>
                             <div class="chair"></div>
@@ -198,8 +198,8 @@ export default {
                     // 如果是3层
                     if(seatItem.gRowNew && seatItem.gColNew){
                         styleObject = {
-                            top: (seatItem.gColNew / 1612) * 843 +'px',
-                            left: (seatItem.gRowNew / 1777)  * 930 +'px',
+                            top: Math.floor((seatItem.gColNew / 1612) * 843) +'px',
+                            left: Math.floor((seatItem.gRowNew / 1777)  * 930) +'px',
                         }
                     }else{
                         styleObject = {
@@ -209,17 +209,37 @@ export default {
                         styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                     }
                 }else if(seatItem.floor == '4' && seatItem.office == '1'){
-                    styleObject = {
-                        top:seatItem.gRow * 9.64 + 23 +'px',
-                        left:seatItem.gCol * 9.6 + 35 +'px',
+                    // 如果是4层
+                    if(seatItem.gRowNew && seatItem.gColNew){
+                        styleObject = {
+                            top: Math.floor((seatItem.gColNew / 1612) * 843) +'px',
+                            left: Math.floor((seatItem.gRowNew / 1777)  * 930) +'px',
+                        }
+                    }else{
+                        styleObject = {
+                            top:seatItem.gRow * 9.64 + 23 +'px',
+                            left:seatItem.gCol * 9.6 + 35 +'px',
+                        }
+                        styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                     }
-                    styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                 }else if(seatItem.floor == '7' && seatItem.office == '2'){
-                    styleObject = {
-                        top: (seatItem.gCol / 571) * 843 +'px',
-                        left: (seatItem.gRow / 1287)  * 930 +'px',
+                    // 如果是4层
+                    if(seatItem.gRowNew && seatItem.gColNew){
+                        // styleObject = {
+                        //     top: Math.floor((seatItem.gColNew / 571) * 843) +'px',
+                        //     left: Math.floor((seatItem.gRowNew / 1287)  * 930) +'px',
+                        // }
+                        styleObject = {
+                            top: seatItem.gColNew +'px',
+                            left: seatItem.gRowNew +'px',
+                        }
+                    }else{
+                        styleObject = {
+                            top: (seatItem.gCol / 571) * 843 +'px',
+                            left: (seatItem.gRow / 1287)  * 930 +'px',
+                        }
+                        styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                     }
-                    styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
                 }
                 return styleObject
             },
@@ -244,10 +264,14 @@ export default {
                 }else if(item.floor == '7' && item.office == '2'){
                     styleObject = {
                         position: 'absolute',
-                        top:item.coordinate.top / 571 * 843 + 'px',
-                        left:item.coordinate.left / 1287 * 930 + 'px',
-                        width:item.coordinate.width / 1287 * 930 + 'px',
-                        height: item.coordinate.height / 571 * 843 + 'px',
+                        // top:item.coordinate.top / 571 * 843 + 'px',
+                        // left:item.coordinate.left / 1287 * 930 + 'px',
+                        // width:item.coordinate.width / 1287 * 930 + 'px',
+                        // height: item.coordinate.height / 571 * 843 + 'px',
+                        top:item.coordinate.top + 'px',
+                        left:item.coordinate.left + 'px',
+                        width:item.coordinate.width + 'px',
+                        height: item.coordinate.height + 'px',
                         backgroundColor: item.backgroundcolor,
                         color:'#646464',
                         fontSize:'12px'
@@ -272,10 +296,10 @@ export default {
                 }else if(item.floor == '7' && item.office == '2'){
                     styleObject = {
                         position: 'absolute',
-                        top:item2.top / 571 * 843 + 'px',
-                        left:item2.left / 1287 * 930 + 'px',
-                        width:item2.width / 1287 * 930 + 'px',
-                        height: item2.height / 571 * 843 + 'px',
+                        top:item2.top + 'px',
+                        left:item2.left + 'px',
+                        width:item2.width + 'px',
+                        height: item2.height + 'px',
                         backgroundColor: item.backgroundcolor,
                         color:'#646464',
                         fontSize:'12px'
@@ -580,8 +604,8 @@ export default {
     }
     .map-box{
         position:absolute;
-        width: 930px;
-        height: 843px;
+        width: 1287px;
+        height: 571px;
         background-size: 100% 100%;
         background-repeat: no-repeat;
         // 给盒子设置上一个过渡的默认值
@@ -606,20 +630,23 @@ export default {
             z-index: 5;
             display: flex;
             flex-direction: row-reverse;
-            align-items: center;
+            width: 15px;
+            height: 30px;
             .desk{
-                width: 4px;
-                height: 12px;
+                width: 6px;
+                height: 30px;
                 background: url('../../../public/legend-image/desk-column.png') no-repeat;
                 background-size: 100% 100%;
                 border-radius: 1px;
             }
             .chair{
-                width: 7px;
-                height: 7px;
+                position: relative;
+                top: 50%;
+                width: 9px;
+                height: 9px;
                 background: url('../../../public/legend-image/yizi.png') no-repeat;
                 background-size: 100% 100%;
-                transform: rotateZ(180deg);
+                transform:translateY(-50%) rotateZ(180deg);
             }
         }
         // 南
@@ -628,7 +655,8 @@ export default {
             z-index: 5;
             display: flex;
             flex-direction: column-reverse;
-            align-items: center;
+            width: 12px;
+            height: 11px;
             .desk{
                 width: 12px;
                 height: 4px;
@@ -637,11 +665,13 @@ export default {
                 border-radius: 1px;
             }
             .chair{
+                position: relative;
+                left: 50%;
                 width: 7px;
                 height: 7px;
                 background: url('../../../public/legend-image/yizi.png') no-repeat;
                 background-size: 100% 100%;
-                transform: rotateZ(270deg);
+                transform:translateX(-50%) rotateZ(270deg);
             }
         }
         // 西
@@ -649,20 +679,23 @@ export default {
             position: absolute;
             z-index: 5;
             display: flex;
-            align-items: center;
+            width: 15px;
+            height: 30px;
             .desk{
-                width: 4px;
-                height: 12px;
+                width: 6px;
+                height: 30px;
                 border-radius: 1px;
                 background: url('../../../public/legend-image/desk-column.png') no-repeat;
                 background-size: 100% 100%;
             }
             .chair{
-                width: 7px;
-                height: 7px;
+                position: relative;
+                top: 50%;
+                width: 9px;
+                height: 9px;
                 background: url('../../../public/legend-image/yizi.png') no-repeat;
                 background-size: 100% 100%;
-                transform: rotateZ(0deg);
+                transform: translateY(-50%) rotateZ(0deg);
             }
         }
         // 北
@@ -671,7 +704,8 @@ export default {
             z-index: 5;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            height: 11px;
+            width: 12px;
             .desk{
                 width: 12px;
                 height: 4px;
@@ -680,11 +714,13 @@ export default {
                 background-size: 100% 100%;
             }
             .chair{
+                position: relative;
+                left: 50%;
                 width: 7px;
                 height: 7px;
                 background: url('../../../public/legend-image/yizi.png') no-repeat;
                 background-size: 100% 100%;
-                transform: rotateZ(90deg);
+                transform:translateX(-50%) rotateZ(90deg);
             }
         }
         // 区域选中的高亮样式
