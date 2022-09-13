@@ -1,0 +1,101 @@
+.threeSeatStyle-PC{
+    // 东
+    .three-new-seat-east{
+        position: absolute;
+        z-index: 5;
+        display: flex;
+        flex-direction: row-reverse;
+        width: 21px;
+        height: 23px;
+        .desk{
+            width: 9px;
+            height: 23px;
+            background: url('../../../../../public/legend-image/desk-column.png') no-repeat;
+            background-size: 100% 100%;
+            border-radius: 1px;
+        }
+        .chair{
+            position: relative;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            background: url('../../../../../public/legend-image/yizi.png') no-repeat;
+            background-size: 100% 100%;
+            transform:translateY(-50%) rotateZ(180deg);
+        }
+    }
+    // 南
+    .three-new-seat-south{
+        position: absolute;
+        z-index: 5;
+        display: flex;
+        flex-direction: column-reverse;
+        width: 23px;
+        height: 21px;
+        .desk{
+            width: 23px;
+            height: 9px;
+            background: url('../../../../../public/legend-image/desk-row.png') no-repeat;
+            background-size: 100% 100%;
+            border-radius: 1px;
+        }
+        .chair{
+            position: relative;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: url('../../../../../public/legend-image/yizi.png') no-repeat;
+            background-size: 100% 100%;
+            transform:translateX(-50%) rotateZ(270deg);
+        }
+    }
+    // 西
+    .three-new-seat-west{
+        position: absolute;
+        z-index: 5;
+        display: flex;
+        width: 21px;
+        height: 23px;
+        .desk{
+            width: 9px;
+            height: 23px;
+            border-radius: 1px;
+            background: url('../../../../../public/legend-image/desk-column.png') no-repeat;
+            background-size: 100% 100%;
+        }
+        .chair{
+            position: relative;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            background: url('../../../../../public/legend-image/yizi.png') no-repeat;
+            background-size: 100% 100%;
+            transform: translateY(-50%) rotateZ(0deg);
+        }
+    }
+    // 北
+    .three-new-seat-north{
+        position: absolute;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        height: 21px;
+        width: 23px;
+        .desk{
+            width: 23px;
+            height: 9px;
+            border-radius: 1px;
+            background: url('../../../../../public/legend-image/desk-row.png') no-repeat;
+            background-size: 100% 100%;
+        }
+        .chair{
+            position: relative;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: url('../../../../../public/legend-image/yizi.png') no-repeat;
+            background-size: 100% 100%;
+            transform:translateX(-50%) rotateZ(90deg);
+        }
+    }
+}

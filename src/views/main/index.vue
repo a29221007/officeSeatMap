@@ -8,7 +8,7 @@
             <i v-on:click="initMap('huifu')" class="iconfont oamap-huifu"></i>
             <i v-on:click="MapBoxReduce(0.2)" class="iconfont oamap-jianhao"></i>
         </div>
-        <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
+        <div ref="MapBoxRef" :class="{'map-box':true,'map-box-beijng': $store.state.currentFloor === 'three' || $store.state.currentFloor === 'four','map-box-shenzhen': $store.state.currentFloor === 'shenzhen'}" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
                 <!-- 办公分区 -->
                 <template v-if="item.diff && item.diff === 2 && item.floor !== 7">
@@ -198,8 +198,8 @@ export default {
                     // 如果是3层
                     if(seatItem.gRowNew && seatItem.gColNew){
                         styleObject = {
-                            top: Math.floor((seatItem.gColNew / 1612) * 843) +'px',
-                            left: Math.floor((seatItem.gRowNew / 1777)  * 930) +'px',
+                            top: seatItem.gColNew +'px',
+                            left: seatItem.gRowNew +'px',
                         }
                     }else{
                         styleObject = {
@@ -212,8 +212,8 @@ export default {
                     // 如果是4层
                     if(seatItem.gRowNew && seatItem.gColNew){
                         styleObject = {
-                            top: Math.floor((seatItem.gColNew / 1612) * 843) +'px',
-                            left: Math.floor((seatItem.gRowNew / 1777)  * 930) +'px',
+                            top: seatItem.gColNew +'px',
+                            left: seatItem.gRowNew +'px',
                         }
                     }else{
                         styleObject = {
@@ -225,10 +225,6 @@ export default {
                 }else if(seatItem.floor == '7' && seatItem.office == '2'){
                     // 如果是4层
                     if(seatItem.gRowNew && seatItem.gColNew){
-                        // styleObject = {
-                        //     top: Math.floor((seatItem.gColNew / 571) * 843) +'px',
-                        //     left: Math.floor((seatItem.gRowNew / 1287)  * 930) +'px',
-                        // }
                         styleObject = {
                             top: seatItem.gColNew +'px',
                             left: seatItem.gRowNew +'px',
@@ -245,7 +241,7 @@ export default {
             },
             // 动态设置座位盒子的类名
             newSeatClassFn(seatItem){
-                return `new-seat-${seatItem.toward}`
+                return `${seatItem.floor == '3' ? 'three' : seatItem.floor == '4' ? 'four' : 'shenzhen'}-new-seat-${seatItem.toward}`
             },
             // 设置每一个区域的样式（单个区域）
             oneAreaStyle(item){
@@ -253,10 +249,10 @@ export default {
                 if((item.floor == '3' || item.floor == '4') && item.office == '1'){
                     styleObject = {
                         position: 'absolute',
-                        top:item.coordinate.top / 1612 * 843 + 'px',
-                        left:item.coordinate.left / 1777 * 930 + 'px',
-                        width:item.coordinate.width / 1777 * 930 + 'px',
-                        height: item.coordinate.height / 1612 * 843 + 'px',
+                        top:item.coordinate.top + 'px',
+                        left:item.coordinate.left + 'px',
+                        width:item.coordinate.width + 'px',
+                        height: item.coordinate.height + 'px',
                         backgroundColor: item.backgroundcolor,
                         color:'#646464',
                         fontSize:'12px'
@@ -264,10 +260,6 @@ export default {
                 }else if(item.floor == '7' && item.office == '2'){
                     styleObject = {
                         position: 'absolute',
-                        // top:item.coordinate.top / 571 * 843 + 'px',
-                        // left:item.coordinate.left / 1287 * 930 + 'px',
-                        // width:item.coordinate.width / 1287 * 930 + 'px',
-                        // height: item.coordinate.height / 571 * 843 + 'px',
                         top:item.coordinate.top + 'px',
                         left:item.coordinate.left + 'px',
                         width:item.coordinate.width + 'px',
@@ -285,10 +277,10 @@ export default {
                 if((item.floor == '3' || item.floor == '4') && item.office == '1'){
                     styleObject = {
                         position: 'absolute',
-                        top:item2.top / 1612 * 843 + 'px',
-                        left:item2.left / 1777 * 930 + 'px',
-                        width:item2.width / 1777 * 930 + 'px',
-                        height: item2.height / 1612 * 843 + 'px',
+                        top:item2.top + 'px',
+                        left:item2.left + 'px',
+                        width:item2.width + 'px',
+                        height: item2.height + 'px',
                         backgroundColor: item.backgroundcolor,
                         color:'#646464',
                         fontSize:'12px'
@@ -411,15 +403,17 @@ export default {
             // 手动设置MapBoxRef盒子的缩放比例，根据父盒子的大小（1200 ，845）
             // scalex: MapContainerRef盒子实际的宽度 / MapContainerRef原来的盒子宽度
             // scaley: MapContainerRef盒子的实际高度 / MapContainerRef运来盒子的高度
-            let scalex = (obj.width * 0.625) / 1200
-            let scaley = (obj.height * 0.872) / 845
+            // let scalex = (obj.width * 0.625) / 1200
+            // let scaley = (obj.height * 0.872) / 845
+            // 初始的缩放比例
+            let scale = MapContainerRef.value.offsetHeight / MapBoxRef.value.offsetHeight
             // 判断两个缩放系数的差值大小，如果两个比例差值的绝对值大于0.2，则将 scalex 和 scaley 值以最小的为准
-            if(Math.abs(scalex - scaley) > 0.2){
-                scalex = Math.min(scalex,scaley)
-                scaley = Math.min(scalex,scaley)
-            }
-            MapBoxRef.value.style.transform = `scale(${scalex},${scaley})`
-            store.commit('setScale',[scalex,scaley])
+            // if(Math.abs(scalex - scaley) > 0.2){
+            //     scalex = Math.min(scalex,scaley)
+            //     scaley = Math.min(scalex,scaley)
+            // }
+            MapBoxRef.value.style.transform = `scale(${scale},${scale})`
+            store.commit('setScale',[scale,scale])
 
             window.addEventListener('resize',function (e){
                 clearTimeout(resizeTimer)
@@ -563,6 +557,10 @@ export default {
 @import '../../style/StyleOfFloorShenZhen/Area/pc/index.less';
 @import '../../style/StyleOfFloorThree/Part/pc/index.less';
 @import '../../style/StyleOfFloorFour/Part/pc/index.less';
+@import '../../style/StyleOfFloorThree/seat/pc/index.less';
+@import '../../style/StyleOfFloorFour/seat/pc/index.less';
+@import '../../style/StyleOfFloorShenZhen/seat/pc/index.less';
+
 .map-container{
     position: relative;
     background-color: #f3f4f6;
@@ -602,10 +600,16 @@ export default {
             }
         }
     }
-    .map-box{
-        position:absolute;
+    .map-box-beijng{
+        width: 1777px;
+        height: 1612px;
+    }
+    .map-box-shenzhen{
         width: 1287px;
         height: 571px;
+    }
+    .map-box{
+        position:absolute;
         background-size: 100% 100%;
         background-repeat: no-repeat;
         // 给盒子设置上一个过渡的默认值
@@ -624,105 +628,12 @@ export default {
             background-repeat: no-repeat;
             z-index: 5;
         }
-        // 东
-        .new-seat-east{
-            position: absolute;
-            z-index: 5;
-            display: flex;
-            flex-direction: row-reverse;
-            width: 15px;
-            height: 30px;
-            .desk{
-                width: 6px;
-                height: 30px;
-                background: url('../../../public/legend-image/desk-column.png') no-repeat;
-                background-size: 100% 100%;
-                border-radius: 1px;
-            }
-            .chair{
-                position: relative;
-                top: 50%;
-                width: 9px;
-                height: 9px;
-                background: url('../../../public/legend-image/yizi.png') no-repeat;
-                background-size: 100% 100%;
-                transform:translateY(-50%) rotateZ(180deg);
-            }
-        }
-        // 南
-        .new-seat-south{
-            position: absolute;
-            z-index: 5;
-            display: flex;
-            flex-direction: column-reverse;
-            width: 12px;
-            height: 11px;
-            .desk{
-                width: 12px;
-                height: 4px;
-                background: url('../../../public/legend-image/desk-row.png') no-repeat;
-                background-size: 100% 100%;
-                border-radius: 1px;
-            }
-            .chair{
-                position: relative;
-                left: 50%;
-                width: 7px;
-                height: 7px;
-                background: url('../../../public/legend-image/yizi.png') no-repeat;
-                background-size: 100% 100%;
-                transform:translateX(-50%) rotateZ(270deg);
-            }
-        }
-        // 西
-        .new-seat-west{
-            position: absolute;
-            z-index: 5;
-            display: flex;
-            width: 15px;
-            height: 30px;
-            .desk{
-                width: 6px;
-                height: 30px;
-                border-radius: 1px;
-                background: url('../../../public/legend-image/desk-column.png') no-repeat;
-                background-size: 100% 100%;
-            }
-            .chair{
-                position: relative;
-                top: 50%;
-                width: 9px;
-                height: 9px;
-                background: url('../../../public/legend-image/yizi.png') no-repeat;
-                background-size: 100% 100%;
-                transform: translateY(-50%) rotateZ(0deg);
-            }
-        }
-        // 北
-        .new-seat-north{
-            position: absolute;
-            z-index: 5;
-            display: flex;
-            flex-direction: column;
-            height: 11px;
-            width: 12px;
-            .desk{
-                width: 12px;
-                height: 4px;
-                border-radius: 1px;
-                background: url('../../../public/legend-image/desk-row.png') no-repeat;
-                background-size: 100% 100%;
-            }
-            .chair{
-                position: relative;
-                left: 50%;
-                width: 7px;
-                height: 7px;
-                background: url('../../../public/legend-image/yizi.png') no-repeat;
-                background-size: 100% 100%;
-                transform:translateX(-50%) rotateZ(90deg);
-            }
-        }
+        // 引用3层新座位的样式
+        .threeSeatStyle-PC;
+        // 引用4层新座位样式
+        .fourSeatStyle-PC;
+        // 引用深圳新座位样式
+        .shenZhenSeatStyle-PC;
         // 区域选中的高亮样式
         .active-area{
             background-color:rgba(255, 165, 0, 0.5)!important;
