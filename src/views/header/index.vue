@@ -334,7 +334,9 @@ export default {
             // 将弹框关闭
             drawerData.is_show = false
             // 切换楼层（或地区）时，将地图初始化
-            initMap()
+            nextTick(() => {
+                initMap()
+            })
         }
         // 定义模糊搜索框的相关数据与方法
         const searchData = reactive({
@@ -493,9 +495,9 @@ export default {
         // 定义图例的数据和方法
         const legendData = reactive({
             legendList:[
-                {id:0,name:'员工',lable:'employees',type:'0',url:'/legend-image/image0.png'},
-                {id:1,name:'空闲',lable:'free',type:'0-1',url:'/legend-image/image1.png'},
-                {id:2,name:'占用',lable:'occupation',type:'0-2',url:'/legend-image/image2.png'},
+                {id:0,name:'员工',lable:'employees',type:'0',url:'/legend-image/yizi0.png'},
+                {id:1,name:'空闲',lable:'free',type:'0-1',url:'/legend-image/yizi0-1.png'},
+                {id:2,name:'占用',lable:'occupation',type:'0-2',url:'/legend-image/yizi0-2.png'},
                 {id:3,name:'会议室',lable:'meeting-room',type:1,url:'/legend-image/icon_meeting.png'},
             ],
             // 点击某一个图例触发的函数
@@ -714,6 +716,11 @@ export default {
             align-items: center;
             cursor: pointer;
             transition: all 0.15s;
+            &:nth-child(-n + 3){
+                img{
+                    transform: rotateZ(90deg);
+                }
+            }
             img{
                 height: 32px;
                 width: 32px;

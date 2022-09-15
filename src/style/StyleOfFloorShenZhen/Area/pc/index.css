@@ -55,6 +55,9 @@
   left: -24px;
   transform: translate(0, -50%);
 }
+.ShenZhenAreaStyle-PC #QY02020700310 {
+  background-color: rgba(2, 122, 255, 0.05) !important;
+}
 .ShenZhenAreaStyle-PC #QY02020700310 .title {
   top: -20%;
 }

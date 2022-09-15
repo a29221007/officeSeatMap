@@ -8,15 +8,16 @@ import store from '../store'
 function initMap(value) {
     // 获取地图盒子
     let MapBox = document.querySelector('.map-box')
+    let MapContainer = document.querySelector('.map-container')
+    // 初始的缩放比例,将地图上下平铺开
+    let scale = MapContainer.offsetHeight / (MapBox.className.includes('map-box-shenzhen') ? 571 : 1612)
+    store.commit('setScale',[scale,scale])
     MapBox.style.transition = 'all 0.3s'
     // 切换楼层后将地图的的缩放比例调整1，放到正中心
     MapBox.style.top = 'unset'
     MapBox.style.left = 'unset'
     MapBox.style.transformOrigin = `50% 50%`
-    MapBox.style.transform = `scale(${store.state.scale[0]},${store.state.scale[1]})`
+    MapBox.style.transform = `scale(${scale},${scale})`
     emitter.emit('initScale',value)
-    // emitter.emit('activeArea',{
-    //     code:'',
-    // })
 }
 export default initMap
