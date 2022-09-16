@@ -194,6 +194,8 @@ export default {
             // 设置座位里面桌子的样式
             seatDeskStyle(seatItem){
                 let deskstyle = null
+                // 判断是否为前台
+                if(seatItem.seat_id === '3A-Q-099' || seatItem.seat_id === '3A-Q-098' || seatItem.seat_id === '4A-Q-099' || seatItem.seat_id === '888') return {disPlay:'none'}
                 if(seatItem.toward === 'west' || seatItem.toward === 'east'){
                     deskstyle = {
                         backgroundImage:`url(/legend-image/desk-column${seatItem.type}.png)`
@@ -217,6 +219,12 @@ export default {
                         backgroundImage:`url(/legend-image/yizi${seatItem.type}.png)`
                     }
                 }
+                // 判断是否为前台
+                if(seatItem.seat_id === '3A-Q-099' || seatItem.seat_id === '4A-Q-099'){
+                    deskstyle.transform = `rotate(45deg)`
+                }else if(seatItem.seat_id === '3A-Q-098'){
+                    deskstyle.transform = `rotate(90deg)`
+                }
                 return deskstyle
             },
             // 动态设置座位盒子的类名
@@ -233,13 +241,12 @@ export default {
                     height: itemPosition.height + 'px',
                     backgroundColor: itemData.backgroundcolor,
                     color:'#646464',
-                    fontSize:'12px'
                 }
             },
             // 鼠标进入每一个座位的处理程序
             seatMouseenter(seatItem,element) {
-                tooltipRef.value.style.top = element.offsetTop - 34 + 'px'
-                tooltipRef.value.style.left = element.offsetLeft - 14 + 'px'
+                tooltipRef.value.style.top = element.offsetTop - 28 + 'px'
+                tooltipRef.value.style.left = element.offsetLeft - 10 + 'px'
                 is_show_tooltip.value = true
                 tooltipText.value = seatItem.seat_id
             },
@@ -315,16 +322,7 @@ export default {
         // 定义鼠标在地图内的坐标
         let x = null
         let y = null
-        // 窗体发生变化时，用于防抖计时器id
-        let resizeTimer = null
         onMounted(() => {
-            /**
-             * 0.625和0.872是开发时，当时的盒子的宽高除以当时浏览器可视区的宽高，计算出来的比例
-             * 这样就实现了，简单的屏幕自适应，用户当前浏览器可视区的宽高乘以这个比例，就是合适的宽高
-            */
-            // 手动设置MapContainerRef盒子的宽高
-            MapContainerRef.value.style.width = obj.width * 0.625 + 'px'
-            MapContainerRef.value.style.height = obj.height * 0.872 + 'px'
             // 监听鼠标在MapBoxRef盒子内的按压事件
             MapContainerRef.value.addEventListener('mousedown', mouseDown)
             // 监听鼠标的弹起事件，移除对鼠标移动事件的监听
@@ -335,20 +333,14 @@ export default {
             MapContainerRef.value.addEventListener("DOMMouseScroll",handleScale_firefox)
             initMap()
             window.addEventListener('resize',function (e){
-                clearTimeout(resizeTimer)
-                resizeTimer = this.setTimeout(() => {
-                    // 手动设置MapContainerRef盒子的宽高
-                    MapContainerRef.value.style.width = e.target.innerWidth * 0.625 + 'px'
-                    MapContainerRef.value.style.height = e.target.innerHeight * 0.872 + 'px'
-                    initMap('huifu')
-                    if(currentElement){
-                        scaleSeat(currentElement.parentNode)
-                    }else if(seatData.currentAreaCode){
-                        const { scaleX, scaleY } = searchArea(seatData.currentAreaCode)
-                        sacleX = scaleX
-                        sacleY = scaleY
-                    }
-                },150)
+                initMap('huifu')
+                if(currentElement){
+                    scaleSeat(currentElement.parentNode)
+                }else if(seatData.currentAreaCode){
+                    const { scaleX, scaleY } = searchArea(seatData.currentAreaCode)
+                    sacleX = scaleX
+                    sacleY = scaleY
+                }
             })
         })
         // 鼠标按下事件的处理程序
@@ -467,9 +459,10 @@ export default {
 @import '../../style/StyleOfFloorShenZhen/seat/pc/index.less';
 
 .map-container{
+    width: 100%;
+    flex: 1;
     position: relative;
     background-color: #f3f4f6;
-    margin: 0 auto;
     overflow: hidden;
     display: flex;
     justify-content: center;

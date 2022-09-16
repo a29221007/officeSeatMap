@@ -336,9 +336,8 @@ function statistical(areaList, seatList, floor){
             let partAndDepart_min_Y = partAndDepartItem.coordinate.top
             // 有效范围的Y终点
             let partAndDepart_max_Y = partAndDepartItem.coordinate.top + partAndDepartItem.coordinate.height
-
+            console.log(seatItem)
             // 计算当前座位的起点
-            // 座位的x
             let seat_x = null
             // 座位的y
             let seat_y = null

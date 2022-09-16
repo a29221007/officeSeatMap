@@ -1,18 +1,13 @@
 .FourAreaStyle-PC #QY010104000270 .title {
   top: unset;
-  bottom: 0;
-}
-.FourAreaStyle-PC #QY010104000472 .title .name {
-  transform: scale(0.45, 0.9);
-}
-.FourAreaStyle-PC #QY010104000787 .title .name {
-  transform: scale(0.45, 0.9);
+  bottom: 5%;
 }
 .FourAreaStyle-PC #QY0101040030116 .title {
   top: 55%;
 }
 .FourAreaStyle-PC #QY0101040028114 .title {
-  top: 5%;
+  top: unset;
+  bottom: -5%;
 }
 .FourAreaStyle-PC #QY0101040032118 .title,
 .FourAreaStyle-PC #QY0101040031117 .title,
@@ -25,13 +20,17 @@
   width: 2px;
   white-space: unset;
 }
-.FourAreaStyle-PC #QY0101040031117 .title {
+.FourAreaStyle-PC #QY01010400310 .title {
   left: 10%;
+  top: 100%;
+}
+.FourAreaStyle-PC #QY01010400310 .title span {
+  width: 2px;
+  white-space: unset;
 }
 .FourAreaStyle-PC #QY0101040036123 .title,
 .FourAreaStyle-PC #QY0101040036122 .title {
-  top: unset;
-  bottom: -3px;
+  top: 30%;
 }
 .FourAreaStyle-PC #QY0101040039125 .title,
 .FourAreaStyle-PC #QY0101040070189 .title {
@@ -49,73 +48,52 @@
   top: unset;
   bottom: -5px;
 }
-.FourAreaStyle-PC #QY0101040035121 .title {
-  top: unset;
-  bottom: -18px;
-}
-.FourAreaStyle-PC #QY0101040035121 .title .name {
-  transform: translate(0px, 5px) scale(0.85, 0.9);
-}
-.FourAreaStyle-PC #QY0101040034120 .title {
-  top: unset;
-  bottom: -21px;
-}
-.FourAreaStyle-PC #QY0101040034120 .title .name {
-  transform: translate(0px, 5px) scale(0.85, 0.9);
-}
 .FourAreaStyle-PC #QY0101040033119 .title {
   top: 10px;
   left: 65%;
 }
-.FourAreaStyle-PC #QY0101040043132 .title {
+.FourAreaStyle-PC #QY0101040043132 .title,
+.FourAreaStyle-PC #QY0101040035121 .title,
+.FourAreaStyle-PC #QY0101040034120 .title {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
   right: 9px;
   left: unset;
 }
-.FourAreaStyle-PC #QY0101040043132 .title span {
+.FourAreaStyle-PC #QY0101040043132 .title span,
+.FourAreaStyle-PC #QY0101040035121 .title span,
+.FourAreaStyle-PC #QY0101040034120 .title span {
   width: 2px;
   white-space: unset;
+  word-break: break-all;
 }
-.FourAreaStyle-PC #QY0101040043132 .title .name {
-  margin-left: 8px;
-  transform: scale(0.85, 0.6);
+.FourAreaStyle-PC #QY0101040043132 .title .name,
+.FourAreaStyle-PC #QY0101040035121 .title .name,
+.FourAreaStyle-PC #QY0101040034120 .title .name {
+  margin-left: 11px;
 }
-.FourAreaStyle-PC #QY0101040043132 .title .subtitle {
-  transform: scale(0.65, 0.45);
+.FourAreaStyle-PC #QY0101040035121 .title {
+  left: unset;
+  right: 10%;
 }
 .FourAreaStyle-PC #QY0101040044133 .title {
   left: unset;
-  right: 29%;
+  right: 25%;
 }
 .FourAreaStyle-PC #QY0101040044133 .title span {
   width: 2px;
   white-space: unset;
 }
-.FourAreaStyle-PC #QY010104001696 .name {
-  transform: scale(0.65, 0.9);
-}
-.FourAreaStyle-PC #QY0101040048144 .name {
-  transform: scale(0.5, 0.9);
-}
 .FourAreaStyle-PC #QY0101040047143 .name {
-  transform: scale(0.35, 0.9);
+  transform: scale(0.6, 1);
 }
 .FourAreaStyle-PC #QY01010400412 .title {
   top: 48%;
-  left: 20%;
+  left: 5%;
 }
 .FourAreaStyle-PC #QY01010400510 .title {
-  left: 18px;
-}
-.FourAreaStyle-PC #QY01010400521 .name,
-.FourAreaStyle-PC #QY0101040058156 .name,
-.FourAreaStyle-PC #QY01010400530 .name,
-.FourAreaStyle-PC #QY01010400540 .name,
-.FourAreaStyle-PC #QY0101040059157 .name,
-.FourAreaStyle-PC #QY0101040060158 .name {
-  transform: scale(0.5, 0.9);
+  left: 80%;
 }
 .FourAreaStyle-PC #QY01010400550 .title {
   top: 61%;
@@ -124,12 +102,7 @@
   top: 20%;
 }
 .FourAreaStyle-PC #QY01010400300 .title {
-  left: unset;
-  right: 9px;
-}
-.FourAreaStyle-PC #QY01010400300 .title span {
-  width: 2px;
-  white-space: unset;
+  top: 10%;
 }
 .FourAreaStyle-PC #QY01010400621 .title,
 .FourAreaStyle-PC #QY01010400631 .title {
@@ -156,17 +129,11 @@
   white-space: unset;
 }
 .FourAreaStyle-PC #QY0101040065165 .title {
-  top: 130%;
-  left: unset;
-  left: 10%;
+  top: 55%;
+  left: 40%;
 }
 .FourAreaStyle-PC #QY01010400450 .title {
-  top: 30%;
-  left: 10%;
-}
-.FourAreaStyle-PC #QY01010400450 .title span {
-  width: 2px;
-  white-space: unset;
+  top: 10%;
 }
 .FourAreaStyle-PC #QY01010400220 {
   border-radius: 5px 0 0 0;

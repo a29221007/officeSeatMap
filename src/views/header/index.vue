@@ -1,6 +1,6 @@
 <template>
     <!-- 头部区域包括顶部的搜索栏以及图例区域 -->
-    <div ref="headerContainerRef" class="header-container">
+    <div class="header-container">
         <!-- 搜索栏 -->
         <div class="search">
             <div class="floor-switch">
@@ -280,26 +280,6 @@ export default {
                         }
                     })
                 })
-            })
-        })
-        // 获取浏览器可视区宽高的依赖注入
-        const obj = inject('clent')
-        const headerContainerRef = ref(null)// 窗体发生变化时，用于防抖计时器id
-        let resizeTimer = null
-        // 组件挂载时
-        onMounted(() => {
-            /**
-             * 0.625和0.124是开发时，当前盒子的宽度和高度除以当前可视区宽度和高度，计算出来的比值
-             * 这样就实现了，简单的屏幕自适应，用户当前浏览器可视区的宽高乘以这个比例，就是合适的宽高
-            */
-            headerContainerRef.value.style.width = obj.width * 0.625 + 'px'
-            headerContainerRef.value.style.height = obj.height * 0.124 + 'px'
-            window.addEventListener('resize',function (e){
-                clearTimeout(resizeTimer)
-                resizeTimer = this.setTimeout(() => {
-                    headerContainerRef.value.style.width = e.target.innerWidth * 0.625 + 'px'
-                    headerContainerRef.value.style.height = e.target.innerHeight * 0.124 + 'px'
-                },300)
             })
         })
         // 监听兄弟组件Main发布的自定义事件from，将弹框显示
@@ -662,7 +642,6 @@ export default {
             ...toRefs(legendData),
             ...toRefs(drawerData),
             handleClickFloor,
-            headerContainerRef,
             Search,
             FixedAssetsRef,
             FixedAssetsUserName,
@@ -680,9 +659,8 @@ export default {
 
 <style lang="less" scoped>
 .header-container{
-    // width: 1200px; // 0.625
-    // height: 120px; // 0.124
-    margin: 0 auto;
+    width: 100%; // 0.625
+    height: 12.4%; // 0.124
     .search{
         width: 100%;
         height: 41.66666667%;
