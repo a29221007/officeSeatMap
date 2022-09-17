@@ -8,8 +8,6 @@ import { provide, ref } from 'vue'
 import PCLayOut from '../views/layout'
 // 导入移动端的布局组件MLayout
 import MLayOut from '../views-rem'
-// 导入获取浏览器可视区的宽高
-import getClient from '../utils/getClient.js'
 import { useStore } from 'vuex'
 import statistical from '@/utils/statistical.js'
 export default {
@@ -40,10 +38,6 @@ export default {
             })
         })
         const partTotaleObject = ref({})
-        // 获取当前浏览器可视区的大小
-        const obj = getClient()
-        // 依赖注入
-        provide('clent',obj)
         provide('partTotaleObject',partTotaleObject.value)
         // 判断是pc端还是移动端的变量
         const is_PC = ref('MLayOut')
@@ -53,7 +47,6 @@ export default {
         }else{
             is_PC.value = 'PCLayOut'
         }
-        
         return {
             is_PC
         }

@@ -8,7 +8,7 @@
             <i v-on:click="initMap('huifu')" class="iconfont oamap-huifu"></i>
             <i v-on:click="MapBoxReduce(0.2)" class="iconfont oamap-jianhao"></i>
         </div>
-        <div ref="MapBoxRef" :class="{'map-box':true,'map-box-beijng': $store.state.currentFloor === 'three' || $store.state.currentFloor === 'four','map-box-shenzhen': $store.state.currentFloor === 'shenzhen'}" :style="MapBoxStyle">
+        <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
                 <!-- 办公分区 -->
                 <template v-if="item.diff && item.diff === 2 && item.floor !== 7">
@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import {ref,computed,onMounted,onBeforeUnmount, reactive, toRefs, inject,onBeforeMount} from 'vue'
+import {ref,computed,onMounted,onBeforeUnmount, reactive, toRefs, inject} from 'vue'
 import { useStore } from 'vuex'
 // 导入获取鼠标在盒子内的坐标函数
 import getMouseX_Y from '@/utils/getmouseX_Y.js'
@@ -121,8 +121,6 @@ export default {
         })
         // 获取各分区的座位数
         const partTotaleObject = inject('partTotaleObject')
-        // 获取浏览器可视区宽高的依赖注入
-        const obj = inject('clent')
         const store = useStore()
         // 控制提示框的显示与隐藏
         const is_show_tooltip = ref(false)
@@ -231,7 +229,7 @@ export default {
             newSeatClassFn(seatItem){
                 return `${seatItem.floor == '3' ? 'three' : seatItem.floor == '4' ? 'four' : 'shenzhen'}-new-seat-${seatItem.toward}`
             },
-            // 设置每一个区域的样式（单个区域）
+            // 设置每一个区域的样式
             areaStyle(itemData,itemPosition){
                 return {
                     position: 'absolute',
@@ -258,10 +256,20 @@ export default {
         })
         // MapBoxRef盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
-            // MapBoxRef盒子的行内样式暂时只有背景图片
-            return {
-                backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`,
+            let style = null
+            if(store.state.currentFloor === 'three' || store.state.currentFloor === 'four'){
+                style = {
+                    width: 1777 + 'px',
+                    height: 1612 + 'px'
+                }
+            }else {
+                style = {
+                    width: 1287 + 'px',
+                    height: 571 + 'px'
+                }
             }
+            style.backgroundImage= `url(/floor_image/1777_1612_${store.getters.floor}层.png)`
+            return style
         })
         // 当前的元素
         let currentElement = null
@@ -497,14 +505,6 @@ export default {
                 margin:5px 0;
             }
         }
-    }
-    .map-box-beijng{
-        width: 1777px;
-        height: 1612px;
-    }
-    .map-box-shenzhen{
-        width: 1287px;
-        height: 571px;
     }
     .map-box{
         position:absolute;

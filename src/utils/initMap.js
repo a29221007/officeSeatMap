@@ -10,7 +10,7 @@ function initMap(value) {
     let MapBox = document.querySelector('.map-box')
     let MapContainer = document.querySelector('.map-container')
     // 初始的缩放比例,将地图上下平铺开
-    let scale = MapContainer.offsetHeight / (MapBox.className.includes('map-box-shenzhen') ? 571 : 1612)
+    let scale = MapContainer.offsetHeight / parseInt(MapBox.style.height)
     store.commit('setScale',[scale,scale])
     MapBox.style.transition = 'all 0.3s'
     // 切换楼层后将地图的的缩放比例调整1，放到正中心
