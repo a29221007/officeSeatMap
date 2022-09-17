@@ -167,8 +167,9 @@
 }
 .threeAreaStyle-PC #QY010103005986 .title {
   top: unset;
-  left: 20%;
-  bottom: -28%;
+  left: unset;
+  bottom: 11%;
+  right: 30%;
 }
 .threeAreaStyle-PC #QY0101030061174 .title,
 .threeAreaStyle-PC #QY0101040066185 .title {

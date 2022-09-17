@@ -546,12 +546,6 @@ export default {
                 display: inline-block;
                 white-space:nowrap;
             }
-            // .name{
-            //     transform: scale(0.85,0.9);
-            // }
-            // .subtitle{
-            //     transform: scale(0.65,0.65);
-            // }
         }
         // 引用PC端3层区域的样式
         .threeAreaStyle-PC;
