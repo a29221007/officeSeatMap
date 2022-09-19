@@ -4,14 +4,14 @@
     #QY010104000270{
         .title{
             top: unset;
-            bottom: 0;
+            bottom: 1%;
         }
     }
     // 奥尔坦西亚
     #QY010104000472{
         .title{
             .name{
-                transform: scale(0.3,0.55);
+                transform: scale(0.8,1);
             }
         }
     }
@@ -19,7 +19,7 @@
     #QY010104000787{
         .title{
             .name{
-                transform: scale(0.3,0.55);
+                transform: scale(0.8,1);
             }
         }
     }
@@ -32,8 +32,8 @@
     // 灵回诗社
     #QY0101040028114{
         .title{
-            top: 5%;
-            left: 35%;
+            top: unset;
+            bottom: -7%;
         }
     }
     // 商务部、盾勇项目组、优格资本（部门）
@@ -41,29 +41,33 @@
         .title{
             left: 20%;
             span{
-                width: .0215rem;
+                width: 2px;
                 white-space:unset;
             }
         }
     }
     // 盾勇项目组
-    #QY0101040031117{
+    #QY01010400310{
         .title{
-            left: 10%;
+            left: 9%;
+            top: 107%;
+            span{
+                width: 2px;
+                white-space:unset;
+            }
         }
     }
     // 美术部-1、美术部-2
     #QY0101040036123,#QY0101040036122{
         .title{
-            top: unset;
-            bottom: -0.172rem;
+            top: 25%;
         }
     }
     // 行政部、一点咨询
     #QY0101040039125,#QY0101040070189{
         .title{
             top: unset;
-            bottom: -0.1828rem;
+            bottom: -5%;
         }
     }
     // 发行技术部
@@ -83,26 +87,6 @@
             bottom: -0.1075rem;
         }
     }
-    // 创新中心（Heyyo工作室）
-    #QY0101040035121{
-        .title{
-            top: unset;
-            bottom: -0.4731rem;
-            .subtitle{
-                transform:translate(0px,-6px) scale(0.38, 0.38)
-            }
-        }
-    }
-    // 运营部（盾勇&苍骑）
-    #QY0101040034120{
-        .title{
-            top: unset;
-            bottom: -0.5054rem;
-            .subtitle{
-                transform:translate(0px,-6.5px) scale(0.38, 0.38)
-            }
-        }
-    }
     // 渠道部
     #QY0101040033119{
         .title{
@@ -110,21 +94,30 @@
             left: 65%;
         }
     }
-    // 发行技术部（产品部）
-    #QY0101040043132{
+    // 发行技术部（产品部）、创新中心（Heyyo工作室）、运营部（盾勇&苍骑）
+    #QY0101040043132,#QY0101040035121,#QY0101040034120{
         .title{
             display: flex;
             flex-direction: row-reverse;
             align-items: center;
-            right: .0108rem;
+            right: 5%;
             left: unset;
             span{
                 width: 2px;
                 white-space:unset;
+                word-break: break-all;
             }
             .name{
-                margin-left: .043rem;
-                transform: scale(0.55, 0.4);
+                margin-left: 13px;
+            }
+        }
+    }
+    // 发行技术部（产品部）、创新中心（Heyyo工作室）、运营部（盾勇&苍骑）
+    #QY0101040035121{
+        .title{
+            right: 9%;
+            .subtitle{
+                transform: scale(1,0.8);
             }
         }
     }
@@ -132,60 +125,43 @@
     #QY0101040044133{
         .title{
             left: unset;
-            right: 29%;
+            right: 25%;
             span{
                 width: 2px;
                 white-space:unset;
             }
         }
     }
-    // 格尔威森林
-    #QY010104001696{
-        .name{
-            transform:scale(0.4, 0.55)
-        }
-    }
-    // 监控室
-    #QY0101040048144{
-        .name{
-            transform:scale(0.4, 0.55)
-        }
-    }
     // ROOBO库房
     #QY0101040047143{
         .name{
-            transform:scale(0.3, 0.55)
+            transform:scale(0.5, 1);
         }
     }
     // ROOBO如布
     #QY01010400412{
         .title{
             top: 48%;
-            left: 20%;
+            left: -10%;
         }
     }
     // 直播间1
     #QY01010400510{
         .title{
-            left: .1935rem;
+            left: 80%;
         }
     }
-    // 直播间1、3、5
-    #QY01010400510,#QY0101040056154,#QY0101040057155{
-        .name{
-            transform:scale(0.5, 0.55)
-        }
-    }
-    // 直播间2、4、6、7、9、10
-    #QY01010400521,#QY0101040058156,#QY01010400530,#QY01010400540,#QY0101040059157,#QY0101040060158{
-        .name{
-            transform:scale(0.35, 0.55)
+    // 直播间6
+    #QY01010400530{
+        .title{
+            top: 60%;
+            left: 57%;
         }
     }
     // 直播间8
     #QY01010400550{
         .title{
-            top: 61%;
+            top: 60%;
         }
     }
     // 机房
@@ -197,12 +173,8 @@
     // 微传播（部门-底部）
     #QY01010400300{
         .title{
-            left: unset;
-            right: .0968rem;
-            span{
-                width: .0215rem;
-                white-space:unset;
-            }
+            left: 40%;
+            top: 10%;
         }
     }
     // 男浴室、女浴室
@@ -233,8 +205,7 @@
     #QY0101040065165{
         .title{
             top: unset;
-            bottom: -230%;
-            left: 0;
+            bottom: 0%;
         }
     }
     // 4层洗手台
@@ -250,12 +221,8 @@
     // 鬼武
     #QY01010400450{
         .title{
-            top: 30%;
-            left: 10%;
-            span{
-                width: .0215rem;
-                white-space:unset;
-            }
+            top: 8%;
+            left: 20%;
         }
     }
     // 聚礼1/4半圆
@@ -270,10 +237,5 @@
     #QY01010400030{
         border-radius:.1505rem 0 0 0;
     }
-    // 星悦轩、格尔威森林，去除 title 的 line-height
-    #QY010104001595,#QY010104001696{
-        .title{
-            line-height: 0;
-        }
-    }
+
 }

@@ -14,7 +14,8 @@
   bottom: 0;
 }
 .threeAreaStyle-mobile #QY010103004762 .title {
-  top: 3%;
+  line-height: 1;
+  top: 14%;
 }
 .threeAreaStyle-mobile #QY010103003838 .title {
   top: 20%;
@@ -164,7 +165,7 @@
   top: 30%;
 }
 .threeAreaStyle-mobile #QY010103005986 .title {
-  top: 120%;
+  top: 70%;
 }
 .threeAreaStyle-mobile #QY0101030061174 .title,
 .threeAreaStyle-mobile #QY0101040066185 .title {

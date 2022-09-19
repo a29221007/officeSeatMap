@@ -9,14 +9,14 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 由单个组成 -->
                         <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="areaStyle(item,item.coordinate)">
-                            <div class="title">{{item.name === '前台' ? '' : item.name}}({{partTotaleObject[item.code]}})</div>
+                            <div class="title"><span>{{item.name === '前台' ? '' : item.name}}</span><span>({{partTotaleObject[item.code]}})</span></div>
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
                             <!-- 有多个组成 -->
                             <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="areaStyle(item,item2)">
-                                <div class="title" v-if="item2.show_area_name">{{item.name === '前台' ? '' : item.name}}({{partTotaleObject[item.code]}})</div>
+                                <div class="title" v-if="item2.show_area_name"><span>{{item.name === '前台' ? '' : item.name}}</span><span>({{partTotaleObject[item.code]}})</span></div>
                             </div>
                         </template>
                     </template>
