@@ -136,7 +136,6 @@ export default {
 
         // 清除当前元素的动画定时器函数
         function clearCurrentElementInterval(){
-            // 1、获取当前的元素实例 DOM
             let curentElement = document.getElementById(currentSeat_id) && document.getElementById(currentSeat_id).lastElementChild
             if(curentElement){
                 // 2、如果有 curentElement 这个DOM实例，则清除定时器
@@ -292,7 +291,7 @@ export default {
                 emitter.emit('form',seatItem)
             }
             scaleSeat(element)
-            currentElement = element.lastElementChild || element
+            currentElement = element && element.lastElementChild
             // 将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacleX = 3
             sacleY = 3

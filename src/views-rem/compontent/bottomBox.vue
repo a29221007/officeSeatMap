@@ -44,7 +44,7 @@ export default {
             store.commit('setCurrentFloor',floor)
             // 切换楼层（或地区）时，向父组件发布一个事件
             emit('switchFloor')
-            initMap()
+            initMap('switchFloor')
         }
 
         // 获取 SearchLegendRef、FloorSwitchRef 两个盒子的DOM对象

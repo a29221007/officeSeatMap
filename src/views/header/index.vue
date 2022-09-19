@@ -313,10 +313,10 @@ export default {
             store.commit('setCurrentFloor',floor)
             // 将弹框关闭
             drawerData.is_show = false
+            let MapBox = document.querySelector('.map-box')
+            MapBox.style.transition = 'unset'
             // 切换楼层（或地区）时，将地图初始化
-            nextTick(() => {
-                initMap()
-            })
+            initMap()
         }
         // 定义模糊搜索框的相关数据与方法
         const searchData = reactive({
@@ -485,6 +485,8 @@ export default {
                 store.commit('setCurrentLegend',type)
                 // 将弹框关闭
                 drawerData.is_show = false
+                let MapBox = document.querySelector('.map-box')
+                MapBox.style.transition = 'all 0.3s'
                 // 切换图例时，初始化地图
                 initMap()
             }
