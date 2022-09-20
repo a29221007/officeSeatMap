@@ -34,9 +34,9 @@ export default {
         let legendData = reactive({
             // 图例的数据集合
             legendList:[
-                {id:0,name:'员工',lable:'employees',type:'0',url:'/legend-image/image0.png'},
-                {id:1,name:'空闲',lable:'free',type:'0-1',url:'/legend-image/image1.png'},
-                {id:2,name:'占用',lable:'occupation',type:'0-2',url:'/legend-image/image2.png'},
+                {id:0,name:'员工',lable:'employees',type:'0',url:'/legend-image/yizi0.png'},
+                {id:1,name:'空闲',lable:'free',type:'0-1',url:'/legend-image/yizi0-1.png'},
+                {id:2,name:'占用',lable:'occupation',type:'0-2',url:'/legend-image/yizi0-2.png'},
                 {id:3,name:'会议室',lable:'meeting-room',type:1,url:'/legend-image/icon_meeting.png'},
             ],
             // 点击某一个图例触发的函数
@@ -89,6 +89,11 @@ export default {
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
+            &:nth-child(-n + 3){
+                img{
+                    transform: rotateZ(90deg);
+                }
+            }
             .legend-image{
                 width: .4301rem;
                 height: .4301rem;

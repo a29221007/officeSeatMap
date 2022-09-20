@@ -4,13 +4,13 @@
 */
 import store from '@/store'
 function clearTimer() {
-  store.state.timerArray.forEach(item => {
-    clearInterval(item.timer)
-  })
-  clearTimeout(store.state.timer)
-  if(store.state.spanElement){
-    store.state.spanElement.querySelector('span') && store.state.spanElement.querySelector('span').remove()
-  }
+    store.state.timerArray.forEach(item => {
+        clearInterval(item.timer)
+    })
+    clearTimeout(store.state.timer)
+    if(store.state.spanElement){
+        store.state.spanElement.querySelector('span') && store.state.spanElement.querySelector('span').remove()
+    }
 }
 
 export default clearTimer

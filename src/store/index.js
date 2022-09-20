@@ -235,6 +235,7 @@ export default createStore({
             try{
                 const res = await getFixedassets(code)
                 if (res.code !== 0) {
+                    if(res.code === 2012) errorMessage(res.message)
                     return context.commit('setIs_have_ckeck_persontFixedAssets',false)
                 }
                 context.commit('setIs_have_ckeck_persontFixedAssets',true)

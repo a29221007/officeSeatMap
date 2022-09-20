@@ -44,7 +44,7 @@ export default {
             store.commit('setCurrentFloor',floor)
             // 切换楼层（或地区）时，向父组件发布一个事件
             emit('switchFloor')
-            initMap()
+            initMap('switchFloor')
         }
 
         // 获取 SearchLegendRef、FloorSwitchRef 两个盒子的DOM对象
@@ -199,12 +199,12 @@ export default {
                 if(flag === 'down'){
                     // 向下滑动
                     SearchLegendContant.value = 'init'
-                    // 如果不处于详情页了，那么将当前的高亮状态取消掉（正好发布这个事件，父组件监听这个事件的处理程序，就是充值座位高亮或区域高亮的）
+                    // 如果不处于详情页了，那么将当前的高亮状态取消掉（正好发布这个事件，父组件监听这个事件的处理程序，就是重置座位高亮或区域高亮的）
                     emit('switchFloor')
                 }else if(flag === 'up'){
                     // 向上滑动
                     SearchLegendContant.value = 'search'
-                    // 如果不处于详情页了，那么将当前的高亮状态取消掉（正好发布这个事件，父组件监听这个事件的处理程序，就是充值座位高亮或区域高亮的）
+                    // 如果不处于详情页了，那么将当前的高亮状态取消掉（正好发布这个事件，父组件监听这个事件的处理程序，就是重置座位高亮或区域高亮的）
                     emit('switchFloor')
                 }
                 b = true

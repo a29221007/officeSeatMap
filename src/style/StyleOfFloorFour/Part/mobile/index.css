@@ -3,121 +3,76 @@
   flex-direction: column;
 }
 .fourPartStyle-mobile #part21 .title {
-  top: 75%;
-  left: 93%;
-  display: flex;
-  flex-direction: column;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 70%;
 }
 .fourPartStyle-mobile #part22 .title {
-  top: unset;
-  bottom: -38%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  left: 55%;
+  transform: scale(0.8, 1);
+  display: flex;
+  flex-direction: column;
 }
 .fourPartStyle-mobile #part23 .title {
-  top: 13%;
-  left: 38%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.fourPartStyle-mobile #part24 {
-  white-space: nowrap;
+  left: 36%;
 }
 .fourPartStyle-mobile #part24 .title {
-  display: flex;
-  align-items: center;
-  top: 7%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 46%;
+  left: 37%;
 }
 .fourPartStyle-mobile #part25 .title {
   top: 62%;
   left: 34%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
 }
 .fourPartStyle-mobile #part26 .title {
-  width: 0.4301rem;
-  left: -20%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 60%;
+  left: 40%;
 }
 .fourPartStyle-mobile #part27 .title {
-  width: 0.4301rem;
-  left: unset;
-  right: -45%;
-  top: unset;
-  bottom: -0.3011rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 40%;
 }
 .fourPartStyle-mobile #part280 .title {
   left: 60%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
 }
 .fourPartStyle-mobile #part29 .title {
   top: 0;
-  left: unset;
-  right: 33%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  left: 32%;
 }
 .fourPartStyle-mobile #part30 .title {
-  top: 83%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.fourPartStyle-mobile #part31 {
-  white-space: nowrap;
+  top: 70%;
 }
 .fourPartStyle-mobile #part31 .title {
-  top: 0;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.fourPartStyle-mobile #part32 {
-  white-space: nowrap;
+  top: 10%;
+  left: 54%;
 }
 .fourPartStyle-mobile #part32 .title {
   top: 20%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  left: 54%;
 }
 .fourPartStyle-mobile #part33 .title {
-  top: 8%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.fourPartStyle-mobile #part34 {
-  white-space: nowrap;
+  top: 52%;
+  left: 60%;
 }
 .fourPartStyle-mobile #part34 .title {
   top: unset;
-  bottom: -20%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.fourPartStyle-mobile #part351 {
-  white-space: nowrap;
+  bottom: -4%;
 }
 .fourPartStyle-mobile #part351 .title {
   top: -10%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.fourPartStyle-mobile #part37 {
-  white-space: nowrap;
 }
 .fourPartStyle-mobile #part37 .title {
-  display: flex;
-  align-items: baseline;
   top: unset;
-  bottom: -30%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  bottom: 0%;
 }
 .fourPartStyle-mobile #part361 .title {
-  top: 35%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 16%;
+  left: 71%;
+  white-space: nowrap;
 }
 .fourPartStyle-mobile #part38 .title {
+  left: 53%;
   display: flex;
-  align-items: baseline;
-  top: 8%;
-  left: 30%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  flex-direction: column;
 }
 .fourPartStyle-mobile #part41 .title {
-  top: 55%;
-  left: unset;
-  right: -35%;
-  transform: translate(-50%, -50%) scale(0.55, 0.55);
+  top: 81%;
+  left: 78%;
 }

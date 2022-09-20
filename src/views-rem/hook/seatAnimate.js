@@ -1,15 +1,16 @@
 // 座位缩放的函数
 // 参数为当前选中的 DOM 元素
+import setTransform from '@/utils/newSeatTransform.js'
 function seatZoom(seat){
     // 首先将当前座位的缩放设置为1transform:scale(3);
-    seat.style.transform = 'scale(1)'
+    seat.style.transform = setTransform(seat,1)
     // 初始化缩放变量
     let scaleNum = 1
     let b = true
     clearInterval(seat.timer)
     seat.timer = setInterval(() => {
-        if(scaleNum > 3){
-            scaleNum = 3
+        if(scaleNum > 2){
+            scaleNum = 2
             b = false
         }else if(scaleNum < 0.5){
             scaleNum = 0.5
@@ -22,7 +23,7 @@ function seatZoom(seat){
             // 减
             scaleNum = scaleNum - 0.05
         }
-        seat.style.transform = `scale(${scaleNum})`
+        seat.style.transform = setTransform(seat,scaleNum)
     },15)
 }
 

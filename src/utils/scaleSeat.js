@@ -16,7 +16,7 @@ import seatZoom from './seatScale.js'
 
 
 function scaleSeatFn($event) {
-    seatZoom($event)
+    seatZoom($event && $event.lastElementChild)
     let MapBoxRef = document.querySelector('.map-box')
     let MapContainerRef = document.querySelector('.map-container')
     // MapBoxRef.style.transition = 'all 1s'
@@ -34,9 +34,6 @@ function scaleSeatFn($event) {
         left:Math.ceil(MapBoxRef.offsetLeft - valueX),
         top:Math.ceil(MapBoxRef.offsetTop - valueY)
     })
-
-    // MapBoxRef.style.left = (MapBoxRef.offsetLeft - valueX) + 'px'
-    // MapBoxRef.style.top = (MapBoxRef.offsetTop - valueY) + 'px'
     // 5、设置缩放的中心点，放大地图
     MapBoxRef.style.transformOrigin = `${$event.offsetLeft}px ${$event.offsetTop}px`
     MapBoxRef.style.transition = `transform 0.5s`

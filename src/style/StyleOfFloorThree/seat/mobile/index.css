@@ -1,0 +1,95 @@
+.threeSeatStyle-mobile .three-new-seat-east {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: row-reverse;
+  width: 21px;
+  height: 23px;
+}
+.threeSeatStyle-mobile .three-new-seat-east .desk {
+  width: 9px;
+  height: 23px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-radius: 1px;
+}
+.threeSeatStyle-mobile .three-new-seat-east .chair {
+  position: relative;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  transform: translateY(-50%) rotateZ(180deg);
+}
+.threeSeatStyle-mobile .three-new-seat-south {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: column-reverse;
+  width: 23px;
+  height: 21px;
+}
+.threeSeatStyle-mobile .three-new-seat-south .desk {
+  width: 23px;
+  height: 9px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-radius: 1px;
+}
+.threeSeatStyle-mobile .three-new-seat-south .chair {
+  position: relative;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  transform: translateX(-50%) rotateZ(270deg);
+}
+.threeSeatStyle-mobile .three-new-seat-west {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  width: 21px;
+  height: 23px;
+}
+.threeSeatStyle-mobile .three-new-seat-west .desk {
+  width: 9px;
+  height: 23px;
+  border-radius: 1px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.threeSeatStyle-mobile .three-new-seat-west .chair {
+  position: relative;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  transform: translateY(-50%) rotateZ(0deg);
+}
+.threeSeatStyle-mobile .three-new-seat-north {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  height: 21px;
+  width: 23px;
+}
+.threeSeatStyle-mobile .three-new-seat-north .desk {
+  width: 23px;
+  height: 9px;
+  border-radius: 1px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.threeSeatStyle-mobile .three-new-seat-north .chair {
+  position: relative;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  transform: translateX(-50%) rotateZ(90deg);
+}

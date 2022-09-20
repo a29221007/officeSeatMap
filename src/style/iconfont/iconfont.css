@@ -1,0 +1,77 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3187109 */
+  /* Color fonts */
+  src: 
+       url('iconfont.woff2?t=1660296204532') format('woff2'),
+       url('iconfont.woff?t=1660296204532') format('woff'),
+       url('iconfont.ttf?t=1660296204532') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.oamap-yizi1:before {
+  content: "\e633";
+}
+
+.oamap-metting:before {
+  content: "\e62d";
+}
+
+.oamap-saoyisao:before {
+  content: "\e61e";
+}
+
+.oamap-unlock:before {
+  content: "\e882";
+}
+
+.oamap-kongxian:before {
+  content: "\e635";
+}
+
+.oamap-huifu:before {
+  content: "\e6e9";
+}
+
+.oamap-dongtaijiantoucopy:before {
+  content: "\e719";
+}
+
+.oamap-xiugai:before {
+  content: "\e632";
+}
+
+.oamap-qingchu:before {
+  content: "\e620";
+}
+
+.oamap-zuojiantou:before {
+  content: "\e60c";
+}
+
+.oamap-sousuo:before {
+  content: "\e636";
+}
+
+.oamap-jiahao:before {
+  content: "\eaf3";
+}
+
+.oamap-jianhao:before {
+  content: "\eaf5";
+}
+
+.oamap-north:before {
+  content: "\e62b";
+}
+
+.oamap-icon_enlarge:before {
+  content: "\e62c";
+}
+

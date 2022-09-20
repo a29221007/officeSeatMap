@@ -1,0 +1,101 @@
+.shenZhenSeatStyle-PC{
+    // 东
+    .shenzhen-new-seat-east{
+        position: absolute;
+        z-index: 5;
+        display: flex;
+        flex-direction: row-reverse;
+        width: 18px;
+        height: 20px;
+        .desk{
+            width: 7px;
+            height: 20px;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            border-radius: 1px;
+        }
+        .chair{
+            position: relative;
+            top: 50%;
+            width: 11px;
+            height: 11px;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            transform:translateY(-50%) rotateZ(180deg);
+        }
+    }
+    // 南
+    .shenzhen-new-seat-south{
+        position: absolute;
+        z-index: 5;
+        display: flex;
+        flex-direction: column-reverse;
+        width: 20px;
+        height: 18px;
+        .desk{
+            width: 20px;
+            height: 7px;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            border-radius: 1px;
+        }
+        .chair{
+            position: relative;
+            left: 50%;
+            width: 11px;
+            height: 11px;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            transform:translateX(-50%) rotateZ(270deg);
+        }
+    }
+    // 西
+    .shenzhen-new-seat-west{
+        position: absolute;
+        z-index: 5;
+        display: flex;
+        width: 18px;
+        height: 20px;
+        .desk{
+            width: 7px;
+            height: 20px;
+            border-radius: 1px;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        .chair{
+            position: relative;
+            top: 50%;
+            width: 11px;
+            height: 11px;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            transform: translateY(-50%) rotateZ(0deg);
+        }
+    }
+    // 北
+    .shenzhen-new-seat-north{
+        position: absolute;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        height: 18px;
+        width: 20px;
+        .desk{
+            width: 20px;
+            height: 7px;
+            border-radius: 1px;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        .chair{
+            position: relative;
+            left: 50%;
+            width: 11px;
+            height: 11px;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            transform:translateX(-50%) rotateZ(90deg);
+        }
+    }
+}

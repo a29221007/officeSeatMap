@@ -1,6 +1,6 @@
 <template>
     <!-- 头部区域包括顶部的搜索栏以及图例区域 -->
-    <div ref="headerContainerRef" class="header-container">
+    <div class="header-container">
         <!-- 搜索栏 -->
         <div class="search">
             <div class="floor-switch">
@@ -219,7 +219,7 @@
 </template>
 
 <script>
-import {ref, reactive, toRefs, nextTick, onMounted, inject, onBeforeMount } from 'vue'
+import {ref, reactive, toRefs, nextTick, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { ElMessageBox,ElLoading } from 'element-plus'
 // 导入消息提示框组件
@@ -282,26 +282,6 @@ export default {
                 })
             })
         })
-        // 获取浏览器可视区宽高的依赖注入
-        const obj = inject('clent')
-        const headerContainerRef = ref(null)// 窗体发生变化时，用于防抖计时器id
-        let resizeTimer = null
-        // 组件挂载时
-        onMounted(() => {
-            /**
-             * 0.625和0.124是开发时，当前盒子的宽度和高度除以当前可视区宽度和高度，计算出来的比值
-             * 这样就实现了，简单的屏幕自适应，用户当前浏览器可视区的宽高乘以这个比例，就是合适的宽高
-            */
-            headerContainerRef.value.style.width = obj.width * 0.625 + 'px'
-            headerContainerRef.value.style.height = obj.height * 0.124 + 'px'
-            window.addEventListener('resize',function (e){
-                clearTimeout(resizeTimer)
-                resizeTimer = this.setTimeout(() => {
-                    headerContainerRef.value.style.width = e.target.innerWidth * 0.625 + 'px'
-                    headerContainerRef.value.style.height = e.target.innerHeight * 0.124 + 'px'
-                },300)
-            })
-        })
         // 监听兄弟组件Main发布的自定义事件from，将弹框显示
         emitter.on('form', data => {
             if(data){
@@ -333,6 +313,8 @@ export default {
             store.commit('setCurrentFloor',floor)
             // 将弹框关闭
             drawerData.is_show = false
+            let MapBox = document.querySelector('.map-box')
+            MapBox.style.transition = 'unset'
             // 切换楼层（或地区）时，将地图初始化
             initMap()
         }
@@ -493,9 +475,9 @@ export default {
         // 定义图例的数据和方法
         const legendData = reactive({
             legendList:[
-                {id:0,name:'员工',lable:'employees',type:'0',url:'/legend-image/image0.png'},
-                {id:1,name:'空闲',lable:'free',type:'0-1',url:'/legend-image/image1.png'},
-                {id:2,name:'占用',lable:'occupation',type:'0-2',url:'/legend-image/image2.png'},
+                {id:0,name:'员工',lable:'employees',type:'0',url:'/legend-image/yizi0.png'},
+                {id:1,name:'空闲',lable:'free',type:'0-1',url:'/legend-image/yizi0-1.png'},
+                {id:2,name:'占用',lable:'occupation',type:'0-2',url:'/legend-image/yizi0-2.png'},
                 {id:3,name:'会议室',lable:'meeting-room',type:1,url:'/legend-image/icon_meeting.png'},
             ],
             // 点击某一个图例触发的函数
@@ -503,6 +485,8 @@ export default {
                 store.commit('setCurrentLegend',type)
                 // 将弹框关闭
                 drawerData.is_show = false
+                let MapBox = document.querySelector('.map-box')
+                MapBox.style.transition = 'all 0.3s'
                 // 切换图例时，初始化地图
                 initMap()
             }
@@ -660,7 +644,6 @@ export default {
             ...toRefs(legendData),
             ...toRefs(drawerData),
             handleClickFloor,
-            headerContainerRef,
             Search,
             FixedAssetsRef,
             FixedAssetsUserName,
@@ -678,9 +661,8 @@ export default {
 
 <style lang="less" scoped>
 .header-container{
-    // width: 1200px; // 0.625
-    // height: 120px; // 0.124
-    margin: 0 auto;
+    width: 100%; // 0.625
+    height: 12.4%; // 0.124
     .search{
         width: 100%;
         height: 41.66666667%;
@@ -714,6 +696,11 @@ export default {
             align-items: center;
             cursor: pointer;
             transition: all 0.15s;
+            &:nth-child(-n + 3){
+                img{
+                    transform: rotateZ(90deg);
+                }
+            }
             img{
                 height: 32px;
                 width: 32px;

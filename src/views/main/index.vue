@@ -14,7 +14,7 @@
                 <template v-if="item.diff && item.diff === 2 && item.floor !== 7">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 由单个组成 -->
-                        <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
+                        <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="areaStyle(item,item.coordinate)">
                             <div class="title">
                                 <span>{{item.name === '前台' ? '' : item.name}}</span>
                                 <span>({{partTotaleObject[item.code]}})</span>
@@ -24,7 +24,7 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
                             <!-- 有多个组成 -->
-                            <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
+                            <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="areaStyle(item,item2)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span>{{item.name === '前台' ? '' : item.name}}</span>
                                     <span>({{partTotaleObject[item.code]}})</span>
@@ -37,7 +37,7 @@
                 <template v-if="item.diff && item.diff === 1">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 由单个矩形组成 -->
-                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)" v-on:click="handleClickMeetingRoom(item)">
+                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="areaStyle(item,item.coordinate)" v-on:click="handleClickMeetingRoom(item)">
                             <div class="title">
                                 <span class="name">{{item.name}}</span>
                                 <template v-if="item.floor == '3' || item.floor == '4'">
@@ -52,7 +52,7 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
                             <!-- 由多个矩形组成 -->
-                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)" v-on:click="handleClickMeetingRoom(item)">
+                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="areaStyle(item,item2)" v-on:click="handleClickMeetingRoom(item)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
                                     <template v-if="item.floor == '3' || item.floor == '4'">
@@ -68,7 +68,9 @@
                 </template>
                 <!-- 座位 -->
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
-                    <div class="seat" :id="item.seat_id" v-on:click="handleClickSeat(item,$event.target)" :style="seatItemStyle(item)" v-on:mouseenter="seatMouseenter(item,$event)" v-on:mouseleave="seatMouseleave">
+                    <div :class="newSeatClassFn(item)" :id="item.seat_id" :style="seatStyle(item)" v-on:click="handleClickSeat(item,$event.currentTarget)" v-on:mouseenter="seatMouseenter(item,$event.currentTarget)" v-on:mouseleave="seatMouseleave">
+                        <div class="desk" :style="seatDeskStyle(item)"></div>
+                        <div class="chair" :style="seatChairStyle(item)"></div>
                     </div>
                 </template>
             </template>
@@ -94,6 +96,7 @@ import scaleSeat from '@/utils/scaleSeat.js'
 import searchArea from '@/utils/searchArea.js'
 // 导入消息提示框组件
 import { successMessage, infoMessage, errorMessage } from '@/utils/message.js'
+import setTransform from '@/utils/newSeatTransform.js'
 export default {
     name:'Main',
     setup(){
@@ -109,8 +112,8 @@ export default {
         emitter.on('SearchSeat', (seat_id) => {
             currentSeat_id = seat_id
             beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
-            beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
-            beforeSeatAnimateElement = document.getElementById(seat_id)
+            beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = setTransform(beforeSeatAnimateElement,1))
+            beforeSeatAnimateElement = document.getElementById(seat_id) && document.getElementById(seat_id).lastElementChild
             // 将区域的高亮取消
             seatData.currentAreaCode = ''
             // 同步搜索变量
@@ -119,8 +122,6 @@ export default {
         })
         // 获取各分区的座位数
         const partTotaleObject = inject('partTotaleObject')
-        // 获取浏览器可视区宽高的依赖注入
-        const obj = inject('clent')
         const store = useStore()
         // 控制提示框的显示与隐藏
         const is_show_tooltip = ref(false)
@@ -136,12 +137,11 @@ export default {
 
         // 清除当前元素的动画定时器函数
         function clearCurrentElementInterval(){
-            // 1、获取当前的元素实例 DOM
-            let curentElement = document.getElementById(currentSeat_id)
+            let curentElement = document.getElementById(currentSeat_id) && document.getElementById(currentSeat_id).lastElementChild
             if(curentElement){
                 // 2、如果有 curentElement 这个DOM实例，则清除定时器
                 clearInterval(curentElement.timer)
-                curentElement.style.transform = `scale(1)`
+                curentElement.style.transform = setTransform(curentElement,1)
                 currentSeat_id = 0
             }
         }
@@ -182,87 +182,69 @@ export default {
             }),
             // 当前选中的区域
             currentAreaCode:'',
-            // 设置每一个座位的样式
-            seatItemStyle(seatItem) {
-                let styleObject = {}
-                if((seatItem.floor == '3' || seatItem.floor == '4') && seatItem.office == '1'){
-                    styleObject = {
-                        top:seatItem.gRow * 9.64 + 23 +'px',
-                        left:seatItem.gCol * 9.6 + 35 +'px',
-                    }
-                }else if(seatItem.floor == '7' && seatItem.office == '2'){
-                    styleObject = {
-                        top: (seatItem.gCol / 571) * 843 +'px',
-                        left: (seatItem.gRow / 1287)  * 930 +'px',
-                    }
+            // 设置每一个座位总的样式
+            seatStyle(seatItem) {
+                return {
+                    top: seatItem.gColNew +'px',
+                    left: seatItem.gRowNew +'px',
                 }
-                styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
-                return styleObject
             },
-            // 设置每一个区域的样式（单个区域）
-            oneAreaStyle(item){
-                let styleObject = {}
-                if((item.floor == '3' || item.floor == '4') && item.office == '1'){
-                    styleObject = {
-                        position: 'absolute',
-                        top:item.coordinate.top / 1612 * 843 + 'px',
-                        left:item.coordinate.left / 1777 * 930 + 'px',
-                        width:item.coordinate.width / 1777 * 930 + 'px',
-                        height: item.coordinate.height / 1612 * 843 + 'px',
-                        backgroundColor: item.backgroundcolor,
-                        color:'#646464',
-                        fontSize:'12px'
+            // 设置座位里面桌子的样式
+            seatDeskStyle(seatItem){
+                let deskstyle = null
+                // 判断是否为前台
+                if(seatItem.seat_id === '3A-Q-099' || seatItem.seat_id === '3A-Q-098' || seatItem.seat_id === '4A-Q-099' || seatItem.seat_id === '888') return {disPlay:'none'}
+                if(seatItem.toward === 'west' || seatItem.toward === 'east'){
+                    deskstyle = {
+                        backgroundImage:`url(/legend-image/desk-column${seatItem.type}.png)`
                     }
-                }else if(item.floor == '7' && item.office == '2'){
-                    styleObject = {
-                        position: 'absolute',
-                        top:item.coordinate.top / 571 * 843 + 'px',
-                        left:item.coordinate.left / 1287 * 930 + 'px',
-                        width:item.coordinate.width / 1287 * 930 + 'px',
-                        height: item.coordinate.height / 571 * 843 + 'px',
-                        backgroundColor: item.backgroundcolor,
-                        color:'#646464',
-                        fontSize:'12px'
+                }else{
+                    deskstyle = {
+                        backgroundImage:`url(/legend-image/desk-row${seatItem.type}.png)`
                     }
                 }
-                return styleObject
+                return deskstyle
             },
-            // 设置每一个区域的样式（多个区域）
-            multipleAreaStyle(item,item2,index){
-                let styleObject = {}
-                if((item.floor == '3' || item.floor == '4') && item.office == '1'){
-                    styleObject = {
-                        position: 'absolute',
-                        top:item2.top / 1612 * 843 + 'px',
-                        left:item2.left / 1777 * 930 + 'px',
-                        width:item2.width / 1777 * 930 + 'px',
-                        height: item2.height / 1612 * 843 + 'px',
-                        backgroundColor: item.backgroundcolor,
-                        color:'#646464',
-                        fontSize:'12px'
+            // 设置座位里面椅子的样式
+            seatChairStyle(seatItem){
+                let deskstyle = null
+                if(seatItem.toward === 'west' || seatItem.toward === 'east'){
+                    deskstyle = {
+                        backgroundImage:`url(/legend-image/yizi${seatItem.type}.png)`
                     }
-                }else if(item.floor == '7' && item.office == '2'){
-                    styleObject = {
-                        position: 'absolute',
-                        top:item2.top / 571 * 843 + 'px',
-                        left:item2.left / 1287 * 930 + 'px',
-                        width:item2.width / 1287 * 930 + 'px',
-                        height: item2.height / 571 * 843 + 'px',
-                        backgroundColor: item.backgroundcolor,
-                        color:'#646464',
-                        fontSize:'12px'
-                    }
-                    // 单独为深圳地区的 "其他" 区域，设置背景色
-                    if((item.code + index) === 'QY02020700310'){
-                        styleObject.backgroundColor = 'rgba(2, 122, 255, 0.05)'
+                }else{
+                    deskstyle = {
+                        backgroundImage:`url(/legend-image/yizi${seatItem.type}.png)`
                     }
                 }
-                return styleObject
+                // 判断是否为前台
+                if(seatItem.seat_id === '3A-Q-099' || seatItem.seat_id === '4A-Q-099'){
+                    deskstyle.transform = `rotate(45deg)`
+                }else if(seatItem.seat_id === '3A-Q-098'){
+                    deskstyle.transform = `rotate(90deg)`
+                }
+                return deskstyle
+            },
+            // 动态设置座位盒子的类名
+            newSeatClassFn(seatItem){
+                return `${seatItem.floor == '3' ? 'three' : seatItem.floor == '4' ? 'four' : 'shenzhen'}-new-seat-${seatItem.toward}`
+            },
+            // 设置每一个区域的样式
+            areaStyle(itemData,itemPosition){
+                return {
+                    position: 'absolute',
+                    top:itemPosition.top + 'px',
+                    left:itemPosition.left + 'px',
+                    width:itemPosition.width + 'px',
+                    height: itemPosition.height + 'px',
+                    backgroundColor: itemData.backgroundcolor,
+                    color:'#646464',
+                }
             },
             // 鼠标进入每一个座位的处理程序
-            seatMouseenter(seatItem,$event) {
-                tooltipRef.value.style.top = $event.target.offsetTop - 34 + 'px'
-                tooltipRef.value.style.left = $event.target.offsetLeft - 14 + 'px'
+            seatMouseenter(seatItem,element) {
+                tooltipRef.value.style.top = element.offsetTop - 28 + 'px'
+                tooltipRef.value.style.left = element.offsetLeft - 10 + 'px'
                 is_show_tooltip.value = true
                 tooltipText.value = seatItem.seat_id
             },
@@ -274,15 +256,25 @@ export default {
         })
         // MapBoxRef盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
-            // MapBoxRef盒子的行内样式暂时只有背景图片
-            return {
-                backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`,
+            let style = null
+            if(store.state.currentFloor === 'three' || store.state.currentFloor === 'four'){
+                style = {
+                    width: 1777 + 'px',
+                    height: 1612 + 'px'
+                }
+            }else {
+                style = {
+                    width: 1287 + 'px',
+                    height: 571 + 'px'
+                }
             }
+            style.backgroundImage= `url(/floor_image/1777_1612_${store.getters.floor}层.png)`
+            return style
         })
         // 当前的元素
         let currentElement = null
         // 鼠标点击每一个座位的事件处理函数
-        function handleClickSeat(seatItem,target){
+        function handleClickSeat(seatItem,element){
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
@@ -294,13 +286,13 @@ export default {
                 return emitter.emit('form','')
             }else{
                 beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
-                beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
-                beforeSeatAnimateElement = target
+                beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = setTransform(beforeSeatAnimateElement,1))
+                beforeSeatAnimateElement = element && element.lastElementChild
                 currentSeat_id = seatItem.seat_id
                 emitter.emit('form',seatItem)
             }
-            scaleSeat(target)
-            currentElement = target
+            scaleSeat(element)
+            currentElement = element && element.lastElementChild
             // 将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
             sacleX = 3
             sacleY = 3
@@ -338,16 +330,7 @@ export default {
         // 定义鼠标在地图内的坐标
         let x = null
         let y = null
-        // 窗体发生变化时，用于防抖计时器id
-        let resizeTimer = null
         onMounted(() => {
-            /**
-             * 0.625和0.872是开发时，当时的盒子的宽高除以当时浏览器可视区的宽高，计算出来的比例
-             * 这样就实现了，简单的屏幕自适应，用户当前浏览器可视区的宽高乘以这个比例，就是合适的宽高
-            */
-            // 手动设置MapContainerRef盒子的宽高
-            MapContainerRef.value.style.width = obj.width * 0.625 + 'px'
-            MapContainerRef.value.style.height = obj.height * 0.872 + 'px'
             // 监听鼠标在MapBoxRef盒子内的按压事件
             MapContainerRef.value.addEventListener('mousedown', mouseDown)
             // 监听鼠标的弹起事件，移除对鼠标移动事件的监听
@@ -356,49 +339,16 @@ export default {
             MapContainerRef.value.addEventListener('mousewheel',handleScale_chrome_ie)
             // firefox
             MapContainerRef.value.addEventListener("DOMMouseScroll",handleScale_firefox)
-            // 手动设置MapBoxRef盒子的缩放比例，根据父盒子的大小（1200 ，845）
-            // scalex: MapContainerRef盒子实际的宽度 / MapContainerRef原来的盒子宽度
-            // scaley: MapContainerRef盒子的实际高度 / MapContainerRef运来盒子的高度
-            let scalex = (obj.width * 0.625) / 1200
-            let scaley = (obj.height * 0.872) / 845
-            // 判断两个缩放系数的差值大小，如果两个比例差值的绝对值大于0.2，则将 scalex 和 scaley 值以最小的为准
-            if(Math.abs(scalex - scaley) > 0.2){
-                scalex = Math.min(scalex,scaley)
-                scaley = Math.min(scalex,scaley)
-            }
-            MapBoxRef.value.style.transform = `scale(${scalex},${scaley})`
-            store.commit('setScale',[scalex,scaley])
-            // 监听窗口变化
+            initMap()
             window.addEventListener('resize',function (e){
-                clearTimeout(resizeTimer)
-                resizeTimer = this.setTimeout(() => {
-                    // 手动设置MapContainerRef盒子的宽高
-                    MapContainerRef.value.style.width = e.target.innerWidth * 0.625 + 'px'
-                    MapContainerRef.value.style.height = e.target.innerHeight * 0.872 + 'px'
-                    // 手动设置MapBoxRef盒子的缩放比例，根据父盒子的大小（1200 ，845）
-                    // scalex: MapContainerRef盒子实际的宽度 / MapContainerRef原来的盒子宽度
-                    // scaley: MapContainerRef盒子的实际高度 / MapContainerRef运来盒子的高度
-                    let scalex = (e.target.innerWidth * 0.625) / 1200
-                    let scaley = (e.target.innerHeight * 0.872) / 845
-                    // 判断两个缩放系数的差值大小，如果两个比例差值的绝对值大于0.2，则将 scalex 和 scaley 值以最小的为准
-                    if(Math.abs(scalex - scaley) > 0.2){
-                        scalex = Math.min(scalex,scaley)
-                        scaley = Math.min(scalex,scaley)
-                    }
-                    
-                    MapBoxRef.value.style.top = 'unset'
-                    MapBoxRef.value.style.left = 'unset'
-                    MapBoxRef.value.style.transformOrigin = `50% 50%`
-                    MapBoxRef.value.style.transform = `scale(${scalex},${scaley})`
-                    if(currentElement){
-                        scaleSeat(currentElement)
-                    }else if(seatData.currentAreaCode){
-                        const { scaleX, scaleY } = searchArea(seatData.currentAreaCode)
-                        sacleX = scaleX
-                        sacleY = scaleY
-                    }
-                    store.commit('setScale',[scalex,scaley])
-                },300)
+                initMap('huifu')
+                if(currentElement){
+                    scaleSeat(currentElement.parentNode)
+                }else if(seatData.currentAreaCode){
+                    const { scaleX, scaleY } = searchArea(seatData.currentAreaCode)
+                    sacleX = scaleX
+                    sacleY = scaleY
+                }
             })
         })
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour,() => store.state.seatListOfShenZhen, () => store.state.areaListOfThree, () => store.state.areaListOfFour, () => store.state.areaListOfShenZhen],() => {
@@ -488,6 +438,7 @@ export default {
             // 将座位和区域高亮取消
             if(value) return // 如果value有值，则return出去，不取消高亮状态
             seatData.currentAreaCode = ''
+            clearCurrentElementInterval()
         })
         // 地图放大的
         function MapBoxAmplification (number){
@@ -536,10 +487,15 @@ export default {
 @import '../../style/StyleOfFloorShenZhen/Area/pc/index.less';
 @import '../../style/StyleOfFloorThree/Part/pc/index.less';
 @import '../../style/StyleOfFloorFour/Part/pc/index.less';
+@import '../../style/StyleOfFloorThree/seat/pc/index.less';
+@import '../../style/StyleOfFloorFour/seat/pc/index.less';
+@import '../../style/StyleOfFloorShenZhen/seat/pc/index.less';
+
 .map-container{
+    width: 100%;
+    flex: 1;
     position: relative;
     background-color: #f3f4f6;
-    margin: 0 auto;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -577,14 +533,11 @@ export default {
     }
     .map-box{
         position:absolute;
-        width: 930px;
-        height: 843px;
         background-size: 100% 100%;
         background-repeat: no-repeat;
         // 给盒子设置上一个过渡的默认值
         transition: all 1s;
         .part{
-            z-index: 2;
             .title{
                 color: rgba(0, 0, 0, 0.2);
             }
@@ -597,6 +550,12 @@ export default {
             background-repeat: no-repeat;
             z-index: 5;
         }
+        // 引用3层新座位的样式
+        .threeSeatStyle-PC;
+        // 引用4层新座位样式
+        .fourSeatStyle-PC;
+        // 引用深圳新座位样式
+        .shenZhenSeatStyle-PC;
         // 区域选中的高亮样式
         .active-area{
             background-color:rgba(255, 165, 0, 0.5)!important;
@@ -607,16 +566,10 @@ export default {
             top: 50%;
             transform: translate(-50%,-50%);
             text-align: center;
-            z-index: 2;
+            z-index: 5;
             span{
                 display: inline-block;
                 white-space:nowrap;
-            }
-            .name{
-                transform: scale(0.85,0.9);
-            }
-            .subtitle{
-                transform: scale(0.65,0.65);
             }
         }
         // 引用PC端3层区域的样式
