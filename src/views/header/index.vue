@@ -529,7 +529,7 @@ export default {
             },
             // 点击当前预约人，跳转到企业微信个人聊天窗口
             handleClickJumpWX(USERID){
-                if(!is_curentMeeting_active.value) return
+                if(!is_curentMeeting_active.value || (drawerData.currentInfo.current.is_wework_user !== 1)) return
                 const loading = ElLoading.service({
                     lock: true,
                     text: '跳转中请稍等',
