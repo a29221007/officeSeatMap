@@ -512,6 +512,7 @@ export default {
         // 给盒子设置上一个过渡的默认值
         transition: all 1s;
         .part{
+            z-index: -1;
             .title{
                 color: rgba(0, 0, 0, 0.2);
             }
