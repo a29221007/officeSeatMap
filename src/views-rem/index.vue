@@ -681,7 +681,7 @@ export default {
                         // 如果是扫二维码得到的连接，则截取连接中的 redirect_uri 字段值
                         let obj1 = formatURL(result)
                         let obj2 = formatURL(decodeURIComponent(obj1.redirect_uri + ''))
-                        // 如果走这个方法，则 关闭提示框函数调用在 这个 scanCodeFn 方法内
+                        // 如果走这个方法，则 关闭提示框函数调用在这个 scanCodeFn 方法内
                         scanCodeFn(obj2.id)
                     }else{
                         // 不是一个 url 路径
