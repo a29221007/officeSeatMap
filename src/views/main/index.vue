@@ -353,6 +353,7 @@ export default {
         })
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour,() => store.state.seatListOfShenZhen, () => store.state.areaListOfThree, () => store.state.areaListOfFour, () => store.state.areaListOfShenZhen],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.seatListOfShenZhen.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length && store.state.areaListOfShenZhen.length){
+                if(window.sessionStorage.getItem('uplode')) return
                 // 进入页面自动选中当前用户座位
                 let currentUserItem = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
                 if(currentUserItem){
@@ -374,6 +375,7 @@ export default {
                     // 没有找到的话用户座位的 scanCodeFn,则提示用户
                     infoMessage('没有找到您的座位，请与管理员联系')
                 }
+                window.sessionStorage.setItem('uplode', true)
             }
         })
         // 鼠标按下事件的处理程序

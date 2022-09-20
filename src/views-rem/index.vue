@@ -144,6 +144,8 @@ export default {
                     store.state.scanQRcode 这个数据只有扫码进入的时候才会有
                     如果用户点击图标进入地图，则根据当前用户的 usercode 找到 用户的座位以及座位的 scanQRcode
                 */
+                // 只有第一次扫码进入或者点击图标进入才会有自动定位的效果
+                if(window.sessionStorage.getItem('uplode')) return endToast()
                 if(store.state.scanQRcode){
                     // 进入项目如果有这个参数，则说明是扫码进入的，直接调用这个方法即可
                     scanCodeFn(store.state.scanQRcode)
@@ -160,6 +162,7 @@ export default {
                         return beginToast('fail','没有找到您的座位，请与管理员联系',2000)
                     }
                 }
+                window.sessionStorage.setItem('uplode', true)
             }
         })
         // 将扫码后跳转的逻辑封装
