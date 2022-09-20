@@ -798,6 +798,7 @@ export default {
             font-size: 14px;
         }
         .part{
+            z-index: -1;
             .title{
                 color: rgba(0, 0, 0, 0.2);
             }
