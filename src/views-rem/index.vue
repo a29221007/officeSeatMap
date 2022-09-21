@@ -798,7 +798,7 @@ export default {
             font-size: 14px;
         }
         .part{
-            z-index: -1;
+            z-index: 2;
             .title{
                 color: rgba(0, 0, 0, 0.2);
             }
@@ -819,7 +819,7 @@ export default {
             top: 50%;
             transform: translate(-50%,-50%);
             text-align: center;
-            z-index: 2;
+            z-index: 5;
             span{
                 display: inline-block;
                 white-space:nowrap;
