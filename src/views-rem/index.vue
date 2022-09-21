@@ -129,20 +129,44 @@ export default {
         let a = true
 
 
-        watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
-            if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
+        watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour,() => store.state.seatListOfShenZhen, () => store.state.areaListOfThree, () => store.state.areaListOfFour, () => store.state.areaListOfShenZhen],() => {
+            if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.seatListOfShenZhen.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length && store.state.areaListOfShenZhen.length){
                 // let requestSearchObj = store.state.scanQRcodeObject
-                scanCodeFn(store.state.scanQRcode)
                 // 判断当前用户的操作权限(暂时编辑按钮也隐藏起来了，暂时这个接口先不调了)
                 // sendCode(requestSearchObj.code).then((res) => {
-                //     console.log(res)
+                    //     console.log(res)
                 //     if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
                 //     store.commit('setIs_have_editor',res.data.u)
                 // })
+
+                /*
+                    页面的DOM全部加载完毕，数据加载完毕后才执行
+                    store.state.scanQRcode 这个数据只有扫码进入的时候才会有
+                    如果用户点击图标进入地图，则根据当前用户的 usercode 找到 用户的座位以及座位的 scanQRcode
+                */
+                // 只有第一次扫码进入或者点击图标进入才会有自动定位的效果
+                if(window.sessionStorage.getItem('uplode')) return endToast()
+                if(store.state.scanQRcode){
+                    // 进入项目如果有这个参数，则说明是扫码进入的，直接调用这个方法即可
+                    scanCodeFn(store.state.scanQRcode)
+                }else {
+                    // 如果没有这个参数，则说明是正常点击图标进入的，得根据当前用户的usercode找到座位的 scanQRcode
+                    let scanQRcode = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
+                    if(scanQRcode){
+                        // 如果找到了当前用户座位的scanQRcode，则调用 scanCodeFn 函数
+                        // 传递第二个参数，是为了区分是否为扫码进入，传递 "notSweepCode" 参数，意思就是当前调用函数不是通过扫码进入的
+                        scanCodeFn(scanQRcode.qr_code,'notSweepCode')
+                    }else{
+                        // 没有找到的话用户座位的 scanCodeFn,则提示用户
+                        endToast()
+                        return beginToast('fail','没有找到您的座位，请与管理员联系',2000)
+                    }
+                }
+                window.sessionStorage.setItem('uplode', true)
             }
         })
         // 将扫码后跳转的逻辑封装
-        function scanCodeFn(scanQRcode){
+        function scanCodeFn(scanQRcode,intoWay){
             // 判断有没有 scanQRcode 这个参数
             if(!scanQRcode) return endToast() // 如果没有这个参数，则直接停止 toast 提示
             // 如果有这个 scanQRcode 这个参数，则根据这个字段查找对应项
@@ -184,11 +208,13 @@ export default {
                     store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id,v_usercode:store.state.UserInfo.usercode }).then(() => {
                         if(store.state.is_have_ckeck_persontFixedAssets) {
                             // 通过扫码进入北京办公区域则显示公共联系人，其他的不显示
-                            if(item.office == '1'){
+                            if(item.office == '1' && !intoWay){
                                 store.commit('setIs_show_public_contact_person',true)
                             }
-                            // 跳转到固资信息页面
-                            router.push('/fixedAssets')
+                            if(!intoWay){
+                                // 只有通过扫码进入的时候跳转到固资信息页面
+                                router.push('/fixedAssets')
+                            }
                         }
                     })
                 }else if(item.type === 1){

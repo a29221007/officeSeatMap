@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import {ref,computed,onMounted,onBeforeUnmount, reactive, toRefs, inject} from 'vue'
+import {ref,computed,onMounted,onBeforeUnmount, reactive, toRefs, inject, watch, nextTick} from 'vue'
 import { useStore } from 'vuex'
 // 导入获取鼠标在盒子内的坐标函数
 import getMouseX_Y from '@/utils/getmouseX_Y.js'
@@ -92,9 +92,10 @@ import initMap from '@/utils/initMap.js'
 
 // 导入座位高亮的逻辑
 import scaleSeat from '@/utils/scaleSeat.js'
-
 // 导入区域高亮的逻辑
 import searchArea from '@/utils/searchArea.js'
+// 导入消息提示框组件
+import { successMessage, infoMessage, errorMessage } from '@/utils/message.js'
 import setTransform from '@/utils/newSeatTransform.js'
 export default {
     name:'Main',
@@ -349,6 +350,33 @@ export default {
                     sacleY = scaleY
                 }
             })
+        })
+        watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour,() => store.state.seatListOfShenZhen, () => store.state.areaListOfThree, () => store.state.areaListOfFour, () => store.state.areaListOfShenZhen],() => {
+            if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.seatListOfShenZhen.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length && store.state.areaListOfShenZhen.length){
+                if(window.sessionStorage.getItem('uplode')) return
+                // 进入页面自动选中当前用户座位
+                let currentUserItem = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
+                if(currentUserItem){
+                    // 设置楼层
+                    let floor = ''
+                    if(currentUserItem.floor == '3' && currentUserItem.office == '1'){
+                        floor = 'three'
+                    }else if(currentUserItem.floor == '4' && currentUserItem.office == '1'){
+                        floor = 'four'
+                    }else if(currentUserItem.floor == '7' && currentUserItem.office == '2'){
+                        floor = 'shenzhen'
+                    }
+                    store.commit('setCurrentFloor',floor)
+                    nextTick(() => {
+                        // 如果找到了当前用户座位的 currentUserItem，则调用 handleClickSeat 函数
+                        handleClickSeat(currentUserItem,document.getElementById(currentUserItem.seat_id))
+                    })
+                }else{
+                    // 没有找到的话用户座位的 scanCodeFn,则提示用户
+                    infoMessage('没有找到您的座位，请与管理员联系')
+                }
+                window.sessionStorage.setItem('uplode', true)
+            }
         })
         // 鼠标按下事件的处理程序
         function mouseDown(e) {

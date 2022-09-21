@@ -2,7 +2,7 @@
 // 参数为当前选中的 DOM 元素
 import setTransform from '@/utils/newSeatTransform.js'
 function seatZoom(seat){
-    // 首先将当前座位的缩放设置为1transform:scale(3);
+    // 首先将当前座位的缩放设置为1
     seat.style.transform = setTransform(seat,1)
     // 初始化缩放变量
     let scaleNum = 1

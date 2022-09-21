@@ -49,8 +49,10 @@ export default{
                 store.commit('setUserInfo',res.data)
                 // 判断是否有 id 这个参数
                 if(searchObj.id){
+                    // 如果有这个字段，则说明是扫码进入的
                     store.commit('setScanQRcode',searchObj.id)
                 }else{
+                    // 没有的话则是正常登录
                     let floor = ''
                     if(res.data.floor == '3' && res.data.location == '1'){
                         floor = 'three'
