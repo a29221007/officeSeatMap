@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import {ref,computed,onMounted,onBeforeUnmount, reactive, toRefs, inject, watch, nextTick} from 'vue'
+import {ref,computed,onMounted,onBeforeUnmount,onBeforeMount, reactive, toRefs, inject, watch, nextTick} from 'vue'
 import { useStore } from 'vuex'
 // 导入获取鼠标在盒子内的坐标函数
 import getMouseX_Y from '@/utils/getmouseX_Y.js'
@@ -97,9 +97,14 @@ import searchArea from '@/utils/searchArea.js'
 // 导入消息提示框组件
 import { successMessage, infoMessage, errorMessage } from '@/utils/message.js'
 import setTransform from '@/utils/newSeatTransform.js'
+import { beginLoading, endLoading } from '../loading.js'
 export default {
     name:'Main',
     setup(){
+        // 
+        onBeforeMount(() => {
+            beginLoading()
+        })
         // 监听搜索区域高亮事件
         emitter.on('activeArea',({code, scaleX, scaleY}) => {
             // 触发了区域高亮事件时，将座位的动画停止
@@ -143,6 +148,7 @@ export default {
                 clearInterval(curentElement.timer)
                 curentElement.style.transform = setTransform(curentElement,1)
                 currentSeat_id = 0
+                currentElement = null
             }
         }
         // 当前地图的信息（包括人员、座位、区域、会议室等）
@@ -340,20 +346,34 @@ export default {
             // firefox
             MapContainerRef.value.addEventListener("DOMMouseScroll",handleScale_firefox)
             initMap()
-            window.addEventListener('resize',function (e){
-                initMap('huifu')
-                if(currentElement){
-                    scaleSeat(currentElement.parentNode)
-                }else if(seatData.currentAreaCode){
-                    const { scaleX, scaleY } = searchArea(seatData.currentAreaCode)
-                    sacleX = scaleX
-                    sacleY = scaleY
-                }
+            
+            window.addEventListener('resize',function (){
+                setTimeout(() => {
+                    let MapBox = document.querySelector('.map-box')
+                    let MapContainer = document.querySelector('.map-container')
+                    // 初始的缩放比例,将地图上下平铺开
+                    let scale = MapContainer.offsetHeight / parseInt(MapBox.style.height)
+                    store.commit('setScale',[scale,scale])
+                    // 切换楼层后将地图的的缩放比例调整1，放到正中心
+                    MapBox.style.top = 'unset'
+                    MapBox.style.left = 'unset'
+                    MapBox.style.transformOrigin = `50% 50%`
+                    MapBox.style.transform = `scale(${scale},${scale})`
+                    sacleX = scale
+                    sacleY = scale
+                    if(currentElement){
+                        scaleSeat(currentElement.parentNode)
+                    }else if(seatData.currentAreaCode){
+                        const { scaleX, scaleY } = searchArea(seatData.currentAreaCode)
+                        sacleX = scaleX
+                        sacleY = scaleY
+                    }
+                },300)
             })
         })
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour,() => store.state.seatListOfShenZhen, () => store.state.areaListOfThree, () => store.state.areaListOfFour, () => store.state.areaListOfShenZhen],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.seatListOfShenZhen.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length && store.state.areaListOfShenZhen.length){
-                if(window.sessionStorage.getItem('uplode')) return
+                if(window.sessionStorage.getItem('uplode')) return endLoading()
                 // 进入页面自动选中当前用户座位
                 let currentUserItem = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
                 if(currentUserItem){
@@ -370,8 +390,10 @@ export default {
                     nextTick(() => {
                         // 如果找到了当前用户座位的 currentUserItem，则调用 handleClickSeat 函数
                         handleClickSeat(currentUserItem,document.getElementById(currentUserItem.seat_id))
+                        endLoading()
                     })
                 }else{
+                    endLoading()
                     // 没有找到的话用户座位的 scanCodeFn,则提示用户
                     infoMessage('没有找到您的座位，请与管理员联系')
                 }
