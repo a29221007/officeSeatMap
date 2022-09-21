@@ -234,30 +234,19 @@ export default {
                 const { appId, timestamp, nonceStr, signature } = res.data
                 return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage','onMenuShareWechat','onMenuShareTimeline']})
             }).then(() => {
+                console.log(typeof store.state.activeInfo)
                 const share = {
-                    title:'',
-                    desc:'',
-                    link:'',
+                    title:'龙图办公区地图',
+                    desc:'快速定位工位与资产信息',
+                    // link:'http://maptest.longtubas.com?openMode=share&qr_code=' + store.state.activeInfo !== 'null' ? (store.state.activeInfo.qr_code ? store.state.activeInfo.qr_code : 'null' ) : 'null',
                     imgUrl:'https://photo.16pic.com/00/45/79/16pic_4579388_b.jpg'
                 }
-                // 企业微信点击转发后自定义内容接口
-                wx.onMenuShareAppMessage({
-                    title: '测试标题-转发', // 分享标题
-                    desc: '测试描述', // 分享描述
-                    link: 'http://maptest.longtubas.com', // 分享链接；在微信上分享时，该链接的域名必须与企业某个应用的可信域名一致
-                    imgUrl: 'https://photo.16pic.com/00/45/79/16pic_4579388_b.jpg', // 分享图标
-                });
-                wx.onMenuShareWechat({
-                    title: '测试标题-微信', // 分享标题
-                    desc: '测试描述', // 分享描述
-                    link: 'http://maptest.longtubas.com', // 分享链接；在微信上分享时，该链接的域名必须与企业某个应用的可信域名一致
-                    imgUrl: 'https://photo.16pic.com/00/45/79/16pic_4579388_b.jpg', // 分享图标
-                });
-                wx.onMenuShareTimeline({
-                    title: '测试标题-朋友圈', // 分享标题
-                    link: 'http://maptest.longtubas.com', // 分享链接；在微信上分享时，该链接的域名必须与企业某个应用的可信域名一致
-                    imgUrl: 'https://photo.16pic.com/00/45/79/16pic_4579388_b.jpg', // 分享图
-                });
+                // 转发
+                wx.onMenuShareAppMessage(share)
+                // 微信
+                wx.onMenuShareWechat(share)
+                // 朋友圈
+                wx.onMenuShareTimeline(share)
             })
         })
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
@@ -659,6 +648,7 @@ export default {
                     endToast()
                     return beginToast('fail', res.message, 2000)
                 }
+                console.log('res.data',res.data)
                 res.data.code = code
                 res.data.type = 1
                 res.data.HistoryList = sortMeetingList(res.data.HistoryList)
