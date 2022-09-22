@@ -7,13 +7,26 @@ stages:
 dev job:
   stage: deploy
   script:
-    - echo "new_oa_map_dev-rem"
-    - git checkout dev-rem
+    - echo "office_map_tb_dev_152"
+    - git checkout develop
     - git pull
-    - npm install && CI=false npm run build
-    - npm prune --production
-    - rsync -rvz --no-owner --no-group --no-perms --progress --exclude=".*" --delete $CI_PROJECT_DIR/ /data/new_oa_map
+    - npm config set registry https://registry.npm.taobao.org
+    - npm install && CI=false npm run develop
+    - rsync -rvz --no-owner --no-group --no-perms --progress --exclude=".*" --delete $CI_PROJECT_DIR/ /data/office_map_tb
   only:
-    - dev-rem
+    - develop
   tags:
-    - "new_oa_map_dev"
+    - "office_map_tb_dev_152"
+main job:
+  stage: deploy
+  script:
+    - echo "office_map_tb_main"
+    - git checkout main
+    - git pull
+    - npm config set registry https://registry.npm.taobao.org
+    - npm install && CI=false npm run build
+    - rsync -rvz --no-owner --no-group --no-perms --progress --exclude=".*" --delete $CI_PROJECT_DIR/ /data/map/office_map_tb
+  only:
+    - main
+  tags:
+    - "office_map_tb_main"
