@@ -1,6 +1,8 @@
 <template>
-    <Header />
-    <Main />
+    <div class="layout">
+        <Header />
+        <Main />
+    </div>
 </template>
 
 <script>
@@ -14,3 +16,13 @@ export default {
     }
 }
 </script>
+
+<style lang="less" scoped>
+.layout{
+    width: 62.5%;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+</style>

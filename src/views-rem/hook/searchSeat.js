@@ -12,7 +12,7 @@ import Animate from './bottomBoxTranstion'
 import seatZoom from './seatAnimate'
 function searchSeat(seat_id){
     let $event = document.getElementById(seat_id)
-    seatZoom($event)
+    seatZoom($event && $event.lastElementChild)
     // 获取地图以及地图容器的DOM元素
     let MapBoxRef = document.querySelector('.map-box')
     let BodyContainerRef = document.querySelector('.body-container')
@@ -34,7 +34,7 @@ function searchSeat(seat_id){
     MapBoxRef.style.transformOrigin = `${$event.offsetLeft}px ${$event.offsetTop}px`
     MapBoxRef.style.transition = `transform 0.5s`
     setTimeout(() => {
-        MapBoxRef.style.transform = `scale(4,4)`
+        MapBoxRef.style.transform = `scale(2,2)`
     },30)
     roll()
 }

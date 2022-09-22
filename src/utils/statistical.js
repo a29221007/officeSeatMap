@@ -336,30 +336,31 @@ function statistical(areaList, seatList, floor){
             let partAndDepart_min_Y = partAndDepartItem.coordinate.top
             // 有效范围的Y终点
             let partAndDepart_max_Y = partAndDepartItem.coordinate.top + partAndDepartItem.coordinate.height
-
             // 计算当前座位的起点
-            // 座位的x
             let seat_x = null
             // 座位的y
             let seat_y = null
             // 分情况判断地区楼层
             if(floor === 3 || floor === 4){
-                // X起点换算
-                partAndDepart_min_X = partAndDepart_min_X / 1777 * 930
-                // X终点换算
-                partAndDepart_max_X = partAndDepart_max_X / 1777 * 930
-                // Y起点换算
-                partAndDepart_min_Y = partAndDepart_min_Y / 1612 * 843
-                // Y终点换算
-                partAndDepart_max_Y = partAndDepart_max_Y / 1612 * 843
-
-                // 座位X坐标换算
-                seat_x = seatItem.gCol * 9.6 + 35
-                // 座位Y坐标换算
-                seat_y = seatItem.gRow * 9.64 + 23
+                if(seatItem.toward === 'west' || seatItem.toward === 'east'){ // 东西方向
+                    seat_x = Number(seatItem.gRowNew) + 10.5
+                    // 座位Y坐标换算
+                    seat_y = Number(seatItem.gColNew) + 11.5
+                }else{ // 南北方向
+                    seat_x = Number(seatItem.gRowNew) + 11.5
+                    // 座位Y坐标换算
+                    seat_y = Number(seatItem.gColNew) + 10.5
+                }
             }else if(floor === 7){
-                seat_x = seatItem.gRow
-                seat_y = seatItem.gCol
+                if(seatItem.toward === 'west' || seatItem.toward === 'east'){ // 东西方向
+                    seat_x = Number(seatItem.gRowNew) + 9
+                    // 座位Y坐标换算
+                    seat_y = Number(seatItem.gColNew) + 10
+                }else{ // 南北方向
+                    seat_x = Number(seatItem.gRowNew) + 10
+                    // 座位Y坐标换算
+                    seat_y = Number(seatItem.gColNew) + 9
+                }
             }
             // 判断条件：判断座位的起点在有效范围区间内
             const flag_x = (seat_x >= partAndDepart_min_X) && (seat_x < partAndDepart_max_X)

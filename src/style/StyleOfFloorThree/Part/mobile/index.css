@@ -6,142 +6,97 @@
   white-space: nowrap;
 }
 .threePartStyle-mobile #part1 .title {
-  top: unset;
-  bottom: -0.3763rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 10%;
 }
 .threePartStyle-mobile #part2 .title {
-  top: unset;
-  bottom: 0.7527rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 42%;
 }
 .threePartStyle-mobile #part3 .title {
-  width: 0.4301rem;
-  left: unset;
-  right: 1.129rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  left: 35%;
+  display: flex;
+  flex-direction: column;
 }
 .threePartStyle-mobile #part4 .title {
-  width: 0.4301rem;
-  left: 0.9677rem;
-  right: unset;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.threePartStyle-mobile #part5 {
-  white-space: nowrap;
+  top: 40%;
+  left: 27%;
+  display: flex;
+  flex-direction: column;
 }
 .threePartStyle-mobile #part5 .title {
-  top: unset;
-  bottom: 0.6452rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 42%;
 }
 .threePartStyle-mobile #part6 .title {
-  top: 1.0215rem;
-  bottom: unset;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.threePartStyle-mobile #part71 {
-  white-space: nowrap;
+  top: unset;
+  bottom: -10%;
+  display: flex;
+  flex-direction: column;
 }
 .threePartStyle-mobile #part71 .title {
-  top: 0.129rem;
-  bottom: unset;
-  left: 0.1613rem;
-  right: unset;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 10%;
+  left: 24%;
 }
 .threePartStyle-mobile #part8 .title {
-  top: unset;
-  bottom: 0.5376rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.threePartStyle-mobile #part9 {
-  white-space: nowrap;
+  left: unset;
+  right: -3%;
+  top: 55%;
+  display: flex;
+  flex-direction: column;
 }
 .threePartStyle-mobile #part9 .title {
-  top: unset;
-  bottom: 0.3763rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 55%;
 }
 .threePartStyle-mobile #part10 .title {
-  left: 1.1828rem;
-  right: unset;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.threePartStyle-mobile #part11 {
-  white-space: nowrap;
+  top: 60%;
+  left: 48.5%;
+  display: flex;
+  flex-direction: column;
 }
 .threePartStyle-mobile #part11 .title {
-  top: unset;
-  bottom: 1.3441rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.threePartStyle-mobile #part12 {
-  white-space: nowrap;
+  top: 41%;
+  left: 50.5%;
+  display: flex;
+  flex-direction: column;
 }
 .threePartStyle-mobile #part12 .title {
-  top: unset;
-  bottom: -0.3763rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  left: 50.5%;
+  display: flex;
+  flex-direction: column;
 }
 .threePartStyle-mobile #part13 .title {
-  width: 0.4301rem;
-  top: 0.1183rem;
-  bottom: unset;
-  left: 0.1828rem;
-  right: unset;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.threePartStyle-mobile #part14 {
-  white-space: nowrap;
+  left: 33%;
+  display: flex;
+  flex-direction: column;
 }
 .threePartStyle-mobile #part14 .title {
-  top: 0.7742rem;
-  bottom: unset;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 56%;
 }
 .threePartStyle-mobile #part15 .title {
-  width: 0.4301rem;
-  left: unset;
-  right: -0.3548rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: unset;
+  bottom: -6%;
 }
 .threePartStyle-mobile #part16 .title {
-  width: 0.4301rem;
   top: unset;
-  bottom: -0.5161rem;
-  left: unset;
-  right: 0.3763rem;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  bottom: 5%;
 }
 .threePartStyle-mobile #part170 .title {
-  width: 0.4301rem;
   left: 53%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.threePartStyle-mobile #part18 {
-  white-space: nowrap;
 }
 .threePartStyle-mobile #part18 .title {
   top: 20%;
   left: 55%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
-}
-.threePartStyle-mobile #part19 {
-  white-space: nowrap;
 }
 .threePartStyle-mobile #part19 .title {
-  top: 5%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  top: 30%;
+  left: 44%;
+  display: flex;
+  flex-direction: column;
 }
 .threePartStyle-mobile #part20 .title {
   top: unset;
-  bottom: -90%;
-  left: 23%;
-  transform: translate(-50%, -50%) scale(0.6, 0.6);
+  bottom: 0%;
+  left: 60%;
 }
 .threePartStyle-mobile #part40 .title {
-  top: 83%;
-  left: 100%;
-  transform: translate(-50%, -50%) scale(0.55, 0.55);
+  top: 73%;
+  left: 80%;
 }

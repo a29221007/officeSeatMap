@@ -8,15 +8,15 @@
                 <template v-if="item.diff && item.diff === 2 && item.floor !== 7">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 由单个组成 -->
-                        <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="oneAreaStyle(item)">
-                            <div class="title">{{item.name === '前台' ? '' : item.name}}({{partTotaleObject[item.code]}})</div>
+                        <div :id="'part' + item.id" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="areaStyle(item,item.coordinate)">
+                            <div class="title"><span>{{item.name === '前台' ? '' : item.name}}</span><span>({{partTotaleObject[item.code]}})</span></div>
                         </div>
                     </template>
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item.id + index">
                             <!-- 有多个组成 -->
-                            <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="multipleAreaStyle(item,item2,index)">
-                                <div class="title" v-if="item2.show_area_name">{{item.name === '前台' ? '' : item.name}}({{partTotaleObject[item.code]}})</div>
+                            <div :id="'part' + item.id + index" :class="['part',item.code,{'active-area':currentAreaCode.includes(item.code)}]" :style="areaStyle(item,item2)">
+                                <div class="title" v-if="item2.show_area_name"><span>{{item.name === '前台' ? '' : item.name}}</span><span>({{partTotaleObject[item.code]}})</span></div>
                             </div>
                         </template>
                     </template>
@@ -25,7 +25,7 @@
                 <template v-if="item.diff && item.diff === 1">
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Object]'">
                         <!-- 区域 -->
-                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)},'area']" :style="oneAreaStyle(item)" v-on:click="handleClickMeetingRoom(item,$event)">
+                        <div :id="item.code + item.id" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)},'area']" :style="areaStyle(item,item.coordinate)" v-on:click="handleClickMeetingRoom(item,$event)">
                             <div class="title">
                                 <span class="name">{{item.name}}</span>
                                 <template v-if="item.floor == '3' || item.floor == '4'">
@@ -40,7 +40,7 @@
                     <template v-if="Object.prototype.toString.call(item.coordinate) === '[object Array]'">
                         <template v-for="(item2,index) in item.coordinate" :key="item2.id">
                             <!-- 区域 -->
-                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)},'area']" :style="multipleAreaStyle(item,item2,index)" v-on:click="handleClickMeetingRoom(item,$event)">
+                            <div :id="item.code + index" :class="[item.code,{'active-area':currentAreaCode.includes(item.code)},'area']" :style="areaStyle(item,item2)" v-on:click="handleClickMeetingRoom(item,$event)">
                                 <div class="title" v-if="item2.show_area_name">
                                     <span class="name">{{item.name}}</span>
                                     <template v-if="item.floor == '3' || item.floor == '4'">
@@ -55,8 +55,9 @@
                     </template>
                 </template>
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
-                    <!-- 座位 -->
-                    <div class="seat" v-on:click="handleClickSeat(item,$event)" :id="item.seat_id" :style="seatItemStyle(item)">
+                    <div :class="newSeatClassFn(item)" :id="item.seat_id" :style="seatStyle(item)" v-on:click="handleClickSeat(item,$event)">
+                        <div class="desk" :style="seatDeskStyle(item)"></div>
+                        <div class="chair" :style="seatChairStyle(item)"></div>
                     </div>
                 </template>
             </template>
@@ -82,6 +83,7 @@ import Scan from './compontent/scan'
 import { sendCode } from '@/api/mobile.js'
 // 座位设置高亮的公共方法
 import searchSeat from './hook/searchSeat'
+import setTransform from '@/utils/newSeatTransform.js'
 // 区域设置高亮的公共方法
 import searchArea from '@/views-rem/hook/searchArea.js'
 import { beginToast, endToast } from '@/views-rem/hook/toast.js'
@@ -98,7 +100,6 @@ import sortMeetingList from '@/views-rem/hook/sortArray.js'
 import { getQrConfig } from '@/api/jumpWX.js'
 // 导入根据条形码获取固资信息的api
 import { getAssetInfoByQR } from '@/api/getAssetInfo.js'
-import image from '../../public/legend-image/icon_meeting.png'
 export default {
     name:'MHome',
     components:{
@@ -128,20 +129,44 @@ export default {
         let a = true
 
 
-        watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour, () => store.state.areaListOfThree, () => store.state.areaListOfFour],() => {
-            if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length){
+        watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour,() => store.state.seatListOfShenZhen, () => store.state.areaListOfThree, () => store.state.areaListOfFour, () => store.state.areaListOfShenZhen],() => {
+            if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.seatListOfShenZhen.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length && store.state.areaListOfShenZhen.length){
                 // let requestSearchObj = store.state.scanQRcodeObject
-                scanCodeFn(store.state.scanQRcode)
                 // 判断当前用户的操作权限(暂时编辑按钮也隐藏起来了，暂时这个接口先不调了)
                 // sendCode(requestSearchObj.code).then((res) => {
-                //     console.log(res)
+                    //     console.log(res)
                 //     if(res.err !== 0) return beginToast('fail','获取用户权限配置失败',2000)
                 //     store.commit('setIs_have_editor',res.data.u)
                 // })
+
+                /*
+                    页面的DOM全部加载完毕，数据加载完毕后才执行
+                    store.state.scanQRcode 这个数据只有扫码进入的时候才会有
+                    如果用户点击图标进入地图，则根据当前用户的 usercode 找到 用户的座位以及座位的 scanQRcode
+                */
+                // 只有第一次扫码进入或者点击图标进入才会有自动定位的效果
+                if(window.sessionStorage.getItem('uplode')) return endToast()
+                if(store.state.scanQRcode){
+                    // 进入项目如果有这个参数，则说明是扫码进入的，直接调用这个方法即可
+                    scanCodeFn(store.state.scanQRcode)
+                }else {
+                    // 如果没有这个参数，则说明是正常点击图标进入的，得根据当前用户的usercode找到座位的 scanQRcode
+                    let scanQRcode = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
+                    if(scanQRcode){
+                        // 如果找到了当前用户座位的scanQRcode，则调用 scanCodeFn 函数
+                        // 传递第二个参数，是为了区分是否为扫码进入，传递 "notSweepCode" 参数，意思就是当前调用函数不是通过扫码进入的
+                        scanCodeFn(scanQRcode.qr_code,'notSweepCode')
+                    }else{
+                        // 没有找到的话用户座位的 scanCodeFn,则提示用户
+                        endToast()
+                        return beginToast('fail','没有找到您的座位，请与管理员联系',2000)
+                    }
+                }
+                window.sessionStorage.setItem('uplode', true)
             }
         })
         // 将扫码后跳转的逻辑封装
-        function scanCodeFn(scanQRcode){
+        function scanCodeFn(scanQRcode,intoWay){
             // 判断有没有 scanQRcode 这个参数
             if(!scanQRcode) return endToast() // 如果没有这个参数，则直接停止 toast 提示
             // 如果有这个 scanQRcode 这个参数，则根据这个字段查找对应项
@@ -169,7 +194,7 @@ export default {
                     store.commit('setActiveInfo',item)
                     // 每一次扫码之前确定上一次有没有高亮做动画的元素
                     beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
-                    beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
+                    beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = setTransform(beforeSeatAnimateElement,1))
                     // 如果为座位
                     seatData.setCurrentSeat_id(item.seat_id)
                     // 点击座位要将底部盒子升上来
@@ -183,11 +208,13 @@ export default {
                     store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id,v_usercode:store.state.UserInfo.usercode }).then(() => {
                         if(store.state.is_have_ckeck_persontFixedAssets) {
                             // 通过扫码进入北京办公区域则显示公共联系人，其他的不显示
-                            if(item.office == '1'){
+                            if(item.office == '1' && !intoWay){
                                 store.commit('setIs_show_public_contact_person',true)
                             }
-                            // 跳转到固资信息页面
-                            router.push('/fixedAssets')
+                            if(!intoWay){
+                                // 只有通过扫码进入的时候跳转到固资信息页面
+                                router.push('/fixedAssets')
+                            }
                         }
                     })
                 }else if(item.type === 1){
@@ -240,10 +267,20 @@ export default {
         })
         // MapBox 盒子的行内样式设置为计算属性
         const MapBoxStyle = computed(() => {
-            // MapBoxRef盒子的行内样式暂时只有背景图片
-            return {
-                backgroundImage: `url(/floor_image/1777_1612_${store.getters.floor}层.png)`
+            let style = null
+            if(store.state.currentFloor === 'three' || store.state.currentFloor === 'four'){
+                style = {
+                    width: 1777 + 'px',
+                    height: 1612 + 'px'
+                }
+            }else {
+                style = {
+                    width: 1287 + 'px',
+                    height: 571 + 'px'
+                }
             }
+            style.backgroundImage= `url(/floor_image/1777_1612_${store.getters.floor}层.png)`
+            return style
         })
         
         // 点击地图盒子触发的函数
@@ -317,8 +354,8 @@ export default {
         }
         // MapBox盒子双击事件的处理函数
         function MapBoxDoubleTapFn() {
-            scale_init_x += 2
-            scale_init_y += 2
+            scale_init_x += 1
+            scale_init_y += 1
             MapBoxScaleFn(0.3)
         }
         // 触发 pinch 事件时首次 zoom 的值
@@ -332,8 +369,8 @@ export default {
             if(pinchCount === 1){
                 firstZoomValue = e.zoom
             }else{
-                scale_init_x += (e.zoom - firstZoomValue) * 2
-                scale_init_y += (e.zoom - firstZoomValue) * 2
+                scale_init_x += (e.zoom - firstZoomValue) * 1.1
+                scale_init_y += (e.zoom - firstZoomValue) * 1.1
                 firstZoomValue = e.zoom
                 MapBoxScaleFn(0.5)
             }
@@ -359,9 +396,9 @@ export default {
         }
         //  MapBox盒子缩放的函数
         function MapBoxScaleFn(timer){
-            if(scale_init_x < 0.75) {
-                scale_init_x = 0.75
-                scale_init_y = 0.75
+            if(scale_init_x < 0.2) {
+                scale_init_x = 0.2
+                scale_init_y = 0.2
             }
             if(scale_init_x > 8) {
                 scale_init_x = 8
@@ -381,11 +418,11 @@ export default {
         // 清除当前元素的动画定时器函数
         function clearCurrentElementInterval(){
             // 1、获取当前的元素实例 DOM
-            let curentElement = document.getElementById(currentSeat_id)
+            let curentElement = document.getElementById(currentSeat_id) && document.getElementById(currentSeat_id).lastElementChild
             if(curentElement){
                 // 2、如果有 curentElement 这个DOM实例，则清除定时器
                 clearInterval(curentElement.timer)
-                curentElement.style.transform = `scale(1)`
+                curentElement.style.transform = setTransform(curentElement,1)
                 currentSeat_id = 0
             }
         }
@@ -423,73 +460,80 @@ export default {
                     return currentFloorSeatList
                 }
             }),
-            // 设置每一个区域的样式（单个区域）
-            oneAreaStyle(item){
-                let styleObject = {}
-                if((item.floor == '3' || item.floor == '4') && item.office == '1'){
-                    styleObject = {
-                        position: 'absolute',
-                        top:(item.coordinate.top / 1612 * 843) / 93 + 'rem',
-                        left:(item.coordinate.left / 1777 * 930) / 93 + 'rem',
-                        width:(item.coordinate.width / 1777 * 930) / 93 + 'rem',
-                        height: (item.coordinate.height / 1612 * 843) / 93 + 'rem',
-                        backgroundColor: item.backgroundcolor,
-                        color:'#646464'
-                    }
-                }else if(item.floor == '7' && item.office == '2'){
-                    styleObject = {
-                        position: 'absolute',
-                        top:(item.coordinate.top / 571 * 843) / 93 + 'rem',
-                        left:(item.coordinate.left / 1287 * 930) / 93 + 'rem',
-                        width:(item.coordinate.width / 1287 * 930) / 93 + 'rem',
-                        height: (item.coordinate.height / 571 * 843) / 93 + 'rem',
-                        backgroundColor: item.backgroundcolor,
-                        color:'#646464',
-                    }
-                }
-                return styleObject
+            // 动态设置座位盒子的类名
+            newSeatClassFn(seatItem){
+                return `${seatItem.floor == '3' ? 'three' : seatItem.floor == '4' ? 'four' : 'shenzhen'}-new-seat-${seatItem.toward}`
             },
-            // 设置每一个区域的样式（多个区域）
-            multipleAreaStyle(item,item2,index){
-                let styleObject = {}
-                if((item.floor == '3' || item.floor == '4') && item.office == '1'){
-                    styleObject = {
-                        position: 'absolute',
-                        top:(item2.top / 1612 * 843) / 93 + 'rem',
-                        left:(item2.left / 1777 * 930) / 93 + 'rem',
-                        width:(item2.width / 1777 * 930) / 93 + 'rem',
-                        height: (item2.height / 1612 * 843) / 93 + 'rem',
-                        backgroundColor: item.backgroundcolor,
-                        color:'#646464'
+            // 设置每一个座位总的样式
+            seatStyle(seatItem) {
+                return {
+                    top: seatItem.gColNew + 'px',
+                    left: seatItem.gRowNew + 'px'
+                }
+            },
+            // 设置座位里面桌子的样式
+            seatDeskStyle(seatItem){
+                let deskstyle = null
+                // 判断是否为前台
+                if(seatItem.seat_id === '3A-Q-099' || seatItem.seat_id === '3A-Q-098' || seatItem.seat_id === '4A-Q-099' || seatItem.seat_id === '888') return {disPlay:'none'}
+                if(seatItem.toward === 'west' || seatItem.toward === 'east'){
+                    deskstyle = {
+                        backgroundImage:`url(/legend-image/desk-column${seatItem.type}.png)`
                     }
-                }else if(item.floor == '7' && item.office == '2'){
-                    styleObject = {
-                        position: 'absolute',
-                        top:(item2.top / 571 * 843) / 93 + 'rem',
-                        left:(item2.left / 1287 * 930) / 93 + 'rem',
-                        width:(item2.width / 1287 * 930) / 93 + 'rem',
-                        height: (item2.height / 571 * 843) / 93 + 'rem',
-                        backgroundColor: item.backgroundcolor,
-                        color:'#646464',
-                    }
-                    // 单独为深圳地区的 "其他" 区域，设置背景色
-                    if((item.code + index) === 'QY02020700310'){
-                        styleObject.backgroundColor = 'rgba(2, 122, 255, 0.05)'
+                }else{
+                    deskstyle = {
+                        backgroundImage:`url(/legend-image/desk-row${seatItem.type}.png)`
                     }
                 }
-                return styleObject
+                return deskstyle
+            },
+            // 设置座位里面椅子的样式
+            seatChairStyle(seatItem){
+                let deskstyle = null
+                if(seatItem.toward === 'west' || seatItem.toward === 'east'){
+                    deskstyle = {
+                        backgroundImage:`url(/legend-image/yizi${seatItem.type}.png)`
+                    }
+                }else{
+                    deskstyle = {
+                        backgroundImage:`url(/legend-image/yizi${seatItem.type}.png)`
+                    }
+                }
+                // 判断是否为前台
+                if(seatItem.seat_id === '3A-Q-099' || seatItem.seat_id === '4A-Q-099'){
+                    deskstyle.transform = `rotate(45deg)`
+                }else if(seatItem.seat_id === '3A-Q-098'){
+                    deskstyle.transform = `rotate(90deg)`
+                }
+                return deskstyle
+            },
+            // 设置每一个区域的样式
+            areaStyle(itemData,itemPosition){
+                return {
+                    position: 'absolute',
+                    top:itemPosition.top + 'px',
+                    left:itemPosition.left + 'px',
+                    width:itemPosition.width + 'px',
+                    height: itemPosition.height + 'px',
+                    backgroundColor: itemData.backgroundcolor,
+                    color:'#646464',
+                }
             },
             // 设置当前选中座位的id
             setCurrentSeat_id(value){
                 currentSeat_id = value
-                beforeSeatAnimateElement = document.getElementById(value)
-                scale_init_x = 4
-                scale_init_y = 4
+                beforeSeatAnimateElement = document.getElementById(value) && document.getElementById(value).lastElementChild
+                scale_init_x = 2
+                scale_init_y = 2
             },
             // 子组件发布的事件，切换路层后，将当前的选中座位和区域的高亮重置
             switchFloor(){
                 clearCurrentElementInterval()
                 seatData.currentAreaCode = ''
+                nextTick(() => {
+                    scale_init_x = BodyContainerRef.value.offsetHeight / parseInt(MapBoxRef.value.style.height)
+                    scale_init_y = BodyContainerRef.value.offsetHeight / parseInt(MapBoxRef.value.style.height)
+                })
             },
             // 当前选中的区域
             currentAreaCode:'',
@@ -500,23 +544,6 @@ export default {
                 scale_init_y = scaleY
                 // 搜索区域时，将座位的高亮取消
                 clearCurrentElementInterval()
-            },
-            // 设置每一个座位的样式
-            seatItemStyle(seatItem) {
-                let styleObject = {}
-                if((seatItem.floor == '3' || seatItem.floor == '4') && seatItem.office == '1'){
-                    styleObject = {
-                        top:(seatItem.gRow * 9.64 + 23) / 93 +'rem',
-                        left:(seatItem.gCol * 9.6 + 35) / 93 +'rem',
-                    }
-                }else if(seatItem.floor == '7' && seatItem.office == '2'){
-                    styleObject = {
-                        top: ((seatItem.gCol / 571) * 843) / 93 + 'rem',
-                        left: ((seatItem.gRow / 1287)  * 930) / 93 +'rem',
-                    }
-                }
-                styleObject.backgroundImage = `url(/legend-image/image${seatItem.type === '0' ? '0' : seatItem.type === '0-1' ? '1' : '2'}.png)`
-                return styleObject
             },
             // 点击每一个座位
             handleClickSeat(seatItem,$event){
@@ -536,8 +563,7 @@ export default {
                     return
                 }
                 beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
-                beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = `scale(1)`)
-                beforeSeatAnimateElement = $event.target
+                beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = setTransform(beforeSeatAnimateElement,1))
                 // 点击座位要将底部盒子升上来
                 scaling = false
                 MapBoxTapFn()
@@ -681,7 +707,7 @@ export default {
                         // 如果是扫二维码得到的连接，则截取连接中的 redirect_uri 字段值
                         let obj1 = formatURL(result)
                         let obj2 = formatURL(decodeURIComponent(obj1.redirect_uri + ''))
-                        // 如果走这个方法，则 关闭提示框函数调用在这个 scanCodeFn 方法内
+                        // 如果走这个方法，则 关闭提示框函数调用在 这个 scanCodeFn 方法内
                         scanCodeFn(obj2.id)
                     }else{
                         // 不是一个 url 路径
@@ -746,6 +772,9 @@ export default {
 @import '../style/StyleOfFloorShenZhen/Area/mobile/index.less';
 @import '../style/StyleOfFloorThree/Part/mobile/index.less';
 @import '../style/StyleOfFloorFour/Part/mobile/index.less';
+@import '../style/StyleOfFloorThree/seat/mobile/index.less';
+@import '../style/StyleOfFloorFour/seat/mobile/index.less';
+@import '../style/StyleOfFloorShenZhen/seat/mobile/index.less';
 // 设置版心的样式
 .body-container{
     min-width: 320px;
@@ -757,31 +786,29 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
     background-color: #f3f4f6;
     // 地图盒子
     .map-box{
         position: absolute;
-        width: 10rem;
-        height: 9.0645rem;
         background-size: 100% 100%;
         background-repeat: no-repeat;
         transition: all 0.5s;
         .area,.part{
-            font-size: 8px;
+            font-size: 14px;
         }
         .part{
+            z-index: 2;
             .title{
                 color: rgba(0, 0, 0, 0.2);
             }
         }
-        .seat{
-            position: absolute;
-            z-index: 5;
-            width: .086rem;
-            height: .086rem;
-            background-size:100%;
-            background-repeat: no-repeat;
-        }
+        // 引用3层新座位的样式
+        .threeSeatStyle-mobile;
+        // 引用4层新座位样式
+        .fourSeatStyle-mobile;
+        // 引用深圳新座位样式
+        .shenZhenSeatStyle-mobile;
         // 区域选中的高亮样式
         .active-area{
             background-color:rgba(255, 165, 0, 0.5)!important;
@@ -792,16 +819,10 @@ export default {
             top: 50%;
             transform: translate(-50%,-50%);
             text-align: center;
-            z-index: 2;
+            z-index: 5;
             span{
                 display: inline-block;
                 white-space:nowrap;
-            }
-            .name{
-                transform: scale(0.55,0.55);
-            }
-            .subtitle{
-                transform: scale(0.38,0.38);
             }
         }
         // 引入3层移动端的区域样式

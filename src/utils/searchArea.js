@@ -55,8 +55,8 @@ function searchArea(code){
     // 6、设置过度属性，以及过渡时间
     mapBox.style.transition = 'all 1s'
     // 7、计算缩放比例
-    let scaleX = ((mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth > 3 ? 3 : (mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth) - 0.1
-    let scaleY = ((mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight > 3 ? 3 : (mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight) - 0.1
+    let scaleX = ((mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth > 2 ? 2 : (mapBox.offsetWidth * store.state.scale[0]) / currentAreaWidth) - 0.1
+    let scaleY = ((mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight > 2 ? 2 : (mapBox.offsetHeight * store.state.scale[1]) / currentAreaHeight) - 0.1
     // 7.1、判断两个缩放比例差值绝对值是否大于1
     if(Math.abs(scaleX - scaleY) > 1){
         // 如果大于1，则将将两个缩放的比例取最小的那一个
