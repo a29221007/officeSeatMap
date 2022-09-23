@@ -374,8 +374,18 @@ export default {
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour,() => store.state.seatListOfShenZhen, () => store.state.areaListOfThree, () => store.state.areaListOfFour, () => store.state.areaListOfShenZhen],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.seatListOfShenZhen.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length && store.state.areaListOfShenZhen.length){
                 if(window.sessionStorage.getItem('uplode')) return endLoading()
-                // 进入页面自动选中当前用户座位
-                let currentUserItem = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
+                /**
+                 * 对于PC端来说,有 store.state.scanQRcode 这个值时，说明是通过分享进入
+                 * */ 
+                // 进入页面时判断用户是点击图标进入的还是通过分享进入的
+                let currentUserItem = null
+                if(store.state.scanQRcode){
+                    // 有这个字段说明是通过分享进入的
+                    currentUserItem = store.getters.AllSeatList.find(item => store.state.scanQRcode === item.qr_code)
+                }else{
+                    // 没有这个字段说明是正常点击项目进入的
+                    currentUserItem = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
+                }
                 if(currentUserItem){
                     // 设置楼层
                     let floor = ''

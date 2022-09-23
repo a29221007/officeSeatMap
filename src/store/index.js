@@ -11,6 +11,7 @@ import { errorMessage } from '@/utils/message.js'
 import { endToast, beginToast } from '@/views-rem/hook/toast.js'
 // 导入获取个人固资的api
 import { getFixedassets } from '@/api/getFixedassets.js'
+import URL from '@/utils/baseUrl.js'
 export default createStore({
     state: {
         // 当前选中的楼层（或地区）
@@ -52,7 +53,7 @@ export default createStore({
         // 如果是通过OA平台进入的项目，需要设置这个 code
         // 如果是扫码进入的项目，也需要设置这个code
         UserInfo: getItem('UserInfo'),
-        // 扫码跳转时，座位或者区域的唯一标识
+        // 扫码跳转时，座位或者区域的唯一标识(扫码进入时或者通过分享进入时才会有)
         scanQRcode: getItem('scanQRcode') || '',
         // 扫条形码得到的数据（移动端）
         scanBarcodeInfoObject: getItem('scanBarcodeInfoObject') || {},
@@ -60,6 +61,13 @@ export default createStore({
         intoTheWay: getItem('intoTheWay') || null,
         // 是否显示公共支持联系人信息
         is_show_public_contact_person: false, // 默认是false
+        // 地图分享的配置对象
+        share:{
+            title: '龙图办公区地图',
+            desc: '快速定位工位与资产信息',
+            link: '',
+            imgUrl: 'https://photo.16pic.com/00/45/79/16pic_4579388_b.jpg'
+        },
     },
     mutations: {
         // 设置当前选中的楼层（或地区）
@@ -167,6 +175,10 @@ export default createStore({
         setIs_show_public_contact_person(state, data){
             state.is_show_public_contact_person = data
             setItem('is_show_public_contact_person',state.is_show_public_contact_person)
+        },
+        // 设置地图分享的链接参数
+        setShare(state, data){
+            state.share.link = URL.shareUrl + data
         }
     },
     actions: {

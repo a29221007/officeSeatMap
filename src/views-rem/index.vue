@@ -100,6 +100,7 @@ import sortMeetingList from '@/views-rem/hook/sortArray.js'
 import { getQrConfig } from '@/api/jumpWX.js'
 // 导入根据条形码获取固资信息的api
 import { getAssetInfoByQR } from '@/api/getAssetInfo.js'
+import URL from '@/utils/baseUrl.js'
 export default {
     name:'MHome',
     components:{
@@ -147,7 +148,7 @@ export default {
                 // 只有第一次扫码进入或者点击图标进入才会有自动定位的效果
                 if(window.sessionStorage.getItem('uplode')) return endToast()
                 if(store.state.scanQRcode){
-                    // 进入项目如果有这个参数，则说明是扫码进入的，直接调用这个方法即可
+                    // 进入项目如果有这个参数，则说明是扫码进入或者是通过分享进入的，直接调用这个方法即可
                     scanCodeFn(store.state.scanQRcode)
                 }else {
                     // 如果没有这个参数，则说明是正常点击图标进入的，得根据当前用户的usercode找到座位的 scanQRcode
@@ -234,19 +235,12 @@ export default {
                 const { appId, timestamp, nonceStr, signature } = res.data
                 return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage','onMenuShareWechat','onMenuShareTimeline']})
             }).then(() => {
-                console.log(typeof store.state.activeInfo)
-                const share = {
-                    title:'龙图办公区地图',
-                    desc:'快速定位工位与资产信息',
-                    // link:'http://maptest.longtubas.com?openMode=share&qr_code=' + store.state.activeInfo !== 'null' ? (store.state.activeInfo.qr_code ? store.state.activeInfo.qr_code : 'null' ) : 'null',
-                    imgUrl:'https://photo.16pic.com/00/45/79/16pic_4579388_b.jpg'
-                }
                 // 转发
-                wx.onMenuShareAppMessage(share)
+                wx.onMenuShareAppMessage(store.state.share)
                 // 微信
-                wx.onMenuShareWechat(share)
+                wx.onMenuShareWechat(store.state.share)
                 // 朋友圈
-                wx.onMenuShareTimeline(share)
+                wx.onMenuShareTimeline(store.state.share)
             })
         })
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
@@ -574,8 +568,12 @@ export default {
                     BottomBoxRef.value.setSearchLegendContant('init')
                     // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
                     if(!scaling) MapBoxTapFn()
+                    // 设置分享的链接参数为null
+                    store.commit('setShare','null')
                     return
                 }
+                // 设置分享的链接参数为点击座位的qr_code
+                store.commit('setShare',seatItem.qr_code)
                 beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
                 beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = setTransform(beforeSeatAnimateElement,1))
                 // 点击座位要将底部盒子升上来
@@ -600,6 +598,7 @@ export default {
                 if(type !== 1) return
                 // 阻止点击会议室事件的冒泡行为
                 $event.stopPropagation()
+                console.log(item);
                 if(code === seatData.currentAreaCode){
                     // 如果相同,则取消高亮，以及恢复底部盒子到主页（init）
                     seatData.currentAreaCode = ''

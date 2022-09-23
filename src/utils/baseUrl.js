@@ -8,19 +8,19 @@ switch (process.env.NODE_ENV) {
     case 'development':
         // 本地环境
         baseUrl = "http://maptest.longtubas.com:8091/api/"
-        shareUrl = 'http://maptest.longtubas.com'
+        shareUrl = 'http://maptest.longtubas.com?openMode=share&qr_code='
         OAUrl = 'https://oabak.longtubas.com/'
         break
     case 'develop':
         // 测试环境
         baseUrl = "http://maptest.longtubas.com:8091/api/"
-        shareUrl = 'http://maptest.longtubas.com'
+        shareUrl = 'http://maptest.longtubas.com?openMode=share&qr_code='
         OAUrl = 'https://oabak.longtubas.com/'
         break
     case 'production':
         // 正式环境
         baseUrl = "https://map.longtubas.com/api/"
-        shareUrl = 'https://map.longtubas.com'
+        shareUrl = 'https://map.longtubas.com?openMode=share&qr_code='
         OAUrl = 'https://oa.longtubas.com/'
         break
 }
