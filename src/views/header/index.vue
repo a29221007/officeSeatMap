@@ -246,6 +246,8 @@ import { getLaunchCode, getAgentConfig, getQrConfig } from '@/api/jumpWX.js'
 
 // 导入对会议室排序的公共方法
 import sortMeetingList from '@/views-rem/hook/sortArray.js'
+// 导入OA根地址
+import URL from '@/utils/baseUrl.js'
 export default {
     name:'Header',
     components:{
@@ -628,13 +630,13 @@ export default {
                         background: 'rgba(0, 0, 0, 0.7)',
                     })
                     wx.invoke('openDefaultBrowser', {
-                        'url': `https://oa.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`
+                        'url': `${URL.OAUrl}Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`
                     }, function(res){
                         loading.close()
                         if(res.err_msg != "openDefaultBrowser:ok") errorMessage('跳转失败，请重试')
                     })
                 }else if(store.state.intoTheWay === 'OA'){
-                    window.open(`https://oa.longtubas.com/Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`)
+                    window.open(`${URL.OAUrl}Default.aspx?Type=100000;103000;200202&usercode=${store.state.UserInfo.usercode}&clickid=meeting`)
                 }
             }
         }
