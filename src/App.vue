@@ -31,8 +31,7 @@ export default{
         SearchArray.forEach(item => {
             searchObj[item.split('=')[0]] = item.split('=')[1]
         })
-        console.log(searchObj)
-        if(searchObj.openMode === 'share' && searchObj.qr_code){
+        if(searchObj.openMode === 'share'){
             window.sessionStorage.setItem('qr_code',searchObj.qr_code)
             router.push('/login?time=' + Date.now())
             return

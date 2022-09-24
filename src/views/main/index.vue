@@ -398,14 +398,23 @@ export default {
                     }
                     store.commit('setCurrentFloor',floor)
                     nextTick(() => {
-                        // 如果找到了当前用户座位的 currentUserItem，则调用 handleClickSeat 函数
-                        handleClickSeat(currentUserItem,document.getElementById(currentUserItem.seat_id))
+                        // 判断 currentUserItem 是座位还是会议室
+                        if(currentUserItem.type === '0' || currentUserItem.type === '0-1' || currentUserItem.type === '0-2'){
+                            // 如果是用户座位则调用 handleClickSeat 函数
+                            handleClickSeat(currentUserItem,document.getElementById(currentUserItem.seat_id))
+                        }else if(currentUserItem.type === 1){
+                            // 如果是会议室则调用 handleClickMeetingRoom 函数
+                            handleClickMeetingRoom(currentUserItem)
+                        }
                         endLoading()
                     })
                 }else{
                     endLoading()
-                    // 没有找到的话用户座位的 scanCodeFn,则提示用户
-                    infoMessage('没有找到您的座位，请与管理员联系')
+                    if(!store.state.scanQRcode){
+                        // 没有这个值，并且用户是通过点击图标进入的，所以如果没有找到座位，则提示用户没有找到座位
+                        infoMessage('没有找到您的座位，请与管理员联系')
+                    }
+                    
                 }
                 window.sessionStorage.setItem('uplode', true)
             }

@@ -148,8 +148,14 @@ export default {
                 // 只有第一次扫码进入或者点击图标进入才会有自动定位的效果
                 if(window.sessionStorage.getItem('uplode')) return endToast()
                 if(store.state.scanQRcode){
-                    // 进入项目如果有这个参数，则说明是扫码进入或者是通过分享进入的，直接调用这个方法即可
-                    scanCodeFn(store.state.scanQRcode)
+                    // 如果有这个参数，则说明是扫码进入或者是通过分享进入的
+                    if(window.sessionStorage.getItem('qr_code')){
+                        // 本地存储中 qr_code 这个字段说明是通过分享进入的
+                        scanCodeFn(store.state.scanQRcode,'share')
+                    }else{
+                        // 本地存储中没有这个字段，则说明是通过扫码进入的
+                        scanCodeFn(store.state.scanQRcode)
+                    }
                 }else {
                     // 如果没有这个参数，则说明是正常点击图标进入的，得根据当前用户的usercode找到座位的 scanQRcode
                     let scanQRcode = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
@@ -220,7 +226,13 @@ export default {
                     })
                 }else if(item.type === 1){
                     // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行，此时定义的 'push',意思是要跳转)
-                    getMeetingData(item,'push')
+                    if(intoWay === 'share'){
+                        // 如果通过会议室分享进入的，不去跳转
+                        getMeetingData(item)
+                    }else {
+                        // 通过会议室扫码才去跳转
+                        getMeetingData(item,'push')
+                    }
                 }
                 // 如果是扫码跳转进来的最后要关闭提示框
                 endToast()
@@ -235,6 +247,8 @@ export default {
                 const { appId, timestamp, nonceStr, signature } = res.data
                 return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage','onMenuShareWechat','onMenuShareTimeline']})
             }).then(() => {
+                // 默认为 none
+                store.commit('setShare','none')
                 // 转发
                 wx.onMenuShareAppMessage(store.state.share)
                 // 微信
@@ -569,7 +583,7 @@ export default {
                     // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
                     if(!scaling) MapBoxTapFn()
                     // 设置分享的链接参数为null
-                    store.commit('setShare','null')
+                    store.commit('setShare','none')
                     return
                 }
                 // 设置分享的链接参数为点击座位的qr_code
@@ -606,8 +620,10 @@ export default {
                     BottomBoxRef.value.setSearchLegendContant('init')
                     // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
                     if(!scaling) MapBoxTapFn()
+                    store.commit('setShare','none')
                     return
                 }
+                store.commit('setShare',item.qr_code)
                 // 点击会议室确保底部的盒子处于升起来的状态
                 scaling = false
                 MapBoxTapFn()
@@ -647,7 +663,6 @@ export default {
                     endToast()
                     return beginToast('fail', res.message, 2000)
                 }
-                console.log('res.data',res.data)
                 res.data.code = code
                 res.data.type = 1
                 res.data.HistoryList = sortMeetingList(res.data.HistoryList)
