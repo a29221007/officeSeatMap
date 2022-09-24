@@ -34,6 +34,9 @@ body,
   color: #333;
   text-align: center;
 }
+.autocomplete .el-autocomplete-suggestion .el-scrollbar .el-autocomplete-suggestion__wrap .el-scrollbar__view li:hover {
+  background-color: #E6E6E6;
+}
 .el-message-box .el-message-box__btns {
   display: flex;
   flex-direction: row-reverse;

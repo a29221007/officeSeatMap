@@ -3,29 +3,24 @@
     <div class="header-container">
         <!-- 搜索栏 -->
         <div class="search">
-            <div class="floor-switch">
-                <span :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<span class="separator" v-if="item.id !== AllArea.length - 1"> / </span></span>
-            </div>
             <el-autocomplete v-model="searchState" value-key='name' popper-class='autocomplete' :prefix-icon="Search" :trigger-on-focus="false" :fetch-suggestions="querySearch" class="inline-input" clearable placeholder="请输入员工姓名或座位号" @select="handleSelect" v-on:clear="handleClearInput">
                 <!-- 自定义搜索建议列表模板(当有搜索建议时) -->
                 <template #default="{ item }" v-if="is_none_sugges">
                     <div class="autoCompleteTemplate" v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
                         <!-- 第一行左边显示姓名，右边显示座位号 -->
                         <div class="oneLine">
-                            <span><span class="title">座位人员名称：</span><span class="content">{{item.name || '暂无数据'}}</span></span>
-                            <span><span class="title">座位号：</span><span class="content">{{item.seat_id}}</span></span>
+                            <span><span class="title">座位人员名称：</span><span class="content" v-html="item.name ? fn(item.name,searchState) : '暂无数据'"></span></span>
+                            <span><span class="title">座位号：</span><span class="content" v-html="fn(item.seat_id,searchState)"></span></span>
                         </div>
                         <!-- 第二行显示该座位所在部门 -->
                         <div class="twoLine"><span class="title">部门：</span><span class="content">{{item.depart || '暂无数据'}}</span></div>
                     </div>
                     <div class="autoCompleteTemplate" v-if="item.diff === 1 || item.diff === 2">
-                        <!-- 第一行左边显示姓名，右边显示座位号 -->
                         <div class="oneLine">
-                            <span><span class="title">区域名称：</span><span class="content">{{item.name + (item.subtitle ? item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '') || '暂无数据'}}</span></span>
+                            <span><span class="title">区域名称：</span><span class="content" v-html="fn2(item,searchState)"></span></span>
                         </div>
-                        <!-- 第二行显示该座位所在部门 -->
                         <div class="twoLine">
-                            <span><span class="title">区域编号：</span><span class="content">{{item.code}}</span></span>
+                            <span><span class="title">区域编号：</span><span class="content" v-html="fn(item.code,searchState)"></span></span>
                         </div>
                     </div>
                 </template>
@@ -34,6 +29,9 @@
                     <div class="is_none_sugges">暂无匹配项</div>
                 </template>
             </el-autocomplete>
+            <div class="floor-switch">
+                <span :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<span class="separator" v-if="item.id !== AllArea.length - 1"> / </span></span>
+            </div>
         </div>
         <!-- 图例 -->
         <div class="legend">
@@ -254,6 +252,25 @@ export default {
         FixedAssets,MeetingRoom
     },
     setup(){
+        // fn 作用是将检索的字体变色
+        function fn(name,value){
+            const index = name.indexOf(value)
+            if(index === -1){
+                return name
+            }else{
+                const string = name.slice(0,index) + value.fontcolor('#3875C6') + fn(name.slice(index + value.length),value)
+                return string
+            }
+        }
+        // fn2 起到辅助作用
+        function fn2(item,value){
+            const flag = item.name + (item.subtitle ? item.subtitle.replace("︵","（").replace('︶','）').replace(/\s/g,"") : '')
+            if(flag){
+                return fn(flag,value)
+            }else{
+                return '暂无数据'
+            }
+        }
         // 判断当前的版本 agentConfig 配置是否成功
         let is_agentConfig_success = true
         onBeforeMount(() => {
@@ -656,6 +673,8 @@ export default {
             MeetingRoomRef,
             is_have_MeetingHistory,
             handleClickJumpOA,
+            fn,
+            fn2
         }
     }
 }
@@ -663,8 +682,8 @@ export default {
 
 <style lang="less" scoped>
 .header-container{
-    width: 100%; // 0.625
-    height: 12.4%; // 0.124
+    width: 100%;
+    height: 12.4%;
     .search{
         width: 100%;
         height: 41.66666667%;
