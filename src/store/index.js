@@ -66,7 +66,7 @@ export default createStore({
             title: '龙图办公区地图',
             desc: '快速定位工位与资产信息',
             link: '',
-            imgUrl: 'https://photo.16pic.com/00/45/79/16pic_4579388_b.jpg'
+            imgUrl: URL.logoUrl
         },
     },
     mutations: {

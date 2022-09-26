@@ -175,7 +175,7 @@ export default {
         // 将扫码后跳转的逻辑封装
         function scanCodeFn(scanQRcode,intoWay){
             // 判断有没有 scanQRcode 这个参数
-            if(!scanQRcode) return endToast() // 如果没有这个参数，则直接停止 toast 提示
+            if(!scanQRcode || (scanQRcode === 'none')) return endToast() // 如果没有这个参数，则直接停止 toast 提示
             // 如果有这个 scanQRcode 这个参数，则根据这个字段查找对应项
             let item = store.getters.AllSeatList.find(item => item.qr_code === scanQRcode)
             // 判断是否有 item 项
@@ -184,6 +184,7 @@ export default {
                 endToast()
                 return beginToast('fail','没有找到相关的座位或区域',2000)
             }
+            store.commit('setShare',scanQRcode)
             // 设置扫码的楼层
             let floor = ''
             if(item.floor == '3' && item.office == '1'){

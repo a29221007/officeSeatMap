@@ -47,8 +47,17 @@ export default{
             // 如果有这两个参数,则说明是从企业微信点击应用图标过来的，或者是扫二维码进入的
             store.commit('setIntoTheWay','weixin')
             // 用 code 请求接口，返回用户个人信息
-            getUserInfo(searchObj.code).then((res) => {
+            let params = {
+                code:searchObj.code
+            }
+            if(window.sessionStorage.getItem('qr_code')){
+                params.share = 1
+            }
+            getUserInfo(params).then((res) => {
                 if(res.code !== 0) {
+                    if(res.code == 500){
+                        return alert(res.message)
+                    }
                     return alert('登录失败，请重新进入或联系相关负责人')
                 }
                 store.commit('setUserInfo',res.data)

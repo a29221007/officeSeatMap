@@ -149,9 +149,9 @@ export default {
                             store.commit('setActiveInfo',item)
                             upDataCurrentSeat_id(seat_id)
                             searchSeat(seat_id)
+                            // 设置分享的链接参数为点击座位的qr_code
+                            store.commit('setShare',qr_code)
                             if(item.type === '0'){
-                                // 设置分享的链接参数为点击座位的qr_code
-                                store.commit('setShare',qr_code)
                                 // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
                                 store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
                             }
@@ -175,9 +175,9 @@ export default {
                                 // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                 emit('setSearchLegendContant','information')
                                 store.commit('setActiveInfo',item)
+                                // 设置分享的链接参数为点击座位的qr_code
+                                store.commit('setShare',qr_code)
                                 if(item.type === '0'){
-                                    // 设置分享的链接参数为点击座位的qr_code
-                                    store.commit('setShare',qr_code)
                                     // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
                                     store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
                                 }
