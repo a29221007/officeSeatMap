@@ -1,13 +1,11 @@
 <template>
+    <!-- 放大缩小按钮 -->
+    <div class="scale-btn">
+        <i v-on:click="MapBoxAmplification(0.2)" class="iconfont oamap-jiahao"></i>
+        <i v-on:click="MapBoxReduce(0.2)" class="iconfont oamap-jianhao"></i>
+        <i v-on:click="initMap('huifu')" class="iconfont oamap-huifu"></i>
+    </div>
     <div ref="MapContainerRef" class="map-container">
-        <!-- 指针 -->
-        <i class="iconfont oamap-north"></i>
-        <!-- 放大缩小按钮 -->
-        <div class="scale-btn">
-            <i v-on:click="MapBoxAmplification(0.2)" class="iconfont oamap-jiahao"></i>
-            <i v-on:click="initMap('huifu')" class="iconfont oamap-huifu"></i>
-            <i v-on:click="MapBoxReduce(0.2)" class="iconfont oamap-jianhao"></i>
-        </div>
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
             <template v-for="item in mapList" :key="item.id">
                 <!-- 办公分区 -->
@@ -548,31 +546,6 @@ export default {
     -ms-user-select: none;
     -khtml-user-select: none;
     user-select: none;
-    .oamap-north {
-        position: absolute;
-        z-index: 3;
-        top: 20px;
-        left: 20px;
-        font-size: 25px;
-    }
-    .scale-btn{
-        position: absolute;
-        z-index: 3;
-        right: 20px;
-        top: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        background-color: #ffffff;
-        padding: 5px;
-        i{
-            font-size: 25px;
-            cursor: pointer;
-            &:nth-child(2){
-                margin:5px 0;
-            }
-        }
-    }
     .map-box{
         position:absolute;
         background-size: 100% 100%;
@@ -645,6 +618,25 @@ export default {
                 transform: rotate(180deg);
                 transform-origin: bottom center;
             }
+        }
+    }
+}
+
+.scale-btn{
+    position: absolute;
+    z-index: 3;
+    right: 23px;
+    bottom: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #ffffff;
+    padding: 5px;
+    i{
+        font-size: 25px;
+        cursor: pointer;
+        &:nth-child(2){
+            margin:5px 0;
         }
     }
 }

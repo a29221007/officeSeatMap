@@ -30,13 +30,15 @@
                 </template>
             </el-autocomplete>
             <div class="floor-switch">
-                <span :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}<span class="separator" v-if="item.id !== AllArea.length - 1"> / </span></span>
+                <div :class="{'active':item.lable === $store.state.currentFloor}" v-for="item in AllArea" :key="item.id" v-on:click="handleClickFloor(item.lable)">{{item.name}}</div>
             </div>
         </div>
         <!-- 图例 -->
         <div class="legend">
-            <div class="legend-item" :class="{'legendItemActive':item.type === $store.state.currentLegend}" v-for="item in legendList" :key="item.id" v-on:click="handleClickLegend(item.type)">
-                <img :src="item.url"><span>{{item.name}}</span>
+            <!-- 指针 -->
+            <div class="north"></div>
+            <div class="legend-item" v-for="item in legendList" :key="item.id" v-on:click="handleClickLegend(item.type)">
+                <img :class="{'legendItemActive':item.type === $store.state.currentLegend}" :src="item.url"><span>{{item.name}}</span>
             </div>
         </div>
     </div>
@@ -683,53 +685,111 @@ export default {
 <style lang="less" scoped>
 .header-container{
     width: 100%;
-    height: 12.4%;
-    .search{
+    /deep/.search{
         width: 100%;
-        height: 41.66666667%;
+        height: 80px;
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        padding: 5px;
+        padding: 28px 0 16px 0;
         .floor-switch{
-            font-size: 16px;
-            span{
+            font-size: 14px;
+            display: flex;
+            div{
+                padding: 0 25px;
+                line-height: 34px;
                 cursor: pointer;
+                color: #403636;
+                border: 1px solid #E6E6E6;
                 &.active{
-                    color: chocolate;
-                    .separator{
-                        color: #000;
-                    }
+                    color: #3875C6;
+                    background-color: #E1ECFD;
+                }
+                &:nth-child(n + 2){
+                    margin-left: -1px;
+                }
+                &:hover{
+                    background-color: #E1ECFD;
+                }
+            }
+        }
+        .el-autocomplete{
+            .el-input{
+                .el-input__inner{
+                    height: 36px;
                 }
             }
         }
     }
     .legend{
-        width: 100%;
-        height: 58.33333333%;
-        background-color: #f3f4f6;
-        padding: 5px;
+        position: absolute;
+        right: 20px;
+        top: 100px;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        z-index: 6;
+        box-shadow: 0px 2px 5px rgba(120, 120, 120, 0.5);
+        border-radius: 2px;
+        .north {
+            width: 46px;
+            height: 46px;
+            background-color: #F5F5F5;
+            background-image: url('../../../public/legend-image/north.png');
+            background-repeat: no-repeat;
+            background-size: 25px;
+            background-position: center;
+        }
         .legend-item{
+            width: 46px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             cursor: pointer;
             transition: all 0.15s;
-            &:nth-child(-n + 3){
+            background-color: #fff;
+            &:nth-child(-n + 4){
                 img{
                     transform: rotateZ(90deg);
                 }
             }
-            img{
-                height: 32px;
-                width: 32px;
-                margin-right: 5px;
+            &:nth-of-type(2){
+                padding-top: 13px;
+                img{
+                    &.legendItemActive{
+                        transform: rotateZ(90deg) scale(1.3);
+                    }
+                }
             }
-        }
-        .legendItemActive{
-            transform: scale(1.2);
+            &:nth-of-type(3){
+                padding-top: 18px;
+                img{
+                    &.legendItemActive{
+                        transform: rotateZ(90deg) scale(1.3);
+                    }
+                }
+            }
+            &:nth-of-type(4){
+                padding-top: 18px;
+                img{
+                    &.legendItemActive{
+                        transform: rotateZ(90deg) scale(1.3);
+                    }
+                }
+            }
+            &:nth-of-type(5){
+                padding: 18px 0 8px 0;
+                img{
+                    &.legendItemActive{
+                        transform: rotateZ(0deg) scale(1.3);
+                    }
+                }
+            }
+            img{
+                height: 25px;
+                width: 25px;
+            }
+            span{
+                line-height: 20px;
+            }
         }
     }
 }

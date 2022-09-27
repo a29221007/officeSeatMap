@@ -19,6 +19,7 @@ export default {
 
 <style lang="less" scoped>
 .layout{
+    position: relative;
     width: 62.5%;
     height: 100%;
     margin: 0 auto;
