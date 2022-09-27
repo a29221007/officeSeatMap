@@ -11,8 +11,8 @@
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { getUserInfo, getUserInfoFromOA } from '@/api/login.js'
-import eruda from 'eruda'
-eruda.init()
+// import eruda from 'eruda'
+// eruda.init()
 export default{
     name: 'App',
     setup() {

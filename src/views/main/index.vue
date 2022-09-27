@@ -101,8 +101,6 @@ import { beginLoading, endLoading } from '../loading.js'
 export default {
     name:'Main',
     setup(){
-        console.log('userAgent',window.navigator.userAgent)
-        // 
         onBeforeMount(() => {
             beginLoading()
         })
