@@ -100,6 +100,7 @@ import sortMeetingList from '@/views-rem/hook/sortArray.js'
 import { getQrConfig } from '@/api/jumpWX.js'
 // 导入根据条形码获取固资信息的api
 import { getAssetInfoByQR } from '@/api/getAssetInfo.js'
+import URL from '@/utils/baseUrl.js'
 export default {
     name:'MHome',
     components:{
@@ -147,8 +148,14 @@ export default {
                 // 只有第一次扫码进入或者点击图标进入才会有自动定位的效果
                 if(window.sessionStorage.getItem('uplode')) return endToast()
                 if(store.state.scanQRcode){
-                    // 进入项目如果有这个参数，则说明是扫码进入的，直接调用这个方法即可
-                    scanCodeFn(store.state.scanQRcode)
+                    // 如果有这个参数，则说明是扫码进入或者是通过分享进入的
+                    if(window.sessionStorage.getItem('qr_code')){
+                        // 本地存储中 qr_code 这个字段说明是通过分享进入的
+                        scanCodeFn(store.state.scanQRcode,'share')
+                    }else{
+                        // 本地存储中没有这个字段，则说明是通过扫码进入的
+                        scanCodeFn(store.state.scanQRcode)
+                    }
                 }else {
                     // 如果没有这个参数，则说明是正常点击图标进入的，得根据当前用户的usercode找到座位的 scanQRcode
                     let scanQRcode = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
@@ -168,7 +175,7 @@ export default {
         // 将扫码后跳转的逻辑封装
         function scanCodeFn(scanQRcode,intoWay){
             // 判断有没有 scanQRcode 这个参数
-            if(!scanQRcode) return endToast() // 如果没有这个参数，则直接停止 toast 提示
+            if(!scanQRcode || (scanQRcode === 'none')) return endToast() // 如果没有这个参数，则直接停止 toast 提示
             // 如果有这个 scanQRcode 这个参数，则根据这个字段查找对应项
             let item = store.getters.AllSeatList.find(item => item.qr_code === scanQRcode)
             // 判断是否有 item 项
@@ -177,6 +184,7 @@ export default {
                 endToast()
                 return beginToast('fail','没有找到相关的座位或区域',2000)
             }
+            store.commit('setShare',scanQRcode)
             // 设置扫码的楼层
             let floor = ''
             if(item.floor == '3' && item.office == '1'){
@@ -219,7 +227,13 @@ export default {
                     })
                 }else if(item.type === 1){
                     // 如果为会议室(传第二个值为固定的，我是自己定义的,只要有值就行，此时定义的 'push',意思是要跳转)
-                    getMeetingData(item,'push')
+                    if(intoWay === 'share'){
+                        // 如果通过会议室分享进入的，不去跳转
+                        getMeetingData(item)
+                    }else {
+                        // 通过会议室扫码才去跳转
+                        getMeetingData(item,'push')
+                    }
                 }
                 // 如果是扫码跳转进来的最后要关闭提示框
                 endToast()
@@ -232,7 +246,16 @@ export default {
             const url = window.location.href
             getQrConfig(url).then(res => {
                 const { appId, timestamp, nonceStr, signature } = res.data
-                wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage'] })
+                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage','onMenuShareWechat','onMenuShareTimeline']})
+            }).then(() => {
+                // 默认为 none
+                store.commit('setShare','none')
+                // 转发
+                wx.onMenuShareAppMessage(store.state.share)
+                // 微信
+                wx.onMenuShareWechat(store.state.share)
+                // 朋友圈
+                wx.onMenuShareTimeline(store.state.share)
             })
         })
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
@@ -560,8 +583,12 @@ export default {
                     BottomBoxRef.value.setSearchLegendContant('init')
                     // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
                     if(!scaling) MapBoxTapFn()
+                    // 设置分享的链接参数为null
+                    store.commit('setShare','none')
                     return
                 }
+                // 设置分享的链接参数为点击座位的qr_code
+                store.commit('setShare',seatItem.qr_code)
                 beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
                 beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = setTransform(beforeSeatAnimateElement,1))
                 // 点击座位要将底部盒子升上来
@@ -586,6 +613,7 @@ export default {
                 if(type !== 1) return
                 // 阻止点击会议室事件的冒泡行为
                 $event.stopPropagation()
+                console.log(item);
                 if(code === seatData.currentAreaCode){
                     // 如果相同,则取消高亮，以及恢复底部盒子到主页（init）
                     seatData.currentAreaCode = ''
@@ -593,8 +621,10 @@ export default {
                     BottomBoxRef.value.setSearchLegendContant('init')
                     // 当点击座位相同时，判断 scaling 的值，如果 scaling 处于 true 时，不用管，当处于false时，需要将盒子提升上来
                     if(!scaling) MapBoxTapFn()
+                    store.commit('setShare','none')
                     return
                 }
+                store.commit('setShare',item.qr_code)
                 // 点击会议室确保底部的盒子处于升起来的状态
                 scaling = false
                 MapBoxTapFn()

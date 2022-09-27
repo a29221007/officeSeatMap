@@ -101,6 +101,7 @@ import { beginLoading, endLoading } from '../loading.js'
 export default {
     name:'Main',
     setup(){
+        console.log('userAgent',window.navigator.userAgent)
         // 
         onBeforeMount(() => {
             beginLoading()
@@ -374,8 +375,18 @@ export default {
         watch([() => store.state.seatListOfthree, () => store.state.seatListOfFour,() => store.state.seatListOfShenZhen, () => store.state.areaListOfThree, () => store.state.areaListOfFour, () => store.state.areaListOfShenZhen],() => {
             if(store.state.seatListOfthree.length && store.state.seatListOfFour.length && store.state.seatListOfShenZhen.length && store.state.areaListOfThree.length && store.state.areaListOfFour.length && store.state.areaListOfShenZhen.length){
                 if(window.sessionStorage.getItem('uplode')) return endLoading()
-                // 进入页面自动选中当前用户座位
-                let currentUserItem = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
+                /**
+                 * 对于PC端来说,有 store.state.scanQRcode 这个值时，说明是通过分享进入
+                 * */ 
+                // 进入页面时判断用户是点击图标进入的还是通过分享进入的
+                let currentUserItem = null
+                if(store.state.scanQRcode){
+                    // 有这个字段说明是通过分享进入的
+                    currentUserItem = store.getters.AllSeatList.find(item => store.state.scanQRcode === item.qr_code)
+                }else{
+                    // 没有这个字段说明是正常点击项目进入的
+                    currentUserItem = store.getters.AllSeatList.find(item => store.state.UserInfo.usercode === item.id)
+                }
                 if(currentUserItem){
                     // 设置楼层
                     let floor = ''
@@ -388,14 +399,23 @@ export default {
                     }
                     store.commit('setCurrentFloor',floor)
                     nextTick(() => {
-                        // 如果找到了当前用户座位的 currentUserItem，则调用 handleClickSeat 函数
-                        handleClickSeat(currentUserItem,document.getElementById(currentUserItem.seat_id))
+                        // 判断 currentUserItem 是座位还是会议室
+                        if(currentUserItem.type === '0' || currentUserItem.type === '0-1' || currentUserItem.type === '0-2'){
+                            // 如果是用户座位则调用 handleClickSeat 函数
+                            handleClickSeat(currentUserItem,document.getElementById(currentUserItem.seat_id))
+                        }else if(currentUserItem.type === 1){
+                            // 如果是会议室则调用 handleClickMeetingRoom 函数
+                            handleClickMeetingRoom(currentUserItem)
+                        }
                         endLoading()
                     })
                 }else{
                     endLoading()
-                    // 没有找到的话用户座位的 scanCodeFn,则提示用户
-                    infoMessage('没有找到您的座位，请与管理员联系')
+                    if(!store.state.scanQRcode){
+                        // 没有这个值，并且用户是通过点击图标进入的，所以如果没有找到座位，则提示用户没有找到座位
+                        infoMessage('没有找到您的座位，请与管理员联系')
+                    }
+                    
                 }
                 window.sessionStorage.setItem('uplode', true)
             }

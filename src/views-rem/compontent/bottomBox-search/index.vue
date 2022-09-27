@@ -140,7 +140,8 @@ export default {
                     // 判断搜索的类型，是座位还是区域
                     if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                         // 如果搜索的是座位
-                        const { depart, name, seat_id } = item
+                        const { qr_code, name, seat_id } = item
+                        console.log(item)
                         // 选中某一项，首先判断该员工的座位，是否在当前楼层
                         if(item.floor == store.getters.floor){
                             // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
@@ -148,6 +149,8 @@ export default {
                             store.commit('setActiveInfo',item)
                             upDataCurrentSeat_id(seat_id)
                             searchSeat(seat_id)
+                            // 设置分享的链接参数为点击座位的qr_code
+                            store.commit('setShare',qr_code)
                             if(item.type === '0'){
                                 // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
                                 store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
@@ -172,6 +175,8 @@ export default {
                                 // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                                 emit('setSearchLegendContant','information')
                                 store.commit('setActiveInfo',item)
+                                // 设置分享的链接参数为点击座位的qr_code
+                                store.commit('setShare',qr_code)
                                 if(item.type === '0'){
                                     // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
                                     store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
@@ -190,6 +195,8 @@ export default {
                         // 如果是区域
                         if(item.floor == store.getters.floor){
                             if(item.type === 1){
+                                // 设置分享的链接参数为点击座位的qr_code
+                                store.commit('setShare',item.qr_code)
                                 getMeetingRoomData(item)
                             }else{
                                 store.commit('setActiveInfo',item)
@@ -218,6 +225,8 @@ export default {
                                 nextTick(() => {
                                     beginToast('success','切换成功',2000)
                                     if(item.type === 1){
+                                        // 设置分享的链接参数为点击座位的qr_code
+                                        store.commit('setShare',item.qr_code)
                                         getMeetingRoomData(item)
                                     }else{
                                         store.commit('setActiveInfo',item)
