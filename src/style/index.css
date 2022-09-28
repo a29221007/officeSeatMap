@@ -15,7 +15,7 @@ body,
   }
 }
 .el-input__inner:focus {
-  border-color: #dcdfe6 !important;
+  border-color: #5D90DC !important;
 }
 .autocomplete .el-autocomplete-suggestion .el-scrollbar .el-autocomplete-suggestion__wrap .el-scrollbar__view li ~ li {
   border-top: 1px solid #eee;

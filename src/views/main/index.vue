@@ -1,9 +1,17 @@
 <template>
     <!-- 放大缩小按钮 -->
     <div class="scale-btn">
-        <i v-on:click="MapBoxAmplification(0.2)" class="iconfont oamap-jiahao"></i>
-        <i v-on:click="MapBoxReduce(0.2)" class="iconfont oamap-jianhao"></i>
-        <i v-on:click="initMap('huifu')" class="iconfont oamap-huifu"></i>
+        <div>
+            <div v-on:click="MapBoxAmplification(0.2)">
+                <i class="iconfont oamap-jiahao"></i>
+            </div>
+            <div v-on:click="MapBoxReduce(0.2)">
+                <i class="iconfont oamap-jianhao"></i>
+            </div>
+        </div>
+        <div v-on:click="initMap('huifu')">
+            <i class="iconfont oamap-chongzhi"></i>
+        </div>
     </div>
     <div ref="MapContainerRef" class="map-container">
         <div ref="MapBoxRef" class="map-box" :style="MapBoxStyle">
@@ -73,7 +81,7 @@
                 </template>
             </template>
             <!-- 鼠标经过每一个座位的提示框 -->
-            <div ref="tooltipRef" class="tooltip" v-show="is_show_tooltip" v-text="tooltipText"></div>
+            <div ref="tooltipRef" class="tooltip" v-html="tooltipText"></div>
         </div>
     </div>
 </template>
@@ -248,12 +256,22 @@ export default {
             seatMouseenter(seatItem,element) {
                 tooltipRef.value.style.top = element.offsetTop - 28 + 'px'
                 tooltipRef.value.style.left = element.offsetLeft - 10 + 'px'
-                is_show_tooltip.value = true
-                tooltipText.value = seatItem.seat_id
+                // is_show_tooltip.value = true
+                // tooltipText.value = seatItem.seat_id
+                tooltipText.value = `<div>1<div>
+                <div>1<div>
+                <div>1<div>
+                <div>1<div>
+                <div>1<div>
+                                        `
+                nextTick(() => {
+                    console.log(tooltipRef.value.offsetHeight)
+                    tooltipRef.value.style.visibility = 'visible'
+                })
             },
             // 鼠标离开每一个座位的处理程序
             seatMouseleave() {
-                is_show_tooltip.value = false
+                tooltipRef.value.style.visibility = 'hidden'
                 tooltipText.value = ''
             }
         })
@@ -599,12 +617,12 @@ export default {
         .FourPartStyle-PC;
         // 设置提示框的样式
         .tooltip{
+            visibility: hidden;
             position: absolute;
             color: #fff;
-            background-color: black;
+            background-color: rgb(0, 0, 0);
             padding: 3px;
-            border-radius: 10px;
-            min-width: 100px;
+            border-radius: 4px;
             text-align: center;
             z-index: 5;
             &::after{
@@ -614,7 +632,7 @@ export default {
                 left: 8%;
                 border: 10px solid transparent;
                 border-top: 0px;
-                border-bottom-color:black ;
+                border-bottom-color:rgb(0, 0, 0);
                 transform: rotate(180deg);
                 transform-origin: bottom center;
             }
@@ -629,14 +647,40 @@ export default {
     bottom: 22px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    background-color: #ffffff;
-    padding: 5px;
-    i{
-        font-size: 25px;
-        cursor: pointer;
-        &:nth-child(2){
-            margin:5px 0;
+    &>div{
+        box-shadow: 0px 2px 5px rgba(120, 120, 120, 0.5);
+        border-radius: 2px;
+        &:first-child{
+            margin-bottom: 12px;
+            div{
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+                background-color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                i{
+                    color: #8C8686;
+                    font-size: 18px;
+                }
+                &:first-child{
+                    border-bottom: 1px solid #E6E6E6;
+                }
+            }
+        }
+        &:last-child{
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            i{
+                color: #8C8686;
+                font-size: 18px;
+            }
         }
     }
 }

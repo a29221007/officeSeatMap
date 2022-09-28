@@ -1,10 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3187109 */
-  /* Color fonts */
-  src: 
-       url('iconfont.woff2?t=1660296204532') format('woff2'),
-       url('iconfont.woff?t=1660296204532') format('woff'),
-       url('iconfont.ttf?t=1660296204532') format('truetype');
+  src: url('iconfont.woff2?t=1664355331718') format('woff2'),
+       url('iconfont.woff?t=1664355331718') format('woff'),
+       url('iconfont.ttf?t=1664355331718') format('truetype');
 }
 
 .iconfont {
@@ -15,12 +13,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.oamap-yizi1:before {
-  content: "\e633";
-}
-
-.oamap-metting:before {
-  content: "\e62d";
+.oamap-chongzhi:before {
+  content: "\e63c";
 }
 
 .oamap-saoyisao:before {
@@ -33,10 +27,6 @@
 
 .oamap-kongxian:before {
   content: "\e635";
-}
-
-.oamap-huifu:before {
-  content: "\e6e9";
 }
 
 .oamap-dongtaijiantoucopy:before {
@@ -65,13 +55,5 @@
 
 .oamap-jianhao:before {
   content: "\eaf5";
-}
-
-.oamap-north:before {
-  content: "\e62b";
-}
-
-.oamap-icon_enlarge:before {
-  content: "\e62c";
 }
 
