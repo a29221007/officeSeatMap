@@ -5,6 +5,7 @@
   flex-direction: row-reverse;
   width: 21px;
   height: 23px;
+  align-items: center;
 }
 .threeSeatStyle-PC .three-new-seat-east .desk {
   width: 9px;
@@ -14,19 +15,18 @@
   border-radius: 1px;
 }
 .threeSeatStyle-PC .three-new-seat-east .chair {
-  position: relative;
-  top: 50%;
   width: 12px;
   height: 12px;
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  transform: translateY(-50%) rotateZ(180deg);
+  transform: rotateZ(180deg);
 }
 .threeSeatStyle-PC .three-new-seat-south {
   position: absolute;
   z-index: 5;
   display: flex;
   flex-direction: column-reverse;
+  align-items: center;
   width: 23px;
   height: 21px;
 }
@@ -38,18 +38,17 @@
   border-radius: 1px;
 }
 .threeSeatStyle-PC .three-new-seat-south .chair {
-  position: relative;
-  left: 50%;
   width: 12px;
   height: 12px;
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  transform: translateX(-50%) rotateZ(270deg);
+  transform: rotateZ(270deg);
 }
 .threeSeatStyle-PC .three-new-seat-west {
   position: absolute;
   z-index: 5;
   display: flex;
+  align-items: center;
   width: 21px;
   height: 23px;
 }
@@ -61,19 +60,18 @@
   background-size: 100% 100%;
 }
 .threeSeatStyle-PC .three-new-seat-west .chair {
-  position: relative;
-  top: 50%;
   width: 12px;
   height: 12px;
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  transform: translateY(-50%) rotateZ(0deg);
+  transform: rotateZ(0deg);
 }
 .threeSeatStyle-PC .three-new-seat-north {
   position: absolute;
   z-index: 5;
   display: flex;
   flex-direction: column;
+  align-items: center;
   height: 21px;
   width: 23px;
 }
@@ -85,11 +83,9 @@
   background-size: 100% 100%;
 }
 .threeSeatStyle-PC .three-new-seat-north .chair {
-  position: relative;
-  left: 50%;
   width: 12px;
   height: 12px;
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  transform: translateX(-50%) rotateZ(90deg);
+  transform: rotateZ(90deg);
 }

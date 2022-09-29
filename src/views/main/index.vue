@@ -133,8 +133,6 @@ export default {
         // 获取各分区的座位数
         const partTotaleObject = inject('partTotaleObject')
         const store = useStore()
-        // 控制提示框的显示与隐藏
-        const is_show_tooltip = ref(false)
         // 提示框的值
         const tooltipText = ref('')
         // 获取提示框的实例对象
@@ -254,18 +252,65 @@ export default {
             },
             // 鼠标进入每一个座位的处理程序
             seatMouseenter(seatItem,element) {
-                tooltipRef.value.style.top = element.offsetTop - 28 + 'px'
-                tooltipRef.value.style.left = element.offsetLeft - 10 + 'px'
-                // is_show_tooltip.value = true
-                // tooltipText.value = seatItem.seat_id
-                tooltipText.value = `<div>1<div>
-                <div>1<div>
-                <div>1<div>
-                <div>1<div>
-                <div>1<div>
-                                        `
+                // 获取到椅子元素
+                const chair = element.querySelector('.chair')
+                // 1、计算出椅子的顶部中点
+                const chairX = Number(seatItem.gRowNew) + chair.offsetLeft + 5
+                const chairY = Number(seatItem.gColNew) + chair.offsetTop
+                // 2、分座位类型创建不同的内容
+                switch(seatItem.type){
+                    case '0':
+                        tooltipText.value = `
+                            <div>
+                                <div class="title">姓名：</div>
+                                <div class="content">${seatItem.name}</div>
+                            </div>
+                            <div>
+                                <div class="title">工号：</div>
+                                <div class="content">${seatItem.id}</div>
+                            </div>
+                            <div>
+                                <div class="title">部门：</div>
+                                <div class="content">${seatItem.depart}</div>
+                            </div>
+                            <div>
+                                <div class="title">座位号：</div>
+                                <div class="content">${seatItem.seat_id}</div>
+                            </div> `
+                    break
+                    case '0-1':
+                        tooltipText.value = `
+                            <div>
+                                <div class="title">空位</div>
+                            </div>
+                            <div>
+                                <div class="title">座位号：</div>
+                                <div class="content">${seatItem.seat_id}</div>
+                            </div> `
+                    break
+                    case '0-2':
+                        tooltipText.value = `
+                            <div>
+                                <div class="title">资产名称：</div>
+                                <div class="content">${seatItem.name}</div>
+                            </div>
+                            <div>
+                                <div class="title">状态：</div>
+                                <div class="content">${seatItem.equipment_status}</div>
+                            </div>
+                            <div>
+                                <div class="title">部门：</div>
+                                <div class="content">${seatItem.depart}</div>
+                            </div>
+                            <div>
+                                <div class="title">座位号：</div>
+                                <div class="content">${seatItem.seat_id}</div>
+                            </div> `
+                    break
+                }
                 nextTick(() => {
-                    console.log(tooltipRef.value.offsetHeight)
+                    tooltipRef.value.style.top = chairY - tooltipRef.value.offsetHeight - 3 + 'px'
+                    tooltipRef.value.style.left = chairX - (tooltipRef.value.offsetWidth / 2) + 'px'
                     tooltipRef.value.style.visibility = 'visible'
                 })
             },
@@ -526,7 +571,6 @@ export default {
             MapBoxRef,
             MapContainerRef,
             MapBoxStyle,
-            is_show_tooltip,
             tooltipText,
             tooltipRef,
             MapBoxAmplification,
@@ -616,24 +660,29 @@ export default {
         // 引入pc端4层的分区样式
         .FourPartStyle-PC;
         // 设置提示框的样式
-        .tooltip{
+        /deep/.tooltip{
             visibility: hidden;
             position: absolute;
             color: #fff;
-            background-color: rgb(0, 0, 0);
-            padding: 3px;
+            background-color: rgba(0, 0, 0,0.7);
+            padding: 14px 14px 12px;
             border-radius: 4px;
-            text-align: center;
             z-index: 5;
+            &>div{
+                display: flex;
+                align-items: baseline;
+                font-size: 14px;
+                line-height: 22px;
+            }
             &::after{
                 content: '';
                 position: absolute;
-                bottom: 1px;
-                left: 8%;
-                border: 10px solid transparent;
+                bottom: 0px;
+                left: 50%;
+                border: 3px solid transparent;
                 border-top: 0px;
-                border-bottom-color:rgb(0, 0, 0);
-                transform: rotate(180deg);
+                border-bottom-color:rgba(0, 0, 0,0.7);
+                transform: translate(-50%,-0.04px) rotate(180deg);
                 transform-origin: bottom center;
             }
         }
