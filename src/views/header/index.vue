@@ -256,6 +256,7 @@ export default {
     setup(){
         // fn 作用是将检索的字体变色
         function fn(name,value){
+            value = value.toUpperCase()
             const index = name.indexOf(value)
             if(index === -1){
                 return name

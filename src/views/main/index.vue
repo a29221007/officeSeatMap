@@ -255,7 +255,7 @@ export default {
                 // 获取到椅子元素
                 const chair = element.querySelector('.chair')
                 // 1、计算出椅子的顶部中点
-                const chairX = Number(seatItem.gRowNew) + chair.offsetLeft + 5
+                const chairX = Number(seatItem.gRowNew) + chair.offsetLeft + (chair.offsetWidth / 2)
                 const chairY = Number(seatItem.gColNew) + chair.offsetTop
                 // 2、分座位类型创建不同的内容
                 switch(seatItem.type){
@@ -341,6 +341,7 @@ export default {
         let currentElement = null
         // 鼠标点击每一个座位的事件处理函数
         function handleClickSeat(seatItem,element){
+            if(moveFlag) return
             // 触发座位的点击事件，将区域的选中状态置空
             seatData.currentAreaCode = ''
             // 点击某一个座位将当前座位的seat_id赋值给current，将当前选中的座位高亮，再点击同一个座位取消高亮
@@ -487,8 +488,12 @@ export default {
             y = mouseY
             document.addEventListener('mousemove',mouseMove)
         }
+        // 鼠标移动时的一个互锁变量
+        let moveFlag = false
         // 鼠标移动的事件处理程序
         function mouseMove(e){
+            // moveFlag 在鼠标移动时设置为 true, 座位的点击事件就不可以触发
+            moveFlag = true
             // 当发生mousemove事件时，对transition的属性值设置为unset
             // store.commit('setMapBoxRef_Transition_Timer','unset')
             MapBoxRef.value.style.transition = 'all 0s'
@@ -502,8 +507,12 @@ export default {
             MapBoxRef.value.style.left = _x + 'px'
             MapBoxRef.value.style.top = _y + 'px'
         }
+        let moveFlagTimer = null
         // 鼠标弹起的事件处理程序
         function mouseUp() {
+            moveFlagTimer = setTimeout(() => {
+                moveFlag = false
+            })
             document.removeEventListener('mousemove',mouseMove)
         }
         // 监听鼠标滚轮滚动的事件-谷歌IE浏览器
@@ -564,6 +573,7 @@ export default {
             document.removeEventListener('mouseup', mouseUp)
             MapContainerRef.value.removeEventListener('mousewheel',handleScale_chrome_ie)
             MapContainerRef.value.removeEventListener("DOMMouseScroll",handleScale_firefox)
+            clearTimeout(moveFlagTimer)
         })
         return {
             ...toRefs(seatData),

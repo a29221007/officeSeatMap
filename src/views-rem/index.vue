@@ -271,7 +271,7 @@ export default {
             // 2、监听 MapBox 地图盒子的各种事件
             // 2.1 实例化 AlloyFinger 这个构造函数，并将地图盒子的DOM元素传递进去
             // 将地图盒子的移动扩大到整个屏幕，不在是之前的手指放到地图上才能移动
-            BodyContainer = new AlloyFinger(BodyContainerRef.value,{}) 
+            BodyContainer = new AlloyFinger(BodyContainerRef.value,{})
             // 2.2 监听 MapBox 盒子的 tap 事件
             BodyContainer.on('touchStart', MapBoxTouchStartFn)
             // 2.5 监听 MapBox 盒子的 pinch 事件
@@ -398,8 +398,10 @@ export default {
                 MapBoxScaleFn(0.5)
             }
         }
+        let moveFlag = false
         // MapBox盒子 pressMove 事件的处理函数
         function MapBoxPressMoveFn(e) {
+            moveFlag = true
             if(!a) return
             // 取消元素的过渡效果
             MapBoxRef.value.style.transition = 'none'
@@ -410,12 +412,16 @@ export default {
         }
         // 延时器一的id
         let timer1 = null
+        let moveFlagTimer = null
         // MapBox盒子 touchEnd 事件
         function MapBoxTouchEndFn() {
             a = false
             firstZoomValue = 0
             pinchCount = 0
             timer1 = setTimeout(() => {a = true},200)
+            moveFlagTimer = setTimeout(() => {
+                moveFlag = false
+            })
         }
         //  MapBox盒子缩放的函数
         function MapBoxScaleFn(timer){
@@ -570,6 +576,7 @@ export default {
             },
             // 点击每一个座位
             handleClickSeat(seatItem,$event){
+                if(moveFlag) return
                 // 阻止冒泡
                 $event.stopPropagation()
                 // 判断当前选中的座位是否有seat_id这个字段，以及值不为null
