@@ -724,6 +724,7 @@ export default {
             // 清除延时器id
             clearTimeout(timer1)
             clearTimeout(timer2)
+            clearTimeout(moveFlagTimer)
         })
         // 监听子组件的扫码行为
         function handleQR(){
