@@ -38,7 +38,7 @@ function scaleSeatFn($event) {
     MapBoxRef.style.transformOrigin = `${$event.offsetLeft}px ${$event.offsetTop}px`
     MapBoxRef.style.transition = `transform 0.5s`
     setTimeout(() => {
-        MapBoxRef.style.transform = `scale(3)`
+        MapBoxRef.style.transform = `scale(1.5)`
     },30)
 }
 
