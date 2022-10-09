@@ -52,7 +52,7 @@ export default createStore({
         // 当前登录人的 code
         // 如果是通过OA平台进入的项目，需要设置这个 code
         // 如果是扫码进入的项目，也需要设置这个code
-        UserInfo: getItem('UserInfo') || {"userid":"jixianggong1","username":"弓吉祥1","email":"jixianggong1@longtugame.com","usercode":"Q220413","location":1,"floor":3},
+        UserInfo: getItem('UserInfo'),
         // 扫码跳转时，座位或者区域的唯一标识(扫码进入时或者通过分享进入时才会有)
         scanQRcode: getItem('scanQRcode') || '',
         // 扫条形码得到的数据（移动端）
