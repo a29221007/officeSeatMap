@@ -121,8 +121,8 @@ export default {
             // 将区域的高亮取消
             seatData.currentAreaCode = ''
             // 同步搜索变量
-            sacleX = 3
-            sacleY = 3
+            sacleX = 1.5
+            sacleY = 1.5
         })
         // 获取各分区的座位数
         const partTotaleObject = inject('partTotaleObject')
@@ -299,8 +299,8 @@ export default {
             scaleSeat(element)
             currentElement = element && element.lastElementChild
             // 将当前的sacle变量设置为300,这样的话，点击某一个座位后，再滚动滚轮就不会出现卡顿、地图移动的bug，这样更友好
-            sacleX = 3
-            sacleY = 3
+            sacleX = 1.5
+            sacleY = 1.5
             if(seatItem.type === '0'){
                 // 点击座位时，就判断当前用户是否有权限查看被点击员工的固资信息
                 store.dispatch('getPersontFixedAssetsList',{ b_usercode:seatItem.id, v_usercode:store.state.UserInfo.usercode })
