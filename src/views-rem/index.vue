@@ -246,7 +246,7 @@ export default {
             const url = window.location.href
             getQrConfig(url).then(res => {
                 const { appId, timestamp, nonceStr, signature } = res.data
-                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage','onMenuShareWechat','onMenuShareTimeline']})
+                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage','onMenuShareWechat','onMenuShareTimeline','showMenuItems']})
             }).then(() => {
                 // 默认为 none
                 store.commit('setShare','none')
@@ -256,6 +256,9 @@ export default {
                 wx.onMenuShareWechat(store.state.share)
                 // 朋友圈
                 wx.onMenuShareTimeline(store.state.share)
+                wx.showMenuItems({
+                    menuList: ["menuItem:refresh","menuItem:share:appMessage","menuItem:copyUrl"] // 要显示的菜单项
+                });
             })
         })
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
