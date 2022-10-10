@@ -246,7 +246,7 @@ export default {
             const url = window.location.href
             getQrConfig(url).then(res => {
                 const { appId, timestamp, nonceStr, signature } = res.data
-                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage','onMenuShareWechat','onMenuShareTimeline','hideMenuItems']})
+                return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage','hideMenuItems']})
             }).then(() => {
                 // 默认为 none
                 store.commit('setShare','none')
@@ -256,8 +256,10 @@ export default {
                 wx.onMenuShareWechat(store.state.share)
                 // 朋友圈
                 wx.onMenuShareTimeline(store.state.share)
-                wx.hideMenuItems({
-                    menuList: ['menuItem:share:wechat','menuItem:openWithSafari']
+                wx.ready(function() {
+                    wx.hideMenuItems({
+                        menuList: ['menuItem:share:wechat','menuItem:openWithSafari','menuItem:share:timeline']
+                    });
                 });
             })
         })
