@@ -74,14 +74,14 @@
                 </template>
                 <!-- 座位 -->
                 <template v-if="item.type === '0' || item.type === '0-1' || item.type === '0-2'">
-                    <div :class="newSeatClassFn(item)" :id="item.seat_id" :style="seatStyle(item)" v-on:click="handleClickSeat(item,$event.currentTarget)" v-on:mouseenter="seatMouseenter(item,$event.currentTarget)" v-on:mouseleave="seatMouseleave">
+                    <div :class="newSeatClassFn(item)" :id="item.seat_id" :style="seatStyle(item)" v-on:click="handleClickSeat(item,$event.currentTarget)">
                         <div class="desk" :style="seatDeskStyle(item)"></div>
                         <div class="chair" :style="seatChairStyle(item)"></div>
                     </div>
                 </template>
             </template>
             <!-- 鼠标经过每一个座位的提示框 -->
-            <div ref="tooltipRef" class="tooltip" v-html="tooltipText"></div>
+            <!-- <div ref="tooltipRef" class="tooltip" v-html="tooltipText"></div> -->
         </div>
     </div>
 </template>
@@ -250,7 +250,7 @@ export default {
                     color:'#646464',
                 }
             },
-            // 鼠标进入每一个座位的处理程序
+            // 鼠标进入每一个座位的处理程序(弹框隐藏，事件解绑，暂时不用)
             seatMouseenter(seatItem,element) {
                 // 获取到椅子元素
                 const chair = element.querySelector('.chair')
@@ -314,7 +314,7 @@ export default {
                     tooltipRef.value.style.visibility = 'visible'
                 })
             },
-            // 鼠标离开每一个座位的处理程序
+            // 鼠标离开每一个座位的处理程序(弹框隐藏，事件解绑，暂时不用)
             seatMouseleave() {
                 tooltipRef.value.style.visibility = 'hidden'
                 tooltipText.value = ''
@@ -726,6 +726,11 @@ export default {
                 &:first-child{
                     border-bottom: 1px solid #E6E6E6;
                 }
+                &:hover{
+                    i{
+                        color: #5d90dc;
+                    }
+                }
             }
         }
         &:last-child{
@@ -739,6 +744,11 @@ export default {
             i{
                 color: #8C8686;
                 font-size: 18px;
+            }
+            &:hover{
+                i{
+                    color: #5d90dc;
+                }
             }
         }
     }
