@@ -711,6 +711,14 @@ export default {
                 &:hover{
                     background-color: #E1ECFD;
                 }
+                &:first-child{
+                    border-top-left-radius: 2px;
+                    border-bottom-left-radius: 2px;
+                }
+                &:last-child{
+                    border-top-right-radius: 2px;
+                    border-bottom-right-radius: 2px;
+                }
             }
         }
         .el-autocomplete{
@@ -730,6 +738,7 @@ export default {
         z-index: 6;
         box-shadow: 0px 2px 5px rgba(120, 120, 120, 0.5);
         border-radius: 2px;
+        overflow: hidden;
         .north {
             width: 46px;
             height: 46px;

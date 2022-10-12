@@ -1,6 +1,9 @@
 <template>
     <!-- 放大缩小按钮 -->
     <div class="scale-btn">
+        <div v-on:click="initMap('huifu')">
+            <i class="iconfont oamap-chongzhi"></i>
+        </div>
         <div>
             <div v-on:click="MapBoxAmplification(0.2)">
                 <i class="iconfont oamap-jiahao"></i>
@@ -8,9 +11,6 @@
             <div v-on:click="MapBoxReduce(0.2)">
                 <i class="iconfont oamap-jianhao"></i>
             </div>
-        </div>
-        <div v-on:click="initMap('huifu')">
-            <i class="iconfont oamap-chongzhi"></i>
         </div>
     </div>
     <div ref="MapContainerRef" class="map-container">
@@ -709,8 +709,8 @@ export default {
     &>div{
         box-shadow: 0px 2px 5px rgba(120, 120, 120, 0.5);
         border-radius: 2px;
-        &:first-child{
-            margin-bottom: 12px;
+        &:last-child{
+            margin-top: 12px;
             div{
                 width: 40px;
                 height: 40px;
@@ -733,7 +733,7 @@ export default {
                 }
             }
         }
-        &:last-child{
+        &:first-child{
             width: 40px;
             height: 40px;
             cursor: pointer;
