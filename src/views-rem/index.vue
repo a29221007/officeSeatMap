@@ -249,18 +249,18 @@ export default {
                 return wx.config({beta: true, debug: false, appId, timestamp, nonceStr, signature, jsApiList: ['scanQRCode', 'invoke','onMenuShareAppMessage','hideMenuItems']})
             }).then(() => {
                 // 默认为 none
-                // store.commit('setShare','none')
-                // // 转发
-                // wx.onMenuShareAppMessage(store.state.share)
-                // // 微信
-                // wx.onMenuShareWechat(store.state.share)
-                // // 朋友圈
-                // wx.onMenuShareTimeline(store.state.share)
-                // wx.ready(function() {
-                //     wx.hideMenuItems({
-                //         menuList: ['menuItem:share:wechat','menuItem:openWithSafari','menuItem:share:timeline']
-                //     });
-                // });
+                store.commit('setShare','none')
+                // 转发
+                wx.onMenuShareAppMessage(store.state.share)
+                // 微信
+                wx.onMenuShareWechat(store.state.share)
+                // 朋友圈
+                wx.onMenuShareTimeline(store.state.share)
+                wx.ready(function() {
+                    wx.hideMenuItems({
+                        menuList: ['menuItem:share:wechat','menuItem:openWithSafari','menuItem:share:timeline']
+                    });
+                });
             })
         })
         // 将实例化的对象从 onMounted 钩子函数中提取出来，用于卸载阶段解绑事件
