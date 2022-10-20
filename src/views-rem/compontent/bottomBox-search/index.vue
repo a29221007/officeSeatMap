@@ -141,7 +141,6 @@ export default {
                     if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                         // 如果搜索的是座位
                         const { qr_code, name, seat_id } = item
-                        console.log(item)
                         // 选中某一项，首先判断该员工的座位，是否在当前楼层
                         if(item.floor == store.getters.floor){
                             // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
@@ -196,7 +195,7 @@ export default {
                         if(item.floor == store.getters.floor){
                             if(item.type === 1){
                                 // 设置分享的链接参数为点击座位的qr_code
-                                store.commit('setShare',item.qr_code)
+                                // store.commit('setShare',item.qr_code)
                                 getMeetingRoomData(item)
                             }else{
                                 store.commit('setActiveInfo',item)
@@ -226,7 +225,7 @@ export default {
                                     beginToast('success','切换成功',2000)
                                     if(item.type === 1){
                                         // 设置分享的链接参数为点击座位的qr_code
-                                        store.commit('setShare',item.qr_code)
+                                        // store.commit('setShare',item.qr_code)
                                         getMeetingRoomData(item)
                                     }else{
                                         store.commit('setActiveInfo',item)

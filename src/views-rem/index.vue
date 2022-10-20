@@ -184,7 +184,6 @@ export default {
                 endToast()
                 return beginToast('fail','没有找到相关的座位或区域',2000)
             }
-            store.commit('setShare',scanQRcode)
             // 设置扫码的楼层
             let floor = ''
             if(item.floor == '3' && item.office == '1'){
@@ -200,6 +199,7 @@ export default {
                 if(item.type === '0' || item.type === '0-1' || item.type === '0-2'){
                     // 如果扫码结果是座位
                     store.commit('setActiveInfo',item)
+                    store.commit('setShare',scanQRcode)
                     // 每一次扫码之前确定上一次有没有高亮做动画的元素
                     beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
                     beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = setTransform(beforeSeatAnimateElement,1))
@@ -599,8 +599,6 @@ export default {
                     store.commit('setShare','none')
                     return
                 }
-                // 设置分享的链接参数为点击座位的qr_code
-                store.commit('setShare',seatItem.qr_code)
                 beforeSeatAnimateElement && clearInterval(beforeSeatAnimateElement.timer)
                 beforeSeatAnimateElement && (beforeSeatAnimateElement.style.transform = setTransform(beforeSeatAnimateElement,1))
                 // 点击座位要将底部盒子升上来
@@ -609,6 +607,8 @@ export default {
                 // 设置座位的高亮状态
                 seatData.setCurrentSeat_id(seatItem.seat_id)
                 store.commit('setActiveInfo', seatItem)
+                // 设置分享的链接参数为点击座位的qr_code
+                store.commit('setShare',seatItem.qr_code)
                 BottomBoxRef.value.setSearchLegendContant('information')
                 // 调用座位高亮的函数
                 searchSeat(seatItem.seat_id)
@@ -625,7 +625,6 @@ export default {
                 if(type !== 1) return
                 // 阻止点击会议室事件的冒泡行为
                 $event.stopPropagation()
-                console.log(item);
                 if(code === seatData.currentAreaCode){
                     // 如果相同,则取消高亮，以及恢复底部盒子到主页（init）
                     seatData.currentAreaCode = ''
@@ -636,7 +635,6 @@ export default {
                     store.commit('setShare','none')
                     return
                 }
-                store.commit('setShare',item.qr_code)
                 // 点击会议室确保底部的盒子处于升起来的状态
                 scaling = false
                 MapBoxTapFn()
@@ -647,7 +645,7 @@ export default {
         // 获取会议室相关数据以及预定记录函数
         // flag 参数是为了区分是否为扫码进入项目，如果flag参数为undefind，则说明不是扫码进入时调用
         function getMeetingData(item,flag) {
-            const { code, name, subtitle } = item
+            const { code, name, subtitle, qr_code } = item
             getMeeting(code).then(res => {
                 if(res.code !== 0){
                     // 在 code 不等于 0 的情况下，继续判断当前区域是否为会议室，如果不为会议室也会发生报错
@@ -681,6 +679,7 @@ export default {
                 res.data.HistoryList = sortMeetingList(res.data.HistoryList)
                 // 设置会议室的相关信息
                 store.commit('setActiveInfo',res.data)
+                store.commit('setShare',qr_code)
                 searchArea(code,seatData.setCurrentAreaCode)
                 // 将底部操作盒子设置为 'information' 状态
                 BottomBoxRef.value.setSearchLegendContant('information')

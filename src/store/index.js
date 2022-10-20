@@ -178,6 +178,20 @@ export default createStore({
         },
         // 设置地图分享的链接参数
         setShare(state, data){
+            // title: '龙图办公区地图',
+            // desc: '快速定位工位与资产信息',
+            if(data === 'none'){
+                state.share.title = '龙图办公区地图'
+                state.share.desc = '快速定位工位与资产信息'
+            }else{
+                if(state.activeInfo.type == 1){
+                    state.share.title = state.activeInfo.name
+                    state.share.desc = state.activeInfo.setting
+                }else if(state.activeInfo.type == '0' || state.activeInfo.type == '0-1' || state.activeInfo.type == '0-2'){
+                    state.share.title = state.activeInfo.name
+                    state.share.desc = state.activeInfo.seat_id
+                }
+            }
             state.share.link = URL.shareUrl + data
         }
     },
