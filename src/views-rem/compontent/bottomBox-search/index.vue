@@ -115,8 +115,11 @@ export default {
             },
             // 点击输入框的返回箭头
             handleClickBack(){
+                inputRef.value.blur()
                 // 点击向右的返回箭头，向父组件发布事件，修改 SearchLegendContant 的值为 'init'
-                emit('setSearchLegendContant','init_back')
+                setTimeout(() => {
+                    emit('setSearchLegendContant','init_back')
+                },150)
             },
             // 点击输入框的清除按钮
             handleClickClear(){
