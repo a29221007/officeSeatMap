@@ -116,7 +116,7 @@ export default {
             // 点击输入框的返回箭头
             handleClickBack(){
                 // 点击向右的返回箭头，向父组件发布事件，修改 SearchLegendContant 的值为 'init'
-                emit('setSearchLegendContant','init')
+                emit('setSearchLegendContant','init_back')
             },
             // 点击输入框的清除按钮
             handleClickClear(){
@@ -143,6 +143,7 @@ export default {
                         const { qr_code, name, seat_id } = item
                         // 选中某一项，首先判断该员工的座位，是否在当前楼层
                         if(item.floor == store.getters.floor){
+                            clearSeatORArea()
                             // 向父组件发布事件，修改 SearchLegendContant 的值为 'information'
                             emit('setSearchLegendContant','information')
                             store.commit('setActiveInfo',item)
@@ -180,6 +181,7 @@ export default {
                                     // 搜索座位时，就判断当前用户是否有权限查看被点击员工的固资信息
                                     store.dispatch('getPersontFixedAssetsList',{ b_usercode:item.id, v_usercode:store.state.UserInfo.usercode })
                                 }
+                                clearSeatORArea()
                                 nextTick(() => {
                                     upDataCurrentSeat_id(seat_id)
                                     searchSeat(seat_id)
@@ -193,6 +195,7 @@ export default {
                     }else{
                         // 如果是区域
                         if(item.floor == store.getters.floor){
+                            clearSeatORArea()
                             if(item.type === 1){
                                 // 设置分享的链接参数为点击座位的qr_code
                                 // store.commit('setShare',item.qr_code)
@@ -221,6 +224,7 @@ export default {
                                     pushFloor = 'shenzhen'
                                 }
                                 store.commit('setCurrentFloor',pushFloor)
+                                clearSeatORArea()
                                 nextTick(() => {
                                     beginToast('success','切换成功',2000)
                                     if(item.type === 1){
@@ -255,6 +259,8 @@ export default {
         let upDataCurrentSeat_id = inject('upCurrentSeat_id')
         // 接受祖先组件传递过来的获取会议室相关数据的函数
         let getMeetingRoomData = inject('getMeetingRoomData')
+        // 接受根组件传递过来的清楚座位或者区域高亮的函数
+        let clearSeatORArea = inject('clearSeatORArea')
         // 卸载阶段
         onBeforeUnmount(() => {
             clearTimeout(searchInput.searchTimer)

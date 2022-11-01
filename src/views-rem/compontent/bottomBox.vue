@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount, inject } from 'vue'
 import { useStore } from 'vuex'
 // 导入子组件
 import Init from './bottomBox-init'
@@ -211,13 +211,20 @@ export default {
                 c = true
             }
         }
-
+        // 接受根组件传递过来的清楚座位或者区域高亮的函数
+        let clearSeatORArea = inject('clearSeatORArea')
         // 控制 SearchLegend 盒子中组件的切换（初始内容（init）/搜索页面（search）/区域座位信息详情页（Information））的变量
         let SearchLegendContant = ref('init')
         // 设置 SearchLegendContant 变量的函数
         function setSearchLegendContant(value) {
-            // 接受子组件的传值
-            SearchLegendContant.value = value
+            if(value === 'init_back'){
+                SearchLegendContant.value = 'init'
+                clearSeatORArea()
+                initMap()
+            }else {
+                // 接受子组件的传值
+                SearchLegendContant.value = value
+            }
         }
         // 输入框获得焦点时的一个延时器id
         let inputTimer = null
@@ -239,7 +246,6 @@ export default {
                 },300)
             }else if(newValue === 'information'){
                 SearchLegendRef.value.style.bottom = 0
-                console.log(SearchLegendTop)
                 SearchLegendRef.value.style.top = SearchLegendTop + 'px'
             }
         })
@@ -281,7 +287,7 @@ export default {
     bottom: 1.2581rem;
     height: 2.7957rem;
     border-radius: 10px 10px 0 0;
-    padding: .3226rem;
+    padding: .3226rem .3226rem .1075rem .3226rem;
     .arrow{
         position: absolute;
         top: .1rem;

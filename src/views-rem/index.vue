@@ -714,6 +714,13 @@ export default {
         provide('upCurrentSeat_id',seatData.setCurrentSeat_id)
         // 向子组件传递获取会议室相关的数据方法
         provide('getMeetingRoomData',getMeetingData)
+
+        // 向子搜索组件传递清除座位高亮或者清除区域高亮的函数
+        function clearSeatORArea(){
+            clearCurrentElementInterval()
+            seatData.currentAreaCode = ''
+        }
+        provide('clearSeatORArea',clearSeatORArea)
         // 卸载阶段，事件解绑
         onBeforeUnmount(() => {
             // 1 卸载 MapBox 盒子的 tap 事件

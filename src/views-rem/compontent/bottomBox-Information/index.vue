@@ -126,7 +126,6 @@ export default {
         border-radius: 7px;
         display: flex;
         align-items: center;
-        margin-bottom: .2688rem;
         .oamap-sousuo{
             color: #f8f9fa;
             font-size: .4301rem;
@@ -143,6 +142,7 @@ export default {
         align-items: center;
         justify-content: space-between;
         border-bottom:1px solid #30322f;
+        padding: .2151rem 0;
         .title{
             font-size: .4301rem;
         }
