@@ -1,7 +1,9 @@
 <template>
     <!-- 点击了搜索结果的某一项后，显示对应区域或座位的详细信息 -->
     <div class="Seat-Area-Information">
-        <!-- 头部区域 -->
+        <!-- 显示选中座位（或者区域）信息的同时，新增了显示搜索框 -->
+        <div class="search-box" v-on:click="handleClickSearchBox"><i class="iconfont oamap-sousuo"></i><span>查找座位、人员、区域信息</span></div>
+        <!-- 头部信息区域 -->
         <div class="header">
             <div class='title'>{{title_Code.title}}</div>
             <!-- <div class="buttons">
@@ -35,7 +37,8 @@ export default {
     components:{
         DepartmentAndOtherAreas, Personnel, TakeUp, MeetingRoom, EmptySeat
     },
-    setup() {
+    emits:['setSearchLegendContant'],
+    setup(prop,{ emit }) {
         const store = useStore()
         // 选中项的信息
         const activeInfo = computed(() => {
@@ -43,7 +46,11 @@ export default {
         })
         // 点击编辑按钮触发的事件
         function handleClickEdit() {
-            
+        }
+        // 点击搜索框触发的函数
+        function handleClickSearchBox(){
+            // 点击搜索的盒子，向父组件发布一个事件，并传递参数
+            emit('setSearchLegendContant','search')
         }
         // 切换组件变量
         let compontentType = computed(() => {
@@ -99,6 +106,7 @@ export default {
             handleClickEdit,
             compontentType,
             title_Code,
+            handleClickSearchBox
         }
     }
 }
@@ -111,6 +119,24 @@ export default {
     display: flex;
     flex-direction: column;
     color: #f8f9fa;
+    .search-box{
+        width: 100%;
+        height: .8602rem;
+        background-color: #262729;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        margin-bottom: .2688rem;
+        .oamap-sousuo{
+            color: #f8f9fa;
+            font-size: .4301rem;
+            margin: 0 .3226rem 0 .3226rem;
+        }
+        span{
+            color: #b1b2b4;
+            font-size: .4301rem;
+        }
+    }
     .header{
         flex: 1;
         display: flex;
